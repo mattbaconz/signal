@@ -1,0 +1,58 @@
+# Environment and secrets (never commit)
+.env
+.env.*
+!.env.example
+
+# OS junk
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# Editor / IDE local (keep shared .vscode/ if you commit team settings)
+*.code-workspace
+.idea/
+*.suo
+*.user
+*.userosscache
+
+# Logs and temp
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.tmp
+*.temp
+*~
+*.swp
+*.swo
+
+# Node (npx skills, local tooling)
+node_modules/
+
+# Python (if scripts or tooling add it later)
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.Python
+
+# PowerShell / coverage
+*.ps1xml
+
+# Windows alternate data streams (rare)
+*:Zone.Identifier
+
+# ---------------------------------------------------------------------------
+# Optional local-only markdown (design notes, private checklists, overlays).
+# Canonical tier/porting/releasing/evidence content lives in README.md.
+# If these paths were ever tracked: git rm --cached SIGNAL-design.md RELEASING.md EVIDENCE.md WHEN-TO-USE.md PORTING.md
+# ---------------------------------------------------------------------------
+/SIGNAL-design.md
+/RELEASING.md
+/EVIDENCE.md
+/WHEN-TO-USE.md
+/PORTING.md
+
+# Local benchmark harness (repro scripts, JSON artifacts — not published)
+benchmark/

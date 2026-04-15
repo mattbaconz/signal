@@ -1,0 +1,27 @@
+# Runs scripts/verify.ps1 on Windows (PowerShell + git + temp repos).
+name: verify
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  verify:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install GitHub CLI
+        shell: pwsh
+        run: |
+          winget install --exact --id GitHub.cli --source winget --accept-source-agreements --accept-package-agreements
+
+      - name: Run verification script
+        shell: pwsh
+        working-directory: ${{ github.workspace }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: ./scripts/verify.ps1 -RequireGh -StrictPr
