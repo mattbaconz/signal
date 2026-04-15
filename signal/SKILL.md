@@ -214,6 +214,19 @@ Long repeated concepts get a short ID. One token instead of fifteen. Declared in
 
 ---
 
+## Aggressive savings (when user wants maximum token reduction)
+
+Activate this block when the user asks for **max compression**, **lowest tokens**, or **strongest SIGNAL**.
+
+1. **`REASON:∅`** — no explanatory prose unless the user explicitly asked *why* or *how it works*.
+2. **Narrowest TMPL** — pick one template (`TMPL:bug`, `TMPL:rev`, …); never spill into unstructured paragraphs. If impossible: one line `SIGNAL_DRIFT: <reason>`.
+3. **Delta-only from turn 2** — only new facts, `Δ`, or answers to the latest user line; never re-summarize prior turns.
+4. **Aliases earlier** — assign `[X1]`, `[X2]` after **2** mentions of the same concept (not 3+).
+5. **BOOT once** — one BOOT block at activation; never repeat full BOOT in later turns.
+6. **Host context** — if the user pastes long rules every message, tell them to move defaults to `GEMINI.md` / `CLAUDE.md` / project rules in **one compressed line** (do not lecture).
+
+---
+
 ## Projected Token Savings
 
 | Session type | Baseline | SIGNAL-1 | SIGNAL-2 | SIGNAL-3 |

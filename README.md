@@ -29,7 +29,7 @@
 4. [Tier specification (SIGNAL-1 / 2 / 3)](#tier-specification-signal-1--2--3)
 5. [When to use which tier (canonical)](#when-to-use-which-tier-canonical)
 6. [Compression layers (summary)](#compression-layers-summary)
-7. [Install](#install)
+7. [Install](#install) (includes [maximize token savings](#maximize-token-savings))
 8. [Cross-tool porting](#cross-tool-porting)
 9. [Verify and safe first use](#verify-and-safe-first-use)
 10. [Workflow skills (git) on Windows](#workflow-skills-git-on-windows)
@@ -217,14 +217,18 @@ If the model cannot satisfy the active template, the spec’d escape is a single
 
 **Universal (skills ecosystem):**
 
+The Skills CLI expects a **GitHub source** as `owner/repo` (not a bare name). After cloning, it discovers every top-level skill folder that contains `SKILL.md`.
+
 ```bash
-npx skills add signal
+npx skills add mattbaconz/signal
 ```
+
+Non-interactive install (all skills, user-level paths): add `-y` and `-g` per the CLI (`npx skills add --help`).
 
 **Gemini CLI (from a checkout of this repo):**
 
 ```bash
-gemini skills install /path/to/singal-skill/signal --consent
+gemini skills install /path/to/your/clone/signal --consent
 ```
 
 **Manual copy** into your tool’s skills directory, for example:
@@ -244,6 +248,34 @@ Authoritative product list: [agentskills.io/home](https://agentskills.io/home).
 ```powershell
 powershell -ExecutionPolicy Bypass -File scripts\install-signal-all.ps1
 ```
+
+### Maximize token savings
+
+This subsection covers **assistant output**, **injected context** (rules / `GEMINI.md` / `CLAUDE.md`), and **chat history** — all three matter for billed tokens.
+
+SIGNAL only wins when **both** sides of the pipe stay lean: what the host injects every turn, and what the model emits.
+
+**Assistant output (biggest lever)**
+
+- Use **`/signal2`** for any session with back-and-forth: BOOT + aliases + **delta-only** turns beat repeating context every message.
+- Declare **`REASON:∅`** in BOOT unless the user explicitly wants teaching or long rationale.
+- Pick one **TMPL** per task (`TMPL:bug`, `TMPL:rev`, …) and stay in it; multi-paragraph answers burn tokens unless you **`SIGNAL_DRIFT`**.
+- Replace hedging with **`[0.0–1.0]`** always; one number beats a sentence.
+- After turn 1, **send only deltas** (what changed). Re-stating the plan every reply is pure waste.
+
+**Input / persistent context (often overlooked)**
+
+- Keep **`GEMINI.md`** / **`CLAUDE.md`** / project rules **short**. Paste a [minimal SIGNAL block from `templates/`](templates/gemini-GEMINI.md) — not the full skill body.
+- Do **not** duplicate the same instructions in three places (rules + user message + skill). The skill loads on demand; rules should **route** to SIGNAL, not mirror it.
+
+**Long threads**
+
+- When history is huge, use **`/signal-ckpt`** (manual) or **`/signal3`** (auto) only if [checkpoint savings outweigh reset cost](#when-to-use-which-tier-canonical) on your host.
+- Optional: install [`signal-state/`](signal-state/) and maintain **`.signal_state.md`** so state lives on disk instead of being re-explained in chat.
+
+**Reality check**
+
+Savings are **maximized when the model follows the skill**. If the assistant drifts into prose, token count drifts with it — say **“follow SIGNAL strictly”** or re-issue **`/signal2`**.
 
 ---
 
@@ -368,7 +400,7 @@ Manual one-liner per host (after cloning):
 
 ```bash
 # Gemini CLI
-gemini skills install /path/to/singal-skill/signal --consent
+gemini skills install /path/to/your/clone/signal --consent
 # …repeat for signal-commit, signal-push, signal-pr, signal-review, signal-ckpt
 ```
 
@@ -585,7 +617,7 @@ You may also keep a **private** `EVIDENCE.md` next to the clone (listed in `.git
 ## Repository layout
 
 ```
-singal-skill/                 ← repository root (folder name may differ when cloned)
+your-clone/                   ← repository root (folder name may differ, e.g. `signal`)
 ├── .gitignore                ← includes optional private *.md overlays (see below)
 ├── assets/
 │   ├── signal-logo.png
