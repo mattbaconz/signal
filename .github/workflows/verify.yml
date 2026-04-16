@@ -14,14 +14,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install GitHub CLI
+      # windows-latest includes GitHub CLI; avoid winget here (flaky / PATH issues on runners).
+      - name: GitHub CLI version
         shell: pwsh
-        run: |
-          winget install --exact --id GitHub.cli --source winget --accept-source-agreements --accept-package-agreements
+        run: gh --version
 
       - name: Run verification script
         shell: pwsh
         working-directory: ${{ github.workspace }}
         env:
           GH_TOKEN: ${{ github.token }}
+          GITHUB_TOKEN: ${{ github.token }}
         run: ./scripts/verify.ps1 -RequireGh -StrictPr

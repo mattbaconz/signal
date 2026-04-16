@@ -88,18 +88,7 @@ if ($LASTEXITCODE -ne 0) {
   exit 1
 }
 
-$gh = Get-Command gh -ErrorAction SilentlyContinue
-if (-not $gh) {
-  Write-Host 'x gh CLI required - install from https://cli.github.com'
-  exit 1
-}
-
-gh auth status 2>$null | Out-Null
-if ($LASTEXITCODE -ne 0) {
-  Write-Host 'x gh not authenticated - run: gh auth login'
-  exit 1
-}
-
+# --draft / --dry only simulate; they do not invoke gh (CI verify uses --dry with no gh auth).
 if ($Draft) {
   Write-Host 'Draft commit message:'
   Write-Host "  $CommitMsg"
@@ -127,6 +116,18 @@ if ($Dry) {
   Write-Host "Would create PR: `"$title`""
   if ($PrDraft) { Write-Host 'Would create as draft PR' }
   exit 0
+}
+
+$gh = Get-Command gh -ErrorAction SilentlyContinue
+if (-not $gh) {
+  Write-Host 'x gh CLI required - install from https://cli.github.com'
+  exit 1
+}
+
+gh auth status 2>$null | Out-Null
+if ($LASTEXITCODE -ne 0) {
+  Write-Host 'x gh not authenticated - run: gh auth login'
+  exit 1
 }
 
 $branch = git rev-parse --abbrev-ref HEAD 2>$null
