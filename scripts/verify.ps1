@@ -196,6 +196,12 @@ foreach ($md in $mdFiles) {
     $pathPart = ($raw -split '#')[0]
     if ([string]::IsNullOrWhiteSpace($pathPart)) { continue }
     $pathPart = $pathPart.Trim()
+    if ($pathPart.StartsWith('<') -and $pathPart.EndsWith('>')) {
+      $pathPart = $pathPart.Substring(1, $pathPart.Length - 2).Trim()
+    }
+    try {
+      $pathPart = [uri]::UnescapeDataString($pathPart)
+    } catch { }
     if ($pathPart.StartsWith('/')) { continue }
     $resolved = Join-Path $dir $pathPart
     try {

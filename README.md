@@ -209,6 +209,7 @@ Do not treat "5+ turns" by itself as the trigger. Five tiny turns are still tiny
 
 - **Checkpoint vs. transcript** — same content as the **~94% / ~18×** example in the intro: one canned multi-turn slice collapsed to a `CKPT` atom (rough token estimate, ~4 chars/token heuristic).
 - **Full host runs** — some CLIs replay a large payload on **session reset** (~60k–80k tokens mentioned above for punishing hosts), so net savings show up once history or per-turn output is large enough to outweigh that tax.
+- **Gemini CLI — chess single-turn (paired cwd)** — same `prompt.txt`, **`--approval-mode plan`**, baseline folder **without** project `GEMINI.md` vs SIGNAL folder **with** [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md)-style defaults. One paired run (`gemini-3.1-pro-preview`, CLI 0.38.x): **~88% fewer characters** in the assistant reply with SIGNAL; **`tokens.total` from the CLI was ~13% higher** in the SIGNAL cwd because **prompt tokens** increased (project instructions + skills). That is an honest single-turn tradeoff: shorter answers, extra context loaded once. Raw numbers: [`benchmark/benchmark chess/results_chess_compare.json`](benchmark/benchmark%20chess/results_chess_compare.json). Reproduce: [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1) (may hit API **429** / capacity; retry later).
 
 Optional local `benchmark/` folders (gitignored) can hold your own scripts and raw numbers; nothing in git claims a single universal “score.”
 

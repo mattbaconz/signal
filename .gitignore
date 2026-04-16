@@ -55,4 +55,8 @@ venv/
 /PORTING.md
 
 # Local benchmark harness (repro scripts, JSON artifacts — not published)
-benchmark/
+benchmark/*
+!benchmark/README.md
+# Versioned: Gemini CLI chess pair harness + proof JSON (see README Evidence)
+!benchmark/benchmark chess/
+!benchmark/benchmark chess/**
