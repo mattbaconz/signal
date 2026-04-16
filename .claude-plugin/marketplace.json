@@ -11,7 +11,7 @@
       "name": "signal",
       "source": "./claude-signal",
       "description": "Token-efficient answers, BOOT/checkpoints, and git workflows (commit, push, PR, review).",
-      "version": "0.1.1"
+      "version": "0.1.2"
     }
   ]
 }

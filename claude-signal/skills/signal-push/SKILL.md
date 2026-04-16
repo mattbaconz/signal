@@ -5,7 +5,7 @@ description: >
   One command for the full local→remote cycle. Use when user types
   /signal-push, "commit and push", "push everything", "push my changes", or
   wants to send current changes to remote without manual steps.
-signal_bundle_version: "0.1.1"
+signal_bundle_version: "0.1.2"
 ---
 
 # ⚡ signal-push — Commit + Push

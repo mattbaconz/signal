@@ -22,8 +22,16 @@ That is **not** a failure of “output compression” — it is a **measurement 
 
 - **Single-turn (e.g. chess harness):** Useful for **reply length** and **style**, not as a universal net-token score. See [`benchmark/benchmark chess/README.md`](../benchmark/benchmark%20chess/README.md). For **fairer** output-only comparison when both arms have project `GEMINI.md`, use `run_chess_compare.ps1 -Pair EqualContext`.
 
+## Reducing input tokens
+
+Output compression alone cannot hide a 200-line `GEMINI.md`. To shrink **prompt**:
+
+- Default to [`templates/gemini-GEMINI.min.md`](../templates/gemini-GEMINI.min.md) / [`templates/claude-CLAUDE.min.md`](../templates/claude-CLAUDE.min.md) for always-on context.
+- For long project memory or notes, rewrite with [`docs/signal-compress.md`](signal-compress.md) (Caveman-compress-style workflow: backup, rewrite, diff review).
+
 ## Further reading in this repo
 
 - [README.md — Maximize token savings](../README.md#maximize-token-savings) — practical knobs.
 - [README.md — Evidence](../README.md#evidence-what-we-measure) — what we claim and what we do not.
 - [templates/gemini-GEMINI.min.md](../templates/gemini-GEMINI.min.md) — thinnest always-on Gemini defaults.
+- [docs/signal-compress.md](signal-compress.md) — shrink `GEMINI.md` / notes.

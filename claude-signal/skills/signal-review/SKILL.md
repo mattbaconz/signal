@@ -6,7 +6,7 @@ description: >
   user types /signal-review, "review this", "review my code", "check this PR",
   "review this file", or asks for a code review on any file, diff, or PR.
   Works standalone or as part of a SIGNAL session.
-signal_bundle_version: "0.1.1"
+signal_bundle_version: "0.1.2"
 ---
 
 # ⚡ signal-review — Templated Code Review

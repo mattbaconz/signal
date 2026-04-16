@@ -2,7 +2,7 @@
 
 **Token-efficient agent answers (templates · symbols · checkpoints) and one-shot git workflows — [Agent Skills](https://agentskills.io/) for Claude Code, Cursor, Gemini CLI, Codex, and more.**
 
-[v0.1.1](CHANGELOG.md) · [MIT](LICENSE) · [Discord](https://discord.gg/4Dkt9CaK8M) · Full protocol: `[signal/SKILL.md](signal/SKILL.md)`
+[v0.1.2](CHANGELOG.md) · [MIT](LICENSE) · [Discord](https://discord.gg/4Dkt9CaK8M) · Full protocol: `[signal/SKILL.md](signal/SKILL.md)`
 
 **Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See [Evidence](#evidence-what-we-measure), **[`docs/token-metrics.md`](docs/token-metrics.md)** (prompt vs output vs history), and the table below.
 
@@ -85,7 +85,7 @@ Per-host paths and activation: [Cross-tool porting](#cross-tool-porting).
 
 ## Skill catalog — what ships in this repo
 
-These six directories are the **core bundle** versioned together as **v0.1.1**:
+These six directories are the **core bundle** versioned together as **v0.1.2**:
 
 
 | Skill folder                       | Role                                                                                          | Loads when                                                                                         |
@@ -331,6 +331,22 @@ SIGNAL only wins when **both** sides of the pipe stay lean: what the host inject
 
 Savings are **maximized when the model follows the skill**. If the assistant drifts into prose, token count drifts with it — say **“follow SIGNAL strictly”** or re-issue `**/signal2`**.
 
+### SIGNAL vs Caveman (token compression)
+
+[Caveman](https://github.com/JuliusBrussee/caveman) inspired a lot of the thinking here. The two are not direct competitors — they target **different parts of the prompt pipe** and are safe to run together.
+
+| Axis                                | Caveman                                          | SIGNAL                                                        |
+| ----------------------------------- | ------------------------------------------------ | ------------------------------------------------------------- |
+| **Assistant output shape**          | Terse voice; strips filler                       | Tiers (`/signal`, `/signal2`, `/signal3`), templates, symbols |
+| **Input / memory compression**      | `caveman-compress` (rewrites memory files)       | [`docs/signal-compress.md`](docs/signal-compress.md) + [`scripts/signal-compress.ps1`](scripts/signal-compress.ps1) (backup + copy-paste prompt) |
+| **Long-thread history**             | —                                                | `signal-ckpt` + SIGNAL-3 checkpoint state                     |
+| **Git workflows**                   | `caveman-commit` (phrasing)                      | `signal-commit` / `-push` / `-pr` / `-review` (full cycle, scripts) |
+| **Per-host packaging**              | Skill pack                                       | Skills + **Claude plugin** (`claude-signal/`) + **Gemini extension** (`gemini-signal/`) |
+
+**When to use both:** run `caveman-compress` (or [`scripts/signal-compress.ps1`](scripts/signal-compress.ps1)) once against a thick `GEMINI.md`, then use SIGNAL tiers for day-to-day replies and git workflows. Input-side compression and output-side compression are orthogonal; they stack.
+
+Measurement caveat: a single cold turn that adds *any* project `GEMINI.md` will usually **increase prompt tokens** even when the reply is much shorter. Read [`docs/token-metrics.md`](docs/token-metrics.md) before comparing two skills on `tokens.total` alone.
+
 ---
 
 ## Cross-tool porting
@@ -557,7 +573,8 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 ├── README.md
 ├── CHANGELOG.md
 ├── docs/
-│   └── token-metrics.md      ← prompt vs output vs history (reading CLI stats)
+│   ├── token-metrics.md      ← prompt vs output vs history (reading CLI stats)
+│   └── signal-compress.md    ← shrink GEMINI.md / notes (Caveman-compress-style)
 ├── contrib/                  ← optional patches (e.g. awesome-agent-skills PR)
 ├── .github/workflows/verify.yml
 ├── gemini-signal/            ← Gemini CLI extension (gemini-extension.json, synced skills/)
@@ -577,6 +594,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
     ├── sync-integration-packages.ps1
     ├── prepare-awesome-agent-skills-pr.ps1
     ├── benchmark.ps1
+    ├── signal-compress.ps1   ← backup + copy-paste prompt for input-side compression
     └── verify.ps1
 ```
 
@@ -588,7 +606,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 **Versioning:** Ship **`signal_bundle_version`** in core `SKILL.md` frontmatter with the tag you cut; add a section to [`CHANGELOG.md`](CHANGELOG.md); push an annotated git tag (`git tag -a v0.x.y -m "…"`); optional GitHub Release from that tag. Keep the three aligned per release.
 
-- **GitHub release:** Tag **`v0.1.1`** is published on the repo. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.1.1&title=SIGNAL%20v0.1.1) (same tag), paste a short summary from [`CHANGELOG.md`](CHANGELOG.md), publish.
+- **GitHub release:** Tag **`v0.1.2`** is published on the repo. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.1.2&title=SIGNAL%20v0.1.2) (same tag), paste a short summary from [`CHANGELOG.md`](CHANGELOG.md), publish.
 - **CI:** [Actions](https://github.com/mattbaconz/signal/actions) runs `scripts/verify.ps1` on pushes/PRs to `main`.
 - **Discord:** [Join](https://discord.gg/4Dkt9CaK8M). Useful pins for mods: install `npx skills add mattbaconz/signal -y -g`, benchmark `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1`, link to this repo.
 - **skills.sh / awesome list:** Installs via `npx skills` help discovery on [skills.sh](https://skills.sh). **Checklist:** fork [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) → run [`scripts/prepare-awesome-agent-skills-pr.ps1`](scripts/prepare-awesome-agent-skills-pr.ps1) or apply [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) → push branch → open PR — details in [`contrib/README.md`](contrib/README.md).
@@ -601,13 +619,14 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 | Document                                   | Use it when                                               |
 | ------------------------------------------ | --------------------------------------------------------- |
-| `[docs/token-metrics.md](docs/token-metrics.md)` | Prompt vs output vs history; reading CLI `stats`        |
-| `[signal/SKILL.md](signal/SKILL.md)`       | Exact activation strings, layers, `SIGNAL_DRIFT` protocol |
-| `[signal/references/](signal/references/)` | Symbol grammar, BOOT presets, checkpoint format           |
+| [`docs/token-metrics.md`](docs/token-metrics.md) | Prompt vs output vs history; reading CLI `stats`    |
+| [`docs/signal-compress.md`](docs/signal-compress.md) | Shrink `GEMINI.md` / notes (Caveman-compress-style) |
+| [`signal/SKILL.md`](signal/SKILL.md)       | Exact activation strings, layers, `SIGNAL_DRIFT` protocol |
+| [`signal/references/`](signal/references/) | Symbol grammar, BOOT presets, checkpoint format           |
 
 
 ---
 
-*v0.1.1 — six core skills: `signal`, `signal-commit`, `signal-push`, `signal-pr`, `signal-review`, `signal-ckpt`; packaged Claude plugin + Gemini extension*
+*v0.1.2 — six core skills: `signal`, `signal-commit`, `signal-push`, `signal-pr`, `signal-review`, `signal-ckpt`; packaged Claude plugin + Gemini extension*
 
 See `[LICENSE](LICENSE)` (MIT).

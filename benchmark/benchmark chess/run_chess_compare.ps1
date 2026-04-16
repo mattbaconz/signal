@@ -136,12 +136,20 @@ $signal = $runs | Where-Object { $_.label -eq "signal" } | Select-Object -First 
 $deltaPrimary = $null
 $deltaPct = $null
 $deltaCharsPct = $null
+$deltaPromptTokens = $null
+$deltaPromptPct = $null
 if ($baseline.ok -and $signal.ok -and $baseline.tokens_primary_max -gt 0) {
   $deltaPrimary = [int]$signal.tokens_primary_max - [int]$baseline.tokens_primary_max
   $deltaPct = [math]::Round(($deltaPrimary / [double]$baseline.tokens_primary_max) * 100, 1)
 }
 if ($baseline.ok -and $signal.ok -and $baseline.response_chars -gt 0) {
   $deltaCharsPct = [math]::Round((1 - ([double]$signal.response_chars / [double]$baseline.response_chars)) * 100, 1)
+}
+if ($baseline.ok -and $signal.ok -and $null -ne $baseline.prompt_tokens -and $null -ne $signal.prompt_tokens) {
+  $deltaPromptTokens = [int]$signal.prompt_tokens - [int]$baseline.prompt_tokens
+  if ([int]$baseline.prompt_tokens -gt 0) {
+    $deltaPromptPct = [math]::Round(($deltaPromptTokens / [double]$baseline.prompt_tokens) * 100, 1)
+  }
 }
 
 $note = "tokens_primary_max is max(stats.models.*.tokens.total). "
@@ -163,6 +171,10 @@ $out = [PSCustomObject]@{
     signal_tokens_primary_max = if ($signal.ok) { $signal.tokens_primary_max } else { $null }
     delta_tokens_primary_max = $deltaPrimary
     delta_pct_total_vs_baseline = $deltaPct
+    baseline_prompt_tokens = if ($baseline.ok) { $baseline.prompt_tokens } else { $null }
+    signal_prompt_tokens = if ($signal.ok) { $signal.prompt_tokens } else { $null }
+    delta_prompt_tokens = $deltaPromptTokens
+    delta_pct_prompt_vs_baseline = $deltaPromptPct
     baseline_response_chars = if ($baseline.ok) { $baseline.response_chars } else { $null }
     signal_response_chars = if ($signal.ok) { $signal.response_chars } else { $null }
     pct_fewer_response_chars_vs_baseline = $deltaCharsPct
@@ -177,7 +189,23 @@ Write-Host "`nWrote $outPath" -ForegroundColor Green
 if (-not ($baseline.ok -and $signal.ok)) {
   exit 1
 }
-if ($null -ne $deltaCharsPct) {
-  Write-Host "Response chars: ~$deltaCharsPct% fewer in SIGNAL folder vs baseline (same prompt)." -ForegroundColor Cyan
+
+Write-Host ""
+Write-Host "Summary (single-turn; see docs/token-metrics.md before citing):" -ForegroundColor Cyan
+if ($null -ne $deltaPromptTokens) {
+  $sign = if ($deltaPromptTokens -gt 0) { "+" } else { "" }
+  $direction = if ($deltaPromptTokens -gt 0) { "more" } elseif ($deltaPromptTokens -lt 0) { "fewer" } else { "same" }
+  Write-Host ("  prompt_tokens : baseline={0,6}  signal={1,6}  delta={2}{3} ({4}% {5})" -f `
+    $baseline.prompt_tokens, $signal.prompt_tokens, $sign, $deltaPromptTokens, $deltaPromptPct, $direction)
 }
+if ($null -ne $deltaPrimary) {
+  $sign2 = if ($deltaPrimary -gt 0) { "+" } else { "" }
+  Write-Host ("  tokens_total  : baseline={0,6}  signal={1,6}  delta={2}{3} ({4}% vs baseline)" -f `
+    $baseline.tokens_primary_max, $signal.tokens_primary_max, $sign2, $deltaPrimary, $deltaPct)
+}
+if ($null -ne $deltaCharsPct) {
+  Write-Host ("  response_chars: baseline={0,6}  signal={1,6}  ~{2}% fewer chars in SIGNAL reply" -f `
+    $baseline.response_chars, $signal.response_chars, $deltaCharsPct) -ForegroundColor Green
+}
+Write-Host "  Gemini JSON exposes prompt vs total; 'output-only' is inferred from response char count."
 exit 0

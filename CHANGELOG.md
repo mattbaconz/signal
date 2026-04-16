@@ -4,6 +4,24 @@ All notable changes to this project are documented here. The format is informal;
 
 **Versioning:** For each release, align **`signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see README *Releases and community*).
 
+## v0.1.2 — 2026-04-16
+
+Git tag: **`v0.1.2`**.
+
+### Added
+
+- [`docs/signal-compress.md`](docs/signal-compress.md) — input-side compression workflow (shrink `GEMINI.md` / notes; backup, rewrite, diff review).
+- [`templates/signal-compress-prompt.md`](templates/signal-compress-prompt.md) — copy-paste SIGNAL-1 compression prompt for memory files.
+- [`scripts/signal-compress.ps1`](scripts/signal-compress.ps1) — backup helper (`-Path`, `-DryRun`, optional `-InvokeGemini` that only prints the command).
+
+### Changed
+
+- `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.1.2** (aligned with extension/plugin manifests).
+- README: new **SIGNAL vs Caveman (token compression)** subsection under *Maximize token savings*; repository layout and *Further reading* list the new docs/script.
+- [`docs/token-metrics.md`](docs/token-metrics.md): new *Reducing input tokens* subsection linking the thin templates and `signal-compress.md`.
+- [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1): JSON now surfaces `baseline_prompt_tokens` / `signal_prompt_tokens` / `delta_prompt_tokens` / `delta_pct_prompt_vs_baseline`; adds a three-line stdout summary (prompt / total / response_chars).
+- [`benchmark/benchmark chess/README.md`](benchmark/benchmark%20chess/README.md): clarified that `tokens.total` mixes prompt and generation and documented `response_chars` as the fallback output signal.
+
 ## v0.1.1 — 2026-04-16
 
 Git tag: **`v0.1.1`**.

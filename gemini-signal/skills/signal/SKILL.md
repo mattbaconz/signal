@@ -8,7 +8,7 @@ description: >
   "signal mode", or asks to reduce token usage. Also activate automatically
   for any long agentic session (5+ turns) where token efficiency matters.
   Three intensity tiers: /signal (65%), /signal2 (80%), /signal3 (90%+).
-signal_bundle_version: "0.1.1"
+signal_bundle_version: "0.1.2"
 ---
 
 # ⚡ SIGNAL — Core Compression Skill

@@ -34,9 +34,11 @@ If Google returns **429** (*No capacity* / *RESOURCE_EXHAUSTED*), wait and **ret
 
 **Interpreting tokens**
 
-- **`tokens_primary_max`**: max of `stats.models.*.tokens.total` for that turn (avoids double-counting router vs main when multiple models appear), same helper as `benchmark/long-session/run_long_session.ps1` in a **full repo clone** (that path may be absent in shallow checkouts).
-- **`tokens.total`** mixes **prompt/input** and **generation**. Compare **`stats.models.*.tokens.prompt`** separately from **shorter assistant text**. See **[`docs/token-metrics.md`](../../docs/token-metrics.md)**.
+- **`prompt_tokens`** (`stats.models.*.tokens.prompt`): everything the model read on that turn — system, project `GEMINI.md`, skill metadata, user message. A thicker `GEMINI.md` raises this; [`templates/gemini-GEMINI.min.md`](../../templates/gemini-GEMINI.min.md) keeps it small.
+- **`tokens_primary_max`**: max of `stats.models.*.tokens.total` for that turn (avoids double-counting router vs main when multiple models appear). This **mixes prompt and generation** — do not read it as an output-only number.
+- **Output / generation** is **not always** a separate field in Gemini JSON. In this harness we use **`response_chars`** (character count of `stats.response`) as the fallback output signal; SIGNAL's wins show up there even when `tokens.total` rises from prompt growth.
 - **Cumulative proof** (history + checkpoints) is **`benchmark/long-session/`** in a full clone — not this single-turn harness.
+- See **[`docs/token-metrics.md`](../../docs/token-metrics.md)** for the canonical breakdown.
 
 **Verified numbers**
 

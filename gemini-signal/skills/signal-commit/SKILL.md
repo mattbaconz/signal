@@ -7,7 +7,7 @@ description: >
   to commit current changes without specifying a message. Supports --draft
   (show message without committing) and --split (atomic commits per logical
   change).
-signal_bundle_version: "0.1.1"
+signal_bundle_version: "0.1.2"
 ---
 
 # ⚡ signal-commit — Instant Commit
