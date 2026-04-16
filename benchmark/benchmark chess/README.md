@@ -28,7 +28,8 @@ once per folder (separate cold starts), parses `stats` from JSON, and writes `re
 **Interpreting tokens**
 
 - **`tokens_primary_max`**: max of `stats.models.*.tokens.total` for that turn (avoids double-counting router vs main when multiple models appear), same helper as [`../long-session/run_long_session.ps1`](../long-session/run_long_session.ps1).
-- Single-turn totals are dominated by **system + tools + first message**; expect a **small** delta from SIGNAL vs baseline. For SIGNAL-3 and cumulative savings, prefer [`../long-session/`](../long-session/).
+- **`tokens.total`** mixes **prompt/input** and **generation** in one number. For a fair read, compare **`stats.models.*.tokens.prompt`** (or equivalent **input** fields) separately from **shorter assistant text** (output). SIGNAL can **lower output** while **`tokens.total` rises** if **prompt** grew (e.g. project `GEMINI.md` + skills).
+- Single-turn totals are dominated by **system + tools + first message**; expect **mixed** deltas vs baseline. For SIGNAL-3 and cumulative savings, prefer [`../long-session/`](../long-session/).
 
 **Failures**
 

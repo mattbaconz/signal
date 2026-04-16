@@ -104,7 +104,7 @@ Additional material in this repository:
 | Path                             | Purpose                                                                                    |
 | -------------------------------- | ------------------------------------------------------------------------------------------ |
 | `[signal-state/](signal-state/)` | Optional companion skill (install if you use it; not part of the “six core” version stamp) |
-| `[templates/](templates/)`       | Snippets to merge into project `**GEMINI.md`** / `**CLAUDE.md`**                           |
+| `[templates/](templates/)`       | Snippets to merge into project `**GEMINI.md`** / `**CLAUDE.md`** (`**gemini-GEMINI.min.md**` = fewest prompt tokens) |
 
 
 Packaged installs: [Claude Code plugin and Gemini CLI extension](#claude-code-plugin-and-gemini-cli-extension) · [Workflow determinism](#workflow-determinism-signal-commit-family)
@@ -270,7 +270,7 @@ Authoritative product list: [agentskills.io/home](https://agentskills.io/home).
 powershell -ExecutionPolicy Bypass -File scripts\install-signal-all.ps1
 ```
 
-For Gemini CLI, **skills alone do not change the default session tone or greeting** — merge `[templates/gemini-GEMINI.md](templates/gemini-GEMINI.md)` into project or user `GEMINI.md` for that.
+For Gemini CLI, **skills alone do not change the default session tone or greeting** — merge [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md) into project or user `GEMINI.md` for that. For **minimal** always-on text (fewest prompt tokens), use [`templates/gemini-GEMINI.min.md`](templates/gemini-GEMINI.min.md) instead.
 
 **Skill conflict warnings (Gemini):** if the same skill exists in two folders the CLI searches (e.g. `~/.gemini/skills/` and `~/.agents/skills/`), remove one copy. The Windows install script puts skills under `**~/.agents/skills/`** (and Claude / Cursor / Codex paths) so you typically only need that tree.
 
@@ -307,8 +307,12 @@ SIGNAL only wins when **both** sides of the pipe stay lean: what the host inject
 
 **Input / persistent context (often overlooked)**
 
-- Keep `**GEMINI.md`** / `**CLAUDE.md`** / project rules **short**. Paste a [minimal SIGNAL block from `templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md) — not the full skill body.
+- Keep `**GEMINI.md`** / `**CLAUDE.md`** / project rules **short**. Paste [templates/gemini-GEMINI.min.md](templates/gemini-GEMINI.min.md) (thinnest) or a short block from [templates/gemini-GEMINI.md](templates/gemini-GEMINI.md) — not the full skill body.
 - Do **not** duplicate the same instructions in three places (rules + user message + skill). The skill loads on demand; rules should **route** to SIGNAL, not mirror it.
+
+**Measuring (Gemini CLI `stats` in `-o json`)**
+
+- Compare **`prompt`** (input the model read) vs **`tokens.total`** (often includes both prompt-side and generation across internal hops). **Shorter replies** cut **generation/output**; **thicker `GEMINI.md`** raises **prompt**. Do not use **`tokens.total`** alone as a proxy for “output-only” savings when comparing skills.
 
 **Long threads**
 
@@ -349,7 +353,7 @@ Use the host's persistent context layer for a **thin default**, then let the `si
 
 **Put this in:** project `GEMINI.md` or `~/.gemini/GEMINI.md`
 
-Start from `[templates/gemini-GEMINI.md](templates/gemini-GEMINI.md)`, or use this minimal block:
+Start from [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md), from [`templates/gemini-GEMINI.min.md`](templates/gemini-GEMINI.min.md) for the smallest prompt footprint, or use this inline minimal block:
 
 ```md
 ## SIGNAL session defaults
