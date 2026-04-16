@@ -19,6 +19,8 @@ All notable changes to this project are documented here. The format is informal;
 
 ### Documentation
 
+- [`contrib/README.md`](contrib/README.md) + [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) — optional PR to [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills); README notes [skills.sh](https://skills.sh) discovery.
+
 - README: [Discord](https://discord.gg/4Dkt9CaK8M) community server link in the header.
 
 ### Fixed

@@ -29,6 +29,8 @@ npx skills add mattbaconz/signal
 
 Install all skills globally without prompts: `npx skills add mattbaconz/signal -y -g` · See `npx skills add --help`.
 
+**skills.sh:** The [public directory](https://skills.sh) reflects `npx skills` installs over time (no manual signup). To propose SIGNAL for the curated [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) list, apply [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) and open a PR (steps in [`contrib/README.md`](contrib/README.md)).
+
 **Also:** [full install options](#installation-options) (Gemini, manual paths, Windows) · [Verify](#verify-and-safe-first-use)
 
 ---
@@ -540,6 +542,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 │   └── signal-demo.gif          ← optional; screen recording for README hero
 ├── README.md
 ├── CHANGELOG.md
+├── contrib/                  ← optional patches (e.g. awesome-agent-skills PR)
 ├── .github/workflows/verify.yml
 ├── gemini-signal/            ← Gemini CLI extension (gemini-extension.json, synced skills/)
 ├── claude-signal/            ← Claude Code plugin (synced skills/)

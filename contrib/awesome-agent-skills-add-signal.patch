@@ -1,0 +1,12 @@
+diff --git a/README.md b/README.md
+index 16d6496..4e8b4ad 100644
+--- a/README.md
++++ b/README.md
+@@ -1224,6 +1224,7 @@ Official MongoDB Agent Skills for agentic workflows — connection management, s
+ - **[obra/dispatching-parallel-agents](https://github.com/obra/superpowers/blob/main/skills/dispatching-parallel-agents/SKILL.md)** - Coordinate multiple simultaneous agents
+ - **[obra/sharing-skills](https://github.com/obra/superpowers/blob/main/skills/sharing-skills/SKILL.md)** - Distribute and communicate capabilities
+ - **[obra/using-superpowers](https://github.com/obra/superpowers/blob/main/skills/using-superpowers/SKILL.md)** - Leverage core platform capabilities
++- **[mattbaconz/signal](https://github.com/mattbaconz/signal)** - SIGNAL: token-efficient assistant output (SIGNAL-1/2/3), checkpoints, and git workflows (commit, push, PR, review); includes Claude plugin and Gemini extension. Install with `npx skills add mattbaconz/signal`.
+ - **[op7418/Youtube-clipper-skill](https://github.com/op7418/Youtube-clipper-skill)** - YouTube clip generation and editing with automated workflows
+ - **[ognjengt/founder-skills](https://github.com/ognjengt/founder-skills)** - Claude skills for founders with packaged startup workflows
+ - **[EveryInc/charlie-cfo-skill](https://github.com/EveryInc/charlie-cfo-skill)** - Bootstrapped CFO financial management inspired by Charlie Munger
