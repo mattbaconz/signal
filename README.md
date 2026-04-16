@@ -2,13 +2,9 @@
 
 **Token-efficient agent answers (templates · symbols · checkpoints) and one-shot git workflows — [Agent Skills](https://agentskills.io/) for Claude Code, Cursor, Gemini CLI, Codex, and more.**
 
-[v0.1.1](CHANGELOG.md) · [MIT](LICENSE) · Full protocol: `[signal/SKILL.md](signal/SKILL.md)`
+[v0.1.1](CHANGELOG.md) · [MIT](LICENSE) · [Discord](https://discord.gg/4Dkt9CaK8M) · Full protocol: `[signal/SKILL.md](signal/SKILL.md)`
 
----
-
-## Demo
-
-Optional: add `assets/signal-demo.gif` (short terminal walkthrough — e.g. commit → checkpoint → review). **Before / after** below shows the token contrast without a recording.
+**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See [Evidence](#evidence-what-we-measure) and the table below.
 
 ---
 
@@ -56,7 +52,7 @@ Per-host paths and activation: [Cross-tool porting](#cross-tool-porting).
 
 ---
 
-**Full table of contents** — tiers, porting, benchmarks, releasing, …
+**Table of contents**
 
 1. [Problem and approach](#problem-and-approach)
 2. [Skill catalog](#skill-catalog--what-ships-in-this-repo)
@@ -67,14 +63,10 @@ Per-host paths and activation: [Cross-tool porting](#cross-tool-porting).
 7. [Cross-tool porting](#cross-tool-porting)
 8. [Verify and safe first use](#verify-and-safe-first-use)
 9. [Workflow skills (git) on Windows](#workflow-skills-git-on-windows)
-10. [Benchmarks and evidence](#benchmarks-and-evidence)
-11. [BOOT presets](#boot-presets)
-12. [Optional extensions](#optional-extensions)
-13. [Rules of the road](#rules-of-the-road)
-14. [Releasing](#releasing)
-15. [Community evidence](#community-evidence)
-16. [Repository layout](#repository-layout)
-17. [Further reading](#further-reading)
+10. [BOOT presets](#boot-presets)
+11. [Rules of the road](#rules-of-the-road)
+12. [Repository layout](#repository-layout)
+13. [Further reading](#further-reading)
 
 ---
 
@@ -111,8 +103,6 @@ Additional material in this repository:
 | `[signal-state/](signal-state/)` | Optional companion skill (install if you use it; not part of the “six core” version stamp) |
 | `[templates/](templates/)`       | Snippets to merge into project `**GEMINI.md`** / `**CLAUDE.md`**                           |
 
-
-**Local-only (gitignored):** a `benchmark/` directory next to your clone can hold reproducibility scripts and run artifacts — it is **not** part of the public tree. Summary numbers are in [Benchmarks and evidence](#benchmarks-and-evidence) below.
 
 Packaged installs: [Claude Code plugin and Gemini CLI extension](#claude-code-plugin-and-gemini-cli-extension) · [Workflow determinism](#workflow-determinism-signal-commit-family)
 
@@ -214,12 +204,10 @@ Do not treat "5+ turns" by itself as the trigger. Five tiny turns are still tiny
 
 ### Evidence (what we measure)
 
-The benchmark story is split in two — both matter when choosing a tier:
+- **Checkpoint vs. transcript** — same content as the **~94% / ~18×** example in the intro: one canned multi-turn slice collapsed to a `CKPT` atom (rough token estimate, ~4 chars/token heuristic).
+- **Full host runs** — some CLIs replay a large payload on **session reset** (~60k–80k tokens mentioned above for punishing hosts), so net savings show up once history or per-turn output is large enough to outweigh that tax.
 
-- **Checkpoint atom vs. verbatim history** — a canned multi-turn slice can shrink to a single `CKPT`-style atom on the order of **~94%** fewer tokens than verbatim history (~18× compression in one representative run; token estimates use a 4 chars/token heuristic).
-- **Full host runs (e.g. Gemini CLI)** — some hosts replay a large framework payload on every fresh session, so **CLI boot tax** can dominate short runs; SIGNAL’s per-turn and checkpoint savings show up clearly only once conversational history is large enough to matter.
-
-Reproducibility scripts and raw JSON live under a **local** `benchmark/` folder if you maintain them beside the clone (`benchmark/` is gitignored and not published).
+Optional local `benchmark/` folders (gitignored) can hold your own scripts and raw numbers; nothing in git claims a single universal “score.”
 
 ---
 
@@ -291,7 +279,7 @@ For Gemini CLI, **skills alone do not change the default session tone or greetin
 | **[`claude-signal/`](claude-signal/)** | Claude Code plugin (`.claude-plugin/plugin.json` + `skills/`). Slash skills are **namespaced**: `/signal:signal-commit`, etc. | Local: `claude --plugin-dir ./claude-signal`. Marketplace: add this repo, then `/plugin install signal@signal-suite` (see [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)). |
 | **[`gemini-signal/`](gemini-signal/)** | Gemini CLI extension (`gemini-extension.json`, bundled `skills/`, optional `commands/` + `bin/` helpers). | Local: `gemini extensions link ./gemini-signal` or `gemini extensions install ./gemini-signal --consent`. Remote URL installs usually need `gemini-extension.json` at the **repo root**; nested paths work best via `link` or a local clone path. |
 
-Contributors: after editing any root skill folder, run `scripts/sync-integration-packages.ps1` (or `scripts/verify.ps1`, which runs sync first) so `gemini-signal/skills/` and `claude-signal/skills/` stay in sync.
+After editing any root skill folder, run `scripts/sync-integration-packages.ps1` (or `scripts/verify.ps1`, which runs sync first) so `gemini-signal/skills/` and `claude-signal/skills/` stay in sync.
 
 ### Workflow determinism (signal-commit family)
 
@@ -481,7 +469,15 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1 -Requir
 powershell -NoProfile -ExecutionPolicy Bypass -File .\signal-commit\scripts\commit.ps1 --dry -- "chore(docs): example"
 ```
 
-Release process: [Releasing](#releasing). Changelog: `[CHANGELOG.md](CHANGELOG.md)`.
+Version history: [`CHANGELOG.md`](CHANGELOG.md).
+
+**Benchmark (deterministic token estimates):**
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1
+```
+
+Uses the same **ceil(charLength / 4)** heuristic as the docs; prints a few canned scenarios (10-line history vs checkpoint, verbose bug text vs SIGNAL line, hedging vs `[conf]`). Numbers are illustrative, not API-billed tokens.
 
 ---
 
@@ -503,16 +499,6 @@ Use `.sh` on macOS, Linux, Git Bash, or WSL. All workflow skills support `**--dr
 
 ---
 
-## Benchmarks
-
-**Checkpoint-style savings:** In one representative 5-turn dialogue, collapsing the full thread text to a single checkpoint line is on the order of **~94%** smaller than the raw transcript (rough token estimate; does not include the host’s own system/tool overhead).
-
-**Long sessions:** Net savings depend on the host. Very short runs sometimes show no win — especially before checkpoints apply or when a new session reloads a large context. See [When to use which tier (canonical)](#when-to-use-which-tier-canonical).
-
-More write-ups: [Community evidence](#community-evidence).
-
----
-
 ## BOOT presets
 
 One-line session modes (full tables and `**BOOT:strict`** in `[signal/references/boot-presets.md](signal/references/boot-presets.md)`):
@@ -523,18 +509,6 @@ BOOT:refactor → TMPL:rev + delta_turns + conf_required
 BOOT:arch     → TMPL:arch + alternatives:conf<0.5_only
 BOOT:review   → TMPL:rev + severity_required
 BOOT:perf     → TMPL:perf + REASON:1line
-```
-
----
-
-## Optional extensions
-
-Shipped as separate installs (examples — not vendored in this repo):
-
-```bash
-npx skills add signal-extend-ship
-npx skills add signal-extend-audit
-npx skills add signal-extend-diff
 ```
 
 ---
@@ -550,86 +524,6 @@ Design rules for the core skills:
 5. `**[conf]` replaces hedging** — no “it might be worth considering…”.
 6. **SIGNAL’s own activation text stays compressed.**
 7. **Escape hatches always exist** — `SIGNAL_DRIFT`, `--draft`, `--dry`.
-
----
-
-## Releasing
-
-For version bumps and tags (contributors):
-
-Expand checklist
-
-### 1. Verify locally
-
-From the repository root (PowerShell on Windows):
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
-```
-
-Exit code must be `0`. Fix any failures before tagging.
-
-If you want to require `gh` and fail hard on `pr.ps1 --dry`, use:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1 -RequireGh -StrictPr
-```
-
-Install `[gh](https://cli.github.com/)` first if you use the strict path.
-
-### 2. Confirm docs
-
-- `[CHANGELOG.md](CHANGELOG.md)` includes the version you are about to tag.
-- This README’s version line matches (currently **v0.1.1**).
-- Optional: add a line under [Community evidence](#community-evidence) if you publish a write-up.
-
-### 3. Create the Git repository (first time only)
-
-If you have not initialized Git yet:
-
-```bash
-git init
-git add -A
-git commit -m "chore: initial import SIGNAL v0.1.0"
-```
-
-Add a remote when you are ready (GitHub, GitLab, etc.):
-
-```bash
-git remote add origin <your-clone-url>
-git push -u origin main
-```
-
-Use your real default branch name (`main`, `master`, etc.).
-
-### 4. Tag the release
-
-Create an annotated tag for traceability:
-
-```bash
-git tag -a v0.1.1 -m "SIGNAL v0.1.1 — six skills, Claude plugin, Gemini extension"
-git push origin v0.1.0
-```
-
-Or push tags in one step after the commit that bumps docs:
-
-```bash
-git push origin --tags
-```
-
-### 5. GitHub release (optional)
-
-On GitHub: **Releases → Draft a new release**, choose tag `v0.1.1`, title `SIGNAL v0.1.1`, paste a short summary from `[CHANGELOG.md](CHANGELOG.md)`.
-
-### 6. CI
-
-After the repo is on GitHub with Actions enabled, the workflow in `[.github/workflows/verify.yml](.github/workflows/verify.yml)` installs `gh`, exposes `GH_TOKEN`, and runs `scripts/verify.ps1 -RequireGh -StrictPr` on each push and pull request to `main` (adjust the branch name in the workflow file if yours differs).
-
----
-
-## Community evidence
-
-Real-world outcomes (tool, tier, one line). [Open a PR](https://github.com/mattbaconz/signal/pulls) to add a row — factual, verifiable entries only.
 
 ---
 
@@ -665,7 +559,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
     └── verify.ps1
 ```
 
-**Optional local-only files** (see `.gitignore`): e.g. private notes or a local `benchmark/` folder next to your clone.
+**Optional local-only files** (see `.gitignore`): e.g. private notes next to your clone.
 
 ---
 

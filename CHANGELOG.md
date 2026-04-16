@@ -6,6 +6,8 @@ All notable changes to this project are documented here. The format is informal;
 
 ### Added
 
+- **[`scripts/benchmark.ps1`](scripts/benchmark.ps1)** — reproducible token-estimate scenarios (4 chars/token heuristic).
+
 - **[`gemini-signal/`](gemini-signal/)** — Gemini CLI extension (`gemini-extension.json`, bundled `GEMINI.md`, synced `skills/`, `commands/signal/*.toml`, `bin/run-commit.*` / `run-push.*`).
 - **[`claude-signal/`](claude-signal/)** — Claude Code plugin (`.claude-plugin/plugin.json`, synced `skills/`).
 - **[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)** — marketplace catalog for `/plugin install signal@signal-suite`.
@@ -14,6 +16,10 @@ All notable changes to this project are documented here. The format is informal;
 ### Changed
 
 - `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.1.1** (aligned with extension/plugin manifests).
+
+### Documentation
+
+- README: [Discord](https://discord.gg/4Dkt9CaK8M) community server link in the header.
 
 ### Fixed
 

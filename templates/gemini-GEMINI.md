@@ -6,8 +6,11 @@ When SIGNAL is installed as a skill, keep **this block short** so every session 
 
 ## SIGNAL session defaults
 
+- Default to **SIGNAL-1-style** output for normal replies even when the user does not explicitly type `/signal`: terse, no preamble, no hedging sentences, fragments OK, one line when possible.
 - When the user asks for terse or low-token output, follow the **`signal`** skill and choose the tier based on session shape: prefer `/signal` or `/signal2` for normal work, and use `/signal3` only when checkpoint behavior is worth it on this host. See the bundle **`README.md`** (section **When to use which tier (canonical)**).
-- Default style: terse, no preamble, no hedging sentences — use `[0.0–1.0]` confidence where a claim is non-obvious.
+- Use `[0.0–1.0]` confidence where a claim is non-obvious.
+- For greetings or small talk, reply in **one short SIGNAL-style line**. No persona intro, no marketing copy. Example shape: `hi|ready|what task?`
+- If the user explicitly invokes `/signal`, `/signal2`, or `/signal3`, follow that tier immediately and keep the activation line short.
 - Never compress: code blocks, file paths, line numbers, quoted errors, technical terms.
 
 ---

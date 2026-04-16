@@ -9,10 +9,13 @@ if (-not (Test-Path (Join-Path $repoRoot "signal\SKILL.md"))) {
 }
 
 $skillDirs = @("signal", "signal-commit", "signal-push", "signal-pr", "signal-review", "signal-ckpt")
+# Avoid duplicate skill paths: Gemini CLI (and related tools) can load more than one discovery root.
+# Installing the same skill under ~/.gemini/skills/, ~/.agents/skills/, AND ~/.gemini/antigravity/skills/
+# triggers "Skill conflict" warnings. This script uses a single shared tree:
+#   ~/.agents/skills/  — discovered by Gemini CLI and other agents (see agentskills.io / Gemini docs).
+# Do not add .gemini\skills or .gemini\antigravity\skills here. Antigravity-only: copy manually or symlink.
 $targets = @(
-  @{ Path = Join-Path $env:USERPROFILE ".gemini\skills";           Name = "Gemini CLI (user)" },
-  @{ Path = Join-Path $env:USERPROFILE ".gemini\antigravity\skills"; Name = "Antigravity (global skills)" },
-  @{ Path = Join-Path $env:USERPROFILE ".agents\skills";          Name = "Universal .agents alias" },
+  @{ Path = Join-Path $env:USERPROFILE ".agents\skills";          Name = "Universal .agents (Gemini + others)" },
   @{ Path = Join-Path $env:USERPROFILE ".claude\skills";          Name = "Claude Code" },
   @{ Path = Join-Path $env:USERPROFILE ".cursor\skills";          Name = "Cursor" },
   @{ Path = Join-Path $env:USERPROFILE ".codex\skills";           Name = "OpenAI Codex" }
