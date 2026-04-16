@@ -68,7 +68,8 @@ Per-host paths and activation: [Cross-tool porting](#cross-tool-porting).
 10. [BOOT presets](#boot-presets)
 11. [Rules of the road](#rules-of-the-road)
 12. [Repository layout](#repository-layout)
-13. [Further reading](#further-reading)
+13. [Releases and community](#releases-and-community)
+14. [Further reading](#further-reading)
 
 ---
 
@@ -559,10 +560,22 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 └── scripts/
     ├── install-signal-all.ps1
     ├── sync-integration-packages.ps1
+    ├── prepare-awesome-agent-skills-pr.ps1
+    ├── benchmark.ps1
     └── verify.ps1
 ```
 
 **Optional local-only files** (see `.gitignore`): e.g. private notes next to your clone.
+
+---
+
+## Releases and community
+
+- **GitHub release:** Tag **`v0.1.1`** is published on the repo. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.1.1&title=SIGNAL%20v0.1.1) (same tag), paste a short summary from [`CHANGELOG.md`](CHANGELOG.md), publish.
+- **CI:** [Actions](https://github.com/mattbaconz/signal/actions) runs `scripts/verify.ps1` on pushes/PRs to `main`.
+- **Discord:** [Join](https://discord.gg/4Dkt9CaK8M). Useful pins for mods: install `npx skills add mattbaconz/signal -y -g`, benchmark `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1`, link to this repo.
+- **skills.sh / awesome list:** Installs via `npx skills` help discovery on [skills.sh](https://skills.sh). To PR the curated [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) list, fork upstream then run [`scripts/prepare-awesome-agent-skills-pr.ps1`](scripts/prepare-awesome-agent-skills-pr.ps1) or apply [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) — details in [`contrib/README.md`](contrib/README.md).
+- **Demo GIF (optional):** Record a short terminal clip (e.g. `npx skills add … --list`, `benchmark.ps1`, `commit.ps1 --dry`) and save as `assets/signal-demo.gif` for the README hero.
 
 ---
 

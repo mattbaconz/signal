@@ -4,6 +4,8 @@ All notable changes to this project are documented here. The format is informal;
 
 ## v0.1.1 — 2026-04-16
 
+Git tag: **`v0.1.1`**.
+
 ### Added
 
 - **[`scripts/benchmark.ps1`](scripts/benchmark.ps1)** — reproducible token-estimate scenarios (4 chars/token heuristic).

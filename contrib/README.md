@@ -1,5 +1,17 @@
 # Contrib patches
 
+## One-click fork (GitHub)
+
+Create your fork first: **[Fork VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills/fork)**.
+
+From the SIGNAL repo root (PowerShell):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\prepare-awesome-agent-skills-pr.ps1
+```
+
+Then follow the printed `git remote` / `git push` steps using **your** fork URL.
+
 ## `awesome-agent-skills-add-signal.patch`
 
 Adds **[mattbaconz/signal](https://github.com/mattbaconz/signal)** to [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) under **Community Skills → Productivity and Collaboration**.
