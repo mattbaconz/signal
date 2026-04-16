@@ -1,11 +1,13 @@
 # Gemini CLI — chess single-turn comparison
 
-**Purpose:** Run the **same** user prompt from [`prompt.txt`](prompt.txt) in two empty project folders:
+**Purpose:** Run the **same** user prompt from [`prompt.txt`](prompt.txt) in two project folders (cold start each time).
 
-| Folder | Project `GEMINI.md` | Intended behavior |
-|--------|---------------------|-------------------|
-| [`chess baseline (no signal)`](chess%20baseline%20(no%20signal)/) | None | More “normal” verbose assistant tone |
-| [`chess signal (signal skill used)`](chess%20signal%20(signal%20skill%20used)/) | Yes (SIGNAL defaults) | Terse, SIGNAL-shaped replies |
+## Folder pairs (`-Pair`)
+
+| `-Pair` | Folders | Role |
+|---------|---------|------|
+| **`Default`** (default) | [`chess baseline (no signal)`](chess%20baseline%20(no%20signal)/) vs [`chess signal (signal skill used)`](chess%20signal%20(signal%20skill%20used)/) | No project `GEMINI.md` vs SIGNAL-style project file — shows **prompt vs output** tradeoff when adding instructions. |
+| **`EqualContext`** | [`chess equal verbose`](chess%20equal%20verbose/) vs [`chess equal signal`](chess%20equal%20signal/) | **Both** have short `GEMINI.md` (verbose control vs SIGNAL minimal) — **fairer** comparison of **reply style** with closer prompt parity. |
 
 **Prerequisites**
 
@@ -17,24 +19,25 @@
 ```powershell
 cd benchmark\benchmark chess
 .\run_chess_compare.ps1
+.\run_chess_compare.ps1 -Pair EqualContext
+.\run_chess_compare.ps1 -Model <model-id>   # optional; default = CLI default model
 ```
 
-The script invokes:
+The script invokes `node …/gemini.js -p @prompt.txt -o json --approval-mode plan` once per folder (separate cold starts), parses `stats` from JSON, and writes:
 
-`gemini -p <prompt.txt> -o json --approval-mode plan`
+- **`Default`:** `results_chess_compare.json`
+- **`EqualContext`:** `results_chess_equal_compare.json`
 
-once per folder (separate cold starts), parses `stats` from JSON, and writes `results_chess_compare.json`.
+**429 / capacity**
+
+If Google returns **429** (*No capacity* / *RESOURCE_EXHAUSTED*), wait and **retry later**, or pass **`-Model`** to a different model your CLI supports. The script does not auto-retry (keeps runs deterministic).
 
 **Interpreting tokens**
 
-- **`tokens_primary_max`**: max of `stats.models.*.tokens.total` for that turn (avoids double-counting router vs main when multiple models appear), same helper as [`../long-session/run_long_session.ps1`](../long-session/run_long_session.ps1).
-- **`tokens.total`** mixes **prompt/input** and **generation** in one number. For a fair read, compare **`stats.models.*.tokens.prompt`** (or equivalent **input** fields) separately from **shorter assistant text** (output). SIGNAL can **lower output** while **`tokens.total` rises** if **prompt** grew (e.g. project `GEMINI.md` + skills).
-- Single-turn totals are dominated by **system + tools + first message**; expect **mixed** deltas vs baseline. For SIGNAL-3 and cumulative savings, prefer [`../long-session/`](../long-session/).
-
-**Failures**
-
-If the API returns **429** (*no capacity* / *rate limit*) or other errors, the script records `error` in the JSON and exits non-zero. Retry later or another model/day.
+- **`tokens_primary_max`**: max of `stats.models.*.tokens.total` for that turn (avoids double-counting router vs main when multiple models appear), same helper as `benchmark/long-session/run_long_session.ps1` in a **full repo clone** (that path may be absent in shallow checkouts).
+- **`tokens.total`** mixes **prompt/input** and **generation**. Compare **`stats.models.*.tokens.prompt`** separately from **shorter assistant text**. See **[`docs/token-metrics.md`](../../docs/token-metrics.md)**.
+- **Cumulative proof** (history + checkpoints) is **`benchmark/long-session/`** in a full clone — not this single-turn harness.
 
 **Verified numbers**
 
-A successful paired run is archived in [`results_chess_compare.json`](results_chess_compare.json) (`verified_paired_run`). It shows **much shorter assistant text** with project `GEMINI.md`, while **`tokens.total` can still rise** on that turn because **prompt** tokens include extra project/skill context — read the `interpretation` field.
+A paired run is archived in [`results_chess_compare.json`](results_chess_compare.json) (`verified_paired_run`). It shows **much shorter assistant text** with SIGNAL in the **Default** pair, while **`tokens.total` can still rise** because **prompt** grew — read the `interpretation` field and [`docs/token-metrics.md`](../../docs/token-metrics.md).

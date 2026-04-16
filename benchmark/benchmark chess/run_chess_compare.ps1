@@ -1,8 +1,10 @@
 #Requires -Version 5.1
-# Run shared prompt.txt in baseline vs SIGNAL GEMINI.md folders; compare Gemini CLI JSON stats.
+# Run shared prompt.txt in two cwd pairs; compare Gemini CLI JSON stats.
 # Uses node + gemini.js -p (not stdin) so JSON is not mixed with node stderr noise.
 param(
-  [string]$Model = $null
+  [string]$Model = $null,
+  [ValidateSet('Default', 'EqualContext')]
+  [string]$Pair = 'Default'
 )
 
 $ErrorActionPreference = "Stop"
@@ -10,7 +12,6 @@ $here = $PSScriptRoot
 Set-Location -LiteralPath $here
 
 $geminiCmd = (Get-Command gemini -ErrorAction Stop).Source
-# Directory that contains gemini.cmd / gemini.ps1 (not the parent of bin).
 $geminiBin = Split-Path $geminiCmd
 $geminiJs = Join-Path $geminiBin "node_modules\@google\gemini-cli\bundle\gemini.js"
 if (-not (Test-Path -LiteralPath $geminiJs)) {
@@ -27,11 +28,19 @@ if ([string]::IsNullOrWhiteSpace($promptText)) {
   Write-Error "prompt.txt is empty"
 }
 
-$baselineDir = Join-Path $here "chess baseline (no signal)"
-$signalDir = Join-Path $here "chess signal (signal skill used)"
+if ($Pair -eq 'Default') {
+  $baselineDir = Join-Path $here "chess baseline (no signal)"
+  $signalDir = Join-Path $here "chess signal (signal skill used)"
+  $outFile = "results_chess_compare.json"
+} else {
+  $baselineDir = Join-Path $here "chess equal verbose"
+  $signalDir = Join-Path $here "chess equal signal"
+  $outFile = "results_chess_equal_compare.json"
+}
+
 foreach ($d in @($baselineDir, $signalDir)) {
   if (-not (Test-Path -LiteralPath $d)) {
-    Write-Error "Missing folder: $d"
+    Write-Error "Missing folder for -Pair ${Pair}: $d"
   }
 }
 
@@ -77,6 +86,11 @@ function Invoke-GeminiJson {
   } finally {
     Pop-Location
   }
+}
+
+Write-Host "Pair=$Pair  (folders: baseline=$(Split-Path $baselineDir -Leaf) vs signal=$(Split-Path $signalDir -Leaf))" -ForegroundColor Cyan
+if ($Model) {
+  Write-Host "Model=$Model" -ForegroundColor Cyan
 }
 
 $runs = @()
@@ -130,7 +144,15 @@ if ($baseline.ok -and $signal.ok -and $baseline.response_chars -gt 0) {
   $deltaCharsPct = [math]::Round((1 - ([double]$signal.response_chars / [double]$baseline.response_chars)) * 100, 1)
 }
 
+$note = "tokens_primary_max is max(stats.models.*.tokens.total). "
+if ($Pair -eq 'EqualContext') {
+  $note += "EqualContext: both cwd have short project GEMINI.md (verbose control vs SIGNAL minimal) for closer prompt parity than Default pair."
+} else {
+  $note += "Default: baseline has no GEMINI.md; SIGNAL cwd loads project instructions — single-turn prompt vs output tradeoff. See docs/token-metrics.md."
+}
+
 $out = [PSCustomObject]@{
+  pair = $Pair
   prompt_file = "prompt.txt"
   gemini_js = $geminiJs
   model_flag = $Model
@@ -144,11 +166,11 @@ $out = [PSCustomObject]@{
     baseline_response_chars = if ($baseline.ok) { $baseline.response_chars } else { $null }
     signal_response_chars = if ($signal.ok) { $signal.response_chars } else { $null }
     pct_fewer_response_chars_vs_baseline = $deltaCharsPct
-    note = "tokens_primary_max is max(stats.models.*.tokens.total). Single-turn: shorter replies can coexist with higher total tokens if prompt/input context grows (e.g. GEMINI.md + skills). See benchmark chess README."
+    note = $note
   }
 }
 
-$outPath = Join-Path $here "results_chess_compare.json"
+$outPath = Join-Path $here $outFile
 $out | ConvertTo-Json -Depth 8 | Set-Content -LiteralPath $outPath -Encoding utf8
 Write-Host "`nWrote $outPath" -ForegroundColor Green
 

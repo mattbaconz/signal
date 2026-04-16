@@ -4,7 +4,7 @@
 
 [v0.1.1](CHANGELOG.md) · [MIT](LICENSE) · [Discord](https://discord.gg/4Dkt9CaK8M) · Full protocol: `[signal/SKILL.md](signal/SKILL.md)`
 
-**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See [Evidence](#evidence-what-we-measure) and the table below.
+**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See [Evidence](#evidence-what-we-measure), **[`docs/token-metrics.md`](docs/token-metrics.md)** (prompt vs output vs history), and the table below.
 
 ---
 
@@ -104,7 +104,7 @@ Additional material in this repository:
 | Path                             | Purpose                                                                                    |
 | -------------------------------- | ------------------------------------------------------------------------------------------ |
 | `[signal-state/](signal-state/)` | Optional companion skill (install if you use it; not part of the “six core” version stamp) |
-| `[templates/](templates/)`       | Snippets to merge into project `**GEMINI.md`** / `**CLAUDE.md`** (`**gemini-GEMINI.min.md**` = fewest prompt tokens) |
+| `[templates/](templates/)`       | Snippets to merge into project `**GEMINI.md`** / `**CLAUDE.md`** (`**gemini-GEMINI.min.md**` / `**claude-CLAUDE.min.md**` = fewest prompt tokens) |
 
 
 Packaged installs: [Claude Code plugin and Gemini CLI extension](#claude-code-plugin-and-gemini-cli-extension) · [Workflow determinism](#workflow-determinism-signal-commit-family)
@@ -207,9 +207,15 @@ Do not treat "5+ turns" by itself as the trigger. Five tiny turns are still tiny
 
 ### Evidence (what we measure)
 
-- **Checkpoint vs. transcript** — same content as the **~94% / ~18×** example in the intro: one canned multi-turn slice collapsed to a `CKPT` atom (rough token estimate, ~4 chars/token heuristic).
-- **Full host runs** — some CLIs replay a large payload on **session reset** (~60k–80k tokens mentioned above for punishing hosts), so net savings show up once history or per-turn output is large enough to outweigh that tax.
-- **Gemini CLI — chess single-turn (paired cwd)** — same `prompt.txt`, **`--approval-mode plan`**, baseline folder **without** project `GEMINI.md` vs SIGNAL folder **with** [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md)-style defaults. One paired run (`gemini-3.1-pro-preview`, CLI 0.38.x): **~88% fewer characters** in the assistant reply with SIGNAL; **`tokens.total` from the CLI was ~13% higher** in the SIGNAL cwd because **prompt tokens** increased (project instructions + skills). That is an honest single-turn tradeoff: shorter answers, extra context loaded once. Raw numbers: [`benchmark/benchmark chess/results_chess_compare.json`](benchmark/benchmark%20chess/results_chess_compare.json). Reproduce: [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1) (may hit API **429** / capacity; retry later).
+**Primary (cumulative / history):** SIGNAL’s tier design targets **long, agentic sessions** where **chat history** and **verbose output** compound. In a **full clone** of this repo, run `benchmark/long-session/run_long_session.ps1` (see `benchmark/long-session/README.md` on disk) — baseline keeps full transcript each turn vs SIGNAL-3-style **CKPT** replacement on a schedule. That is the fairest **net** story for “SIGNAL vs verbose defaults” on Gemini CLI.
+
+**Supporting (single-turn / style):** **Checkpoint vs. transcript** — same idea as the **~94% / ~18×** intro example: a multi-turn slice collapsed to a `CKPT` atom (rough token estimate, ~4 chars/token heuristic).
+
+**Full host runs:** some CLIs replay a large payload on **session reset** (~60k–80k tokens mentioned above for punishing hosts), so net savings show up once history or per-turn output is large enough to outweigh that tax.
+
+**Supplementary — Gemini CLI chess (paired cwd):** same `prompt.txt`, **`--approval-mode plan`**, **default pair**: baseline folder **without** project `GEMINI.md` vs SIGNAL folder **with** [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md)-style defaults. One paired run (`gemini-3.1-pro-preview`, CLI 0.38.x): **~88% fewer characters** in the assistant reply with SIGNAL; **`tokens.total` from the CLI was ~13% higher** in the SIGNAL cwd because **prompt tokens** increased (project instructions + skills). That is a **single-turn** tradeoff, not the primary cumulative proof. Raw numbers: [`benchmark/benchmark chess/results_chess_compare.json`](benchmark/benchmark%20chess/results_chess_compare.json). Reproduce: [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1) (may hit API **429** / capacity; retry later). For **both arms with project `GEMINI.md`**, use `-Pair EqualContext` — see that README.
+
+**Definitions:** **[`docs/token-metrics.md`](docs/token-metrics.md)** — prompt vs output vs history; why `tokens.total` can rise when replies shrink.
 
 Optional local `benchmark/` folders (gitignored) can hold your own scripts and raw numbers; nothing in git claims a single universal “score.”
 
@@ -293,6 +299,8 @@ After editing any root skill folder, run `scripts/sync-integration-packages.ps1`
 
 ### Maximize token savings
 
+Canonical definitions: **[`docs/token-metrics.md`](docs/token-metrics.md)** (prompt vs output vs history, and how to read CLI `stats`).
+
 This subsection covers **assistant output**, **injected context** (rules / `GEMINI.md` / `CLAUDE.md`), and **chat history** — all three matter for billed tokens.
 
 SIGNAL only wins when **both** sides of the pipe stay lean: what the host injects every turn, and what the model emits.
@@ -307,7 +315,7 @@ SIGNAL only wins when **both** sides of the pipe stay lean: what the host inject
 
 **Input / persistent context (often overlooked)**
 
-- Keep `**GEMINI.md`** / `**CLAUDE.md`** / project rules **short**. Paste [templates/gemini-GEMINI.min.md](templates/gemini-GEMINI.min.md) (thinnest) or a short block from [templates/gemini-GEMINI.md](templates/gemini-GEMINI.md) — not the full skill body.
+- Keep `**GEMINI.md`** / `**CLAUDE.md`** / project rules **short**. Paste [templates/gemini-GEMINI.min.md](templates/gemini-GEMINI.min.md) or [templates/claude-CLAUDE.min.md](templates/claude-CLAUDE.min.md) (thinnest per host) or a short block from the non-`.min` templates — not the full skill body.
 - Do **not** duplicate the same instructions in three places (rules + user message + skill). The skill loads on demand; rules should **route** to SIGNAL, not mirror it.
 
 **Measuring (Gemini CLI `stats` in `-o json`)**
@@ -375,7 +383,7 @@ Do not repeat this block in every prompt. Gemini already has `GEMINI.md` cascadi
 
 **Put this in:** project `CLAUDE.md`
 
-Start from `[templates/claude-CLAUDE.md](templates/claude-CLAUDE.md)`, or use this minimal block:
+Start from [`templates/claude-CLAUDE.md`](templates/claude-CLAUDE.md), from [`templates/claude-CLAUDE.min.md`](templates/claude-CLAUDE.min.md) for the smallest prompt footprint, or use this minimal block:
 
 ```md
 ## SIGNAL session defaults
@@ -548,6 +556,8 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 │   └── signal-demo.gif          ← optional; screen recording for README hero
 ├── README.md
 ├── CHANGELOG.md
+├── docs/
+│   └── token-metrics.md      ← prompt vs output vs history (reading CLI stats)
 ├── contrib/                  ← optional patches (e.g. awesome-agent-skills PR)
 ├── .github/workflows/verify.yml
 ├── gemini-signal/            ← Gemini CLI extension (gemini-extension.json, synced skills/)
@@ -576,11 +586,13 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 ## Releases and community
 
+**Versioning:** Ship **`signal_bundle_version`** in core `SKILL.md` frontmatter with the tag you cut; add a section to [`CHANGELOG.md`](CHANGELOG.md); push an annotated git tag (`git tag -a v0.x.y -m "…"`); optional GitHub Release from that tag. Keep the three aligned per release.
+
 - **GitHub release:** Tag **`v0.1.1`** is published on the repo. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.1.1&title=SIGNAL%20v0.1.1) (same tag), paste a short summary from [`CHANGELOG.md`](CHANGELOG.md), publish.
 - **CI:** [Actions](https://github.com/mattbaconz/signal/actions) runs `scripts/verify.ps1` on pushes/PRs to `main`.
 - **Discord:** [Join](https://discord.gg/4Dkt9CaK8M). Useful pins for mods: install `npx skills add mattbaconz/signal -y -g`, benchmark `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1`, link to this repo.
-- **skills.sh / awesome list:** Installs via `npx skills` help discovery on [skills.sh](https://skills.sh). To PR the curated [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) list, fork upstream then run [`scripts/prepare-awesome-agent-skills-pr.ps1`](scripts/prepare-awesome-agent-skills-pr.ps1) or apply [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) — details in [`contrib/README.md`](contrib/README.md).
-- **Demo GIF (optional):** Record a short terminal clip (e.g. `npx skills add … --list`, `benchmark.ps1`, `commit.ps1 --dry`) and save as `assets/signal-demo.gif` for the README hero.
+- **skills.sh / awesome list:** Installs via `npx skills` help discovery on [skills.sh](https://skills.sh). **Checklist:** fork [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) → run [`scripts/prepare-awesome-agent-skills-pr.ps1`](scripts/prepare-awesome-agent-skills-pr.ps1) or apply [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) → push branch → open PR — details in [`contrib/README.md`](contrib/README.md).
+- **Demo GIF (optional):** See [`assets/README.md`](assets/README.md) for recording steps; save as `assets/signal-demo.gif` for the README hero.
 
 ---
 
@@ -589,6 +601,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 | Document                                   | Use it when                                               |
 | ------------------------------------------ | --------------------------------------------------------- |
+| `[docs/token-metrics.md](docs/token-metrics.md)` | Prompt vs output vs history; reading CLI `stats`        |
 | `[signal/SKILL.md](signal/SKILL.md)`       | Exact activation strings, layers, `SIGNAL_DRIFT` protocol |
 | `[signal/references/](signal/references/)` | Symbol grammar, BOOT presets, checkpoint format           |
 

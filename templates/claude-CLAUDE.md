@@ -2,6 +2,8 @@
 
 When SIGNAL is installed as a skill, keep **this block short** so every session gets defaults **without** pasting a long `/signal3` preamble on each message.
 
+**Minimal injection (fewest prompt tokens):** merge only [`claude-CLAUDE.min.md`](claude-CLAUDE.min.md) instead of this file.
+
 ---
 
 ## SIGNAL session defaults

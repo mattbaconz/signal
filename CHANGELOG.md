@@ -2,6 +2,8 @@
 
 All notable changes to this project are documented here. The format is informal; this repo tracks the SIGNAL skill suite as one deliverable.
 
+**Versioning:** For each release, align **`signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see README *Releases and community*).
+
 ## v0.1.1 — 2026-04-16
 
 Git tag: **`v0.1.1`**.
