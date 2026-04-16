@@ -7,7 +7,7 @@ param(
 
 <#
 .SYNOPSIS
-  Verification harness for SIGNAL: Windows scripts (--dry), optional gh, and markdown link targets.
+  Verification harness for SIGNAL: sync integration packages, Windows scripts (--dry), optional gh, and markdown link targets.
 
   Run from repo root:
     powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
@@ -39,6 +39,56 @@ git --version *>$null
 if ($LASTEXITCODE -ne 0) {
   Write-Host 'x git is required on PATH for script verification.'
   exit 1
+}
+
+# --- 0) Sync integration packages + structure ---
+$syncPs1 = Join-Path $RepoRoot 'scripts\sync-integration-packages.ps1'
+if (-not (Test-Path -LiteralPath $syncPs1)) {
+  Fail "missing $syncPs1"
+} else {
+  & powershell -NoProfile -ExecutionPolicy Bypass -File $syncPs1
+  if ($LASTEXITCODE -ne 0) { Fail 'sync-integration-packages.ps1 failed'; exit 1 }
+  Ok 'sync-integration-packages.ps1'
+}
+
+$geminiExt = Join-Path $RepoRoot 'gemini-signal\gemini-extension.json'
+$geminiGem = Join-Path $RepoRoot 'gemini-signal\GEMINI.md'
+$geminiSkill = Join-Path $RepoRoot 'gemini-signal\skills\signal\SKILL.md'
+$geminiBin = Join-Path $RepoRoot 'gemini-signal\bin\run-commit.ps1'
+foreach ($p in @($geminiExt, $geminiGem, $geminiSkill, $geminiBin)) {
+  if (-not (Test-Path -LiteralPath $p)) { Fail "gemini-signal incomplete: missing $p" }
+}
+if (-not $script:VerifyFailed) { Ok 'gemini-signal structure' }
+
+$claudePlug = Join-Path $RepoRoot 'claude-signal\.claude-plugin\plugin.json'
+$claudeSkill = Join-Path $RepoRoot 'claude-signal\skills\signal\SKILL.md'
+foreach ($p in @($claudePlug, $claudeSkill)) {
+  if (-not (Test-Path -LiteralPath $p)) { Fail "claude-signal incomplete: missing $p" }
+}
+if (-not $script:VerifyFailed) { Ok 'claude-signal structure' }
+
+$mkt = Join-Path $RepoRoot '.claude-plugin\marketplace.json'
+if (-not (Test-Path -LiteralPath $mkt)) { Fail "missing $mkt" } else { Ok '.claude-plugin/marketplace.json' }
+
+# --- 0b) gemini-signal/bin/run-commit.ps1 --dry (uses bundled skill copy) ---
+$geminiCommitWrapper = Join-Path $RepoRoot 'gemini-signal\bin\run-commit.ps1'
+if (-not (Test-Path -LiteralPath $geminiCommitWrapper)) {
+  Fail "missing $geminiCommitWrapper"
+} else {
+  $tmpG = Join-Path ([System.IO.Path]::GetTempPath()) ("signal-verify-gemini-commit-" + [Guid]::NewGuid().ToString('n'))
+  try {
+    New-Item -ItemType Directory -Path $tmpG -Force | Out-Null
+    Push-Location $tmpG
+    git init -q
+    git config user.email 'verify@local'
+    git config user.name 'verify'
+    Set-Content -Path 'hello.txt' -Value 'test'
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $geminiCommitWrapper --dry -- 'chore(verify): gemini wrapper dry'
+    if ($LASTEXITCODE -ne 0) { Fail 'gemini-signal/bin/run-commit.ps1 --dry failed' } else { Ok 'gemini-signal/bin/run-commit.ps1 --dry (temp repo)' }
+  } finally {
+    Pop-Location
+    Remove-Item -LiteralPath $tmpG -Recurse -Force -ErrorAction SilentlyContinue
+  }
 }
 
 # --- 1) commit.ps1 --dry ---
@@ -127,7 +177,9 @@ if (-not (Test-Path -LiteralPath $prPs1)) {
 $mdFiles = Get-ChildItem -Path $RepoRoot -Recurse -Filter '*.md' -File -ErrorAction SilentlyContinue |
   Where-Object {
     $_.FullName -notmatch '\\\.git\\' -and
-    $_.FullName -notmatch '\\benchmark\\'
+    $_.FullName -notmatch '\\benchmark\\' -and
+    $_.FullName -notmatch '\\gemini-signal\\skills\\' -and
+    $_.FullName -notmatch '\\claude-signal\\skills\\'
   }
 
 $linkPattern = '\[[^\]]*\]\(([^)]+)\)'

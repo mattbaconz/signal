@@ -1,0 +1,10 @@
+{
+  "name": "signal",
+  "description": "SIGNAL — token-efficient agent output, checkpoints, and one-shot git workflows (Agent Skills).",
+  "version": "0.1.1",
+  "author": {
+    "name": "SIGNAL"
+  },
+  "repository": "https://github.com/mattbaconz/signal",
+  "homepage": "https://github.com/mattbaconz/signal#readme"
+}

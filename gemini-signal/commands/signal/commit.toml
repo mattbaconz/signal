@@ -1,0 +1,21 @@
+# Invoked as /signal:commit — git context for SIGNAL signal-commit (cwd = workspace).
+description = "SIGNAL commit: inject git status and diff; follow signal-commit skill to commit."
+
+prompt = """
+## SIGNAL commit helper
+
+Repository (workspace) state:
+
+```text
+!{ git status -sb 2>&1 }
+```
+
+```diff
+!{ git diff --staged 2>&1 }
+!{ git diff 2>&1 }
+```
+
+Follow the **signal-commit** skill end-to-end in this turn: derive a Conventional Commit message, then run `git add -A` and `git commit` using your tools, or tell the user to run the bundled script from the **repository root** (path is next to `gemini-extension.json` under `bin/run-commit.ps1` or `bin/run-commit.sh`), passing `--dry` first if they want a preview.
+
+If nothing to commit, say so in one SIGNAL-style line.
+"""

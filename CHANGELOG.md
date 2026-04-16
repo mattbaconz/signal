@@ -2,6 +2,23 @@
 
 All notable changes to this project are documented here. The format is informal; this repo tracks the SIGNAL skill suite as one deliverable.
 
+## v0.1.1 — 2026-04-16
+
+### Added
+
+- **[`gemini-signal/`](gemini-signal/)** — Gemini CLI extension (`gemini-extension.json`, bundled `GEMINI.md`, synced `skills/`, `commands/signal/*.toml`, `bin/run-commit.*` / `run-push.*`).
+- **[`claude-signal/`](claude-signal/)** — Claude Code plugin (`.claude-plugin/plugin.json`, synced `skills/`).
+- **[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)** — marketplace catalog for `/plugin install signal@signal-suite`.
+- **[`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1)** — copies the six core skill folders into `gemini-signal/skills/` and `claude-signal/skills/` (also run automatically at the start of [`scripts/verify.ps1`](scripts/verify.ps1)).
+
+### Changed
+
+- `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.1.1** (aligned with extension/plugin manifests).
+
+### Fixed
+
+- README platform matrix: corrected broken markdown link for the Gemini GEMINI.md cascade doc.
+
 ## v0.1.0 — 2026-04-15
 
 ### Added

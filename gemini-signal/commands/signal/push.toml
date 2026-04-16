@@ -1,0 +1,18 @@
+# Invoked as /signal:push
+description = "SIGNAL push: git context; follow signal-push skill."
+
+prompt = """
+## SIGNAL push helper
+
+```text
+!{ git status -sb 2>&1 }
+!{ git remote -v 2>&1 }
+```
+
+```diff
+!{ git diff --staged 2>&1 }
+!{ git diff 2>&1 }
+```
+
+Follow the **signal-push** skill: commit if needed, then push. Use bundled `bin/run-push.ps1` / `bin/run-push.sh` from the extension root if shell is preferred. Use `--dry` to preview.
+"""
