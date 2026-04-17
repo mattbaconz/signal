@@ -150,16 +150,18 @@ Per-host paths and activation: [Cross-tool porting](#cross-tool-porting).
 
 **Scope:** SIGNAL optimizes **assistant output shape and session state representation**. It does not replace your editor, linter, or VCS — the `[signal-commit](#skill-catalog--what-ships-in-this-repo)` family wraps normal git and `[gh](https://cli.github.com/)` behavior.
 
+**Coding discipline:** For implementation and editing, the bundle includes **Karpathy-inspired norms** ([`signal/references/karpathy-coding-norms.md`](signal/references/karpathy-coding-norms.md))—assumptions, simplicity, minimal diffs, verifiable goals—adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills). That addresses *process*; SIGNAL tiers still address *token shape*. You can also install the upstream plugin separately if you want their unmodified `CLAUDE.md` workflow.
+
 ---
 
 ## Skill catalog — what ships in this repo
 
-These six directories are the **core bundle** versioned together as **v0.2.0**:
+These six directories are the **core bundle** versioned together as **v0.2.1**:
 
 
 | Skill folder                       | Role                                                                                          | Loads when                                                                                         |
 | ---------------------------------- | --------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `[signal/](signal/)`               | **Core protocol** — tiers, templates, BOOT, checkpoints, `SIGNAL_DRIFT` escape hatch          | User asks for compression, `/signal`, `/signal2`, `/signal3`, or long sessions where tokens matter |
+| `[signal/](signal/)`               | **Core protocol** — tiers, templates, BOOT, checkpoints, `SIGNAL_DRIFT`; Karpathy-style coding norms reference | User asks for compression, `/signal`, `/signal2`, `/signal3`, or long sessions where tokens matter |
 | `[signal-commit/](signal-commit/)` | Stage all + commit with **Conventional Commits** message from diff; **no prompts** by default | “Just commit”, `/signal-commit`, commit without a message                                          |
 | `[signal-push/](signal-push/)`     | Same as commit, then **push** (sets upstream on new branches)                                 | “Commit and push”, `/signal-push`                                                                  |
 | `[signal-pr/](signal-pr/)`         | Same as push, then **open PR** via `gh`                                                       | `/signal-pr`, “open a PR”                                                                          |
@@ -691,7 +693,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 - **Gemini extension ([browse](https://geminicli.com/extensions/browse/)):** Add GitHub topic **`gemini-cli-extension`** to **this** repo. The manifest is **[gemini-extension.json](gemini-extension.json)** at the root (see [release extensions](https://geminicli.com/docs/extensions/releasing)); it is produced by **[scripts/sync-integration-packages.ps1](scripts/sync-integration-packages.ps1)**. Tag releases so the indexer can associate versions.
 - **Claude Code (Anthropic official catalog):** Third-party install today: `/plugin marketplace add mattbaconz/signal` then `/plugin install signal@signal-suite`. To request listing in `**claude-plugins-official`**, use Anthropic’s forms: [claude.ai/settings/plugins/submit](https://claude.ai/settings/plugins/submit) or [platform.claude.com/plugins/submit](https://platform.claude.com/plugins/submit) ([docs](https://code.claude.com/docs/en/discover-plugins)).
-- **GitHub release:** Tag `**v0.2.0`**. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.2.0&title=SIGNAL%20v0.2.0) (same tag), paste a short summary from `[CHANGELOG.md](CHANGELOG.md)`, publish.
+- **GitHub release:** Tag **`v0.2.1`**. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.2.1&title=SIGNAL%20v0.2.1) (same tag), paste a short summary from `[CHANGELOG.md](CHANGELOG.md)`, publish.
 - **CI:** [Actions](https://github.com/mattbaconz/signal/actions) runs `scripts/verify.ps1` on pushes/PRs to `main`.
 - **Discord:** [Join](https://discord.gg/4Dkt9CaK8M). Useful pins for mods: install `npx skills add mattbaconz/signal -y -g`, benchmark `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1`, link to this repo.
 - **skills.sh / awesome list:** Installs via `npx skills` help discovery on [skills.sh](https://skills.sh). **Checklist:** fork [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) → run `[scripts/prepare-awesome-agent-skills-pr.ps1](scripts/prepare-awesome-agent-skills-pr.ps1)` or apply `[contrib/awesome-agent-skills-add-signal.patch](contrib/awesome-agent-skills-add-signal.patch)` → push branch → open PR — details in `[contrib/README.md](contrib/README.md)`.
@@ -708,7 +710,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 | `[docs/signal-compress.md](docs/signal-compress.md)`                           | Shorter `GEMINI.md` / notes (SIGNAL-1 rewrite workflow)         |
 | `[benchmark/benchmark chess/README.md](benchmark/benchmark%20chess/README.md)` | Gemini CLI chess harness; **EqualContext** vs **Default** pairs |
 | `[signal/SKILL.md](signal/SKILL.md)`                                           | Exact activation strings, layers, `SIGNAL_DRIFT` protocol       |
-| `[signal/references/](signal/references/)`                                     | Symbol grammar, BOOT presets, checkpoint format                 |
+| `[signal/references/](signal/references/)`                                     | Symbol grammar, BOOT presets, checkpoint format, Karpathy-style coding norms |
 | `[hooks/README.md](hooks/README.md)`                                           | Claude Code optional hooks + `[SIGNAL]` statusline              |
 
 
@@ -720,6 +722,6 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 ---
 
-*v0.2.0 — six core skills: `signal`, `signal-commit`, `signal-push`, `signal-pr`, `signal-review`, `signal-ckpt`; packaged Claude plugin + Gemini extension; IDE rules + optional hooks*
+*v0.2.1 — six core skills: `signal`, `signal-commit`, `signal-push`, `signal-pr`, `signal-review`, `signal-ckpt`; packaged Claude plugin + Gemini extension; IDE rules + optional hooks; Karpathy-inspired coding norms reference*
 
 See `[LICENSE](LICENSE)` (MIT).

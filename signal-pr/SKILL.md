@@ -5,7 +5,7 @@ description: >
   Title and body are generated from the diff and commit history. Use when user
   types /signal-pr, "open a PR", "create pull request", "ship a PR", or
   "make a PR". Requires gh CLI.
-signal_bundle_version: "0.2.0"
+signal_bundle_version: "0.2.1"
 ---
 
 # ⚡ signal-pr — Commit + Push + PR

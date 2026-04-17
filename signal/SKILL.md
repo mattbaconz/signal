@@ -8,7 +8,7 @@ description: >
   "signal mode", or asks to reduce token usage. Also activate automatically
   for any long agentic session (5+ turns) where token efficiency matters.
   Three intensity tiers: /signal (65%), /signal2 (80%), /signal3 (90%+).
-signal_bundle_version: "0.2.0"
+signal_bundle_version: "0.2.1"
 ---
 
 # ⚡ SIGNAL — Core Compression Skill
@@ -39,6 +39,17 @@ Brutalist token compression protocol. One install. Every tool. ~85% fewer tokens
 - Use **`/signal3`** only when the conversation history is large enough that checkpoint replacement outweighs the host's reset cost.
 
 Host-aware guidance lives in [`../README.md`](../README.md) (section **When to use which tier (canonical)**).
+
+## Coding tasks (Karpathy-inspired norms)
+
+For **writing or editing code** (not pure chat compression), also apply the four norms in [`references/karpathy-coding-norms.md`](references/karpathy-coding-norms.md): think before coding, simplicity first, surgical changes, goal-driven execution. They reduce wrong assumptions and scope creep; SIGNAL tiers still govern **surface form**.
+
+| Norm | SIGNAL hook |
+|------|----------------|
+| Tradeoffs / options | `TMPL:arch`, or short `ALT:` |
+| Ambiguity | Ask; then stay terse—do not guess silently |
+| Verification | Compact plan lines with `verify:` |
+| Conflict with template | `SIGNAL_DRIFT: …` |
 
 ## If you cannot follow the active template
 

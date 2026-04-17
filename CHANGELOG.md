@@ -4,11 +4,18 @@ All notable changes to this project are documented here. The format is informal;
 
 **Versioning:** For each release, align `**signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see README *Releases and community*).
 
-## Unreleased
+## v0.2.1 — 2026-04-18
+
+Git tag: **`v0.2.1`** (recommended after merge).
 
 ### Added
 
-- **Gemini extension at repository root:** [`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1) now mirrors `gemini-signal/` to the repo root (`gemini-extension.json`, `GEMINI.md`, `skills/`, `commands/`, `bin/`) so **[geminicli.com/extensions](https://geminicli.com/extensions/browse/)** indexing and `gemini extensions install https://github.com/mattbaconz/signal` work without a second repository ([releasing](https://geminicli.com/docs/extensions/releasing)). Add GitHub topic **`gemini-cli-extension`** on this repo.
+- **[`signal/references/karpathy-coding-norms.md`](signal/references/karpathy-coding-norms.md)** — Karpathy-inspired coding discipline for implementation/editing (think before coding, simplicity first, surgical changes, goal-driven execution), adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT) with attribution; mapped to SIGNAL templates and `SIGNAL_DRIFT`. Wired into [`signal/SKILL.md`](signal/SKILL.md), [`templates/host-always-on.body.md`](templates/host-always-on.body.md), [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md) / [`claude-CLAUDE.md`](templates/claude-CLAUDE.md) (+ `.min`), and [`gemini-signal/GEMINI.md`](gemini-signal/GEMINI.md).
+
+### Changed
+
+- `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.2.1** (aligned with extension/plugin manifests).
+- **Gemini extension at repository root** (from prior unreleased work): [`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1) mirrors `gemini-signal/` to the repo root for **[geminicli.com/extensions](https://geminicli.com/extensions/browse/)** and `gemini extensions install https://github.com/mattbaconz/signal` ([releasing](https://geminicli.com/docs/extensions/releasing)); add topic **`gemini-cli-extension`** on this repo.
 
 ## v0.2.0 — 2026-04-17
 

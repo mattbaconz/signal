@@ -12,6 +12,10 @@ When SIGNAL is installed as a skill, keep **this block short** so every session 
 - Default style: terse, no preamble, no hedging sentences — use `[0.0–1.0]` confidence where a claim is non-obvious.
 - Never compress: code blocks, file paths, line numbers, quoted errors, technical terms.
 
+## Coding tasks (Karpathy-inspired norms)
+
+When **implementing or editing code**, follow the **`signal`** skill section *Coding tasks (Karpathy-inspired norms)* and [`karpathy-coding-norms.md`](../signal/references/karpathy-coding-norms.md) in the bundle (assumptions, simplicity, minimal diff, verifiable goals).
+
 ---
 
 Remove this section if your project already defines conflicting tone rules.
