@@ -1,28 +1,41 @@
 ﻿{
-  "verified_paired_run": {
-    "date": "2026-04-16",
-    "timezone_note": "Captured on maintainer machine; reproduce with run_chess_compare.ps1 when API capacity allows.",
-    "gemini_cli_version": "0.38.1",
-    "model": "gemini-3.1-pro-preview",
-    "method": "node <node_modules>/@google/gemini-cli/bundle/gemini.js -p @prompt.txt -o json --approval-mode plan",
-    "prerequisites": "npx skills add mattbaconz/signal -y -g; same prompt.txt in both cwd runs",
-    "baseline": {
-      "folder": "chess baseline (no signal)",
-      "tokens_total_max": 8219,
-      "prompt_tokens": 7555,
-      "response_chars": 2313
-    },
-    "signal": {
-      "folder": "chess signal (signal skill used)",
-      "project_gemini_md": "SIGNAL session defaults (see folder)",
-      "tokens_total_max": 9315,
-      "prompt_tokens": 8009,
-      "response_chars": 278
-    },
-    "compare": {
-      "delta_tokens_total_max_pct_vs_baseline": 13.3,
-      "pct_fewer_response_chars_vs_baseline": 88.0,
-      "interpretation": "Assistant reply was much shorter with SIGNAL project GEMINI.md (~88% fewer characters vs this baseline run). stats.models.*.tokens.total was higher in the SIGNAL cwd mainly because prompt/input tokens increased (~8009 vs ~7555) from GEMINI.md + skill context — expected single-turn tradeoff. For cumulative session savings (especially history), use benchmark/long-session/."
-    }
-  }
+    "pair":  "Default",
+    "prompt_file":  "prompt.txt",
+    "gemini_js":  "C:\\Users\\mattbaconz\\scoop\\apps\\nodejs\\current\\bin\\node_modules\\@google\\gemini-cli\\bundle\\gemini.js",
+    "model_flag":  "",
+    "generated_at":  "2026-04-17T12:49:55.9604670+07:00",
+    "runs":  [
+                 {
+                     "label":  "baseline",
+                     "ok":  true,
+                     "model":  "gemini-3.1-pro-preview",
+                     "tokens_primary_max":  8333,
+                     "prompt_tokens":  7585,
+                     "response_chars":  2486,
+                     "session_id":  "bbe84d65-4c42-4706-90f0-574278b94e04"
+                 },
+                 {
+                     "label":  "signal",
+                     "ok":  true,
+                     "model":  "gemini-3.1-pro-preview",
+                     "tokens_primary_max":  8565,
+                     "prompt_tokens":  8015,
+                     "response_chars":  310,
+                     "session_id":  "3c74ca3e-1ec0-4460-aa1d-8ac0bdd68f09"
+                 }
+             ],
+    "compare":  {
+                    "baseline_tokens_primary_max":  8333,
+                    "signal_tokens_primary_max":  8565,
+                    "delta_tokens_primary_max":  232,
+                    "delta_pct_total_vs_baseline":  2.8,
+                    "baseline_prompt_tokens":  7585,
+                    "signal_prompt_tokens":  8015,
+                    "delta_prompt_tokens":  430,
+                    "delta_pct_prompt_vs_baseline":  5.7,
+                    "baseline_response_chars":  2486,
+                    "signal_response_chars":  310,
+                    "pct_fewer_response_chars_vs_baseline":  87.5,
+                    "note":  "tokens_primary_max is max(stats.models.*.tokens.total). Default: baseline has no GEMINI.md; SIGNAL cwd loads project instructions - single-turn prompt vs output tradeoff. See docs/token-metrics.md."
+                }
 }

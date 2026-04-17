@@ -1,0 +1,4 @@
+# OpenAI Codex — enable hooks for this repo (SessionStart runs .codex/hooks.json).
+# Windows: some Codex builds disable hooks; use manual skill activation if needed.
+[features]
+codex_hooks = true

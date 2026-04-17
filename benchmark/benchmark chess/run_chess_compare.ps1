@@ -70,6 +70,15 @@ function Get-PromptTokens {
   return $null
 }
 
+function Get-GeminiMdCharCount {
+  param([string]$Dir)
+  $p = Join-Path $Dir 'GEMINI.md'
+  if (-not (Test-Path -LiteralPath $p)) { return $null }
+  $raw = Get-Content -LiteralPath $p -Raw -ErrorAction SilentlyContinue
+  if ($null -eq $raw) { return $null }
+  return $raw.Length
+}
+
 function Invoke-GeminiJson {
   param([string]$WorkingDir)
   Push-Location -LiteralPath $WorkingDir
@@ -91,6 +100,17 @@ function Invoke-GeminiJson {
 Write-Host "Pair=$Pair  (folders: baseline=$(Split-Path $baselineDir -Leaf) vs signal=$(Split-Path $signalDir -Leaf))" -ForegroundColor Cyan
 if ($Model) {
   Write-Host "Model=$Model" -ForegroundColor Cyan
+}
+
+$gemCharsBase = Get-GeminiMdCharCount $baselineDir
+$gemCharsSig = Get-GeminiMdCharCount $signalDir
+Write-Host "GEMINI.md on disk: baseline=$(if ($null -eq $gemCharsBase) { '(none)' } else { $gemCharsBase }) chars  signal=$(if ($null -eq $gemCharsSig) { '(none)' } else { $gemCharsSig }) chars" -ForegroundColor Cyan
+if ($null -ne $gemCharsBase -and $null -ne $gemCharsSig -and $gemCharsBase -gt 0) {
+  $charDeltaPct = [math]::Round((($gemCharsSig - $gemCharsBase) / [double]$gemCharsBase) * 100, 1)
+  Write-Host "  Project file size delta: ${charDeltaPct}% (aim for low absolute value for fair prompt-token comparison)" -ForegroundColor Cyan
+}
+if ($Pair -eq 'Default') {
+  Write-Host 'Fairness: Default baseline has no GEMINI.md; prompt_tokens will skew vs SIGNAL. Prefer -Pair EqualContext for matched project files.' -ForegroundColor Yellow
 }
 
 $runs = @()
@@ -152,11 +172,16 @@ if ($baseline.ok -and $signal.ok -and $null -ne $baseline.prompt_tokens -and $nu
   }
 }
 
+$gemMdDeltaPct = $null
+if ($null -ne $gemCharsBase -and $null -ne $gemCharsSig -and $gemCharsBase -gt 0) {
+  $gemMdDeltaPct = [math]::Round((($gemCharsSig - $gemCharsBase) / [double]$gemCharsBase) * 100, 1)
+}
+
 $note = "tokens_primary_max is max(stats.models.*.tokens.total). "
 if ($Pair -eq 'EqualContext') {
-  $note += "EqualContext: both cwd have short project GEMINI.md (verbose control vs SIGNAL minimal) for closer prompt parity than Default pair."
+  $note += "EqualContext: matched GEMINI.md structure (shared Preservation block; Style differs). Check baseline_gemini_md_chars vs signal_gemini_md_chars; small size delta means fairer prompt_tokens comparison than Default."
 } else {
-  $note += "Default: baseline has no GEMINI.md; SIGNAL cwd loads project instructions — single-turn prompt vs output tradeoff. See docs/token-metrics.md."
+  $note += "Default: baseline has no GEMINI.md; SIGNAL cwd loads project instructions - single-turn prompt vs output tradeoff. See docs/token-metrics.md."
 }
 
 $out = [PSCustomObject]@{
@@ -178,6 +203,9 @@ $out = [PSCustomObject]@{
     baseline_response_chars = if ($baseline.ok) { $baseline.response_chars } else { $null }
     signal_response_chars = if ($signal.ok) { $signal.response_chars } else { $null }
     pct_fewer_response_chars_vs_baseline = $deltaCharsPct
+    baseline_gemini_md_chars = $gemCharsBase
+    signal_gemini_md_chars = $gemCharsSig
+    gemini_md_size_delta_pct = $gemMdDeltaPct
     note = $note
   }
 }
@@ -191,21 +219,23 @@ if (-not ($baseline.ok -and $signal.ok)) {
 }
 
 Write-Host ""
-Write-Host "Summary (single-turn; see docs/token-metrics.md before citing):" -ForegroundColor Cyan
+Write-Host 'Summary (single-turn; see docs/token-metrics.md before citing):' -ForegroundColor Cyan
 if ($null -ne $deltaPromptTokens) {
   $sign = if ($deltaPromptTokens -gt 0) { "+" } else { "" }
   $direction = if ($deltaPromptTokens -gt 0) { "more" } elseif ($deltaPromptTokens -lt 0) { "fewer" } else { "same" }
-  Write-Host ("  prompt_tokens : baseline={0,6}  signal={1,6}  delta={2}{3} ({4}% {5})" -f `
-    $baseline.prompt_tokens, $signal.prompt_tokens, $sign, $deltaPromptTokens, $deltaPromptPct, $direction)
+  $pctStr = if ($null -ne $deltaPromptPct) { "$deltaPromptPct" } else { "n/a" }
+  Write-Host ('  prompt_tokens : baseline={0,6}  signal={1,6}  delta={2}{3} ({4} pct {5})' -f `
+    $baseline.prompt_tokens, $signal.prompt_tokens, $sign, $deltaPromptTokens, $pctStr, $direction)
 }
 if ($null -ne $deltaPrimary) {
   $sign2 = if ($deltaPrimary -gt 0) { "+" } else { "" }
-  Write-Host ("  tokens_total  : baseline={0,6}  signal={1,6}  delta={2}{3} ({4}% vs baseline)" -f `
-    $baseline.tokens_primary_max, $signal.tokens_primary_max, $sign2, $deltaPrimary, $deltaPct)
+  $pctTotal = if ($null -ne $deltaPct) { "$deltaPct" } else { "n/a" }
+  Write-Host ('  tokens_total  : baseline={0,6}  signal={1,6}  delta={2}{3} ({4} pct vs baseline)' -f `
+    $baseline.tokens_primary_max, $signal.tokens_primary_max, $sign2, $deltaPrimary, $pctTotal)
 }
 if ($null -ne $deltaCharsPct) {
-  Write-Host ("  response_chars: baseline={0,6}  signal={1,6}  ~{2}% fewer chars in SIGNAL reply" -f `
+  Write-Host ('  response_chars: baseline={0,6}  signal={1,6}  approx {2} pct fewer chars in SIGNAL reply' -f `
     $baseline.response_chars, $signal.response_chars, $deltaCharsPct) -ForegroundColor Green
 }
-Write-Host "  Gemini JSON exposes prompt vs total; 'output-only' is inferred from response char count."
+Write-Host '  Gemini JSON exposes prompt vs total; output length uses response char count as proxy.'
 exit 0

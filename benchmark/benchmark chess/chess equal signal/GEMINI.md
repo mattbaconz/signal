@@ -1,7 +1,9 @@
-# Project context — SIGNAL (minimal)
+# Chess benchmark (arm: SIGNAL)
 
-## SIGNAL (minimal)
+## Style
 
-- Default **SIGNAL-1**: terse, no preamble, no hedging; fragments OK. Non-obvious claims → `[0.0–1.0]`.
-- Tiers and templates: follow the **`signal`** skill (`/signal`, `/signal2`, `/signal3`).
-- Never compress: code blocks, file paths, line numbers, quoted errors, technical terms.
+SIGNAL-1: terse, no preamble, fragments OK. Non-obvious claims → [0.0–1.0]. Follow **signal** skill.
+
+## Preservation (matched across arms)
+
+Do not shorten or merge: fenced code, file paths, line numbers, quoted errors, or technical terms.

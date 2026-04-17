@@ -1,3 +1,9 @@
-# Project tone (control)
+# Chess benchmark (arm: verbose)
 
-Answer in full, helpful sentences. Expand on chess ideas where useful for a club player. Default verbose assistant style.
+## Style
+
+Full sentences. Explain chess for a club player. Add a brief example when it clarifies the idea.
+
+## Preservation (matched across arms)
+
+Do not shorten or merge: fenced code, file paths, line numbers, quoted errors, or technical terms.

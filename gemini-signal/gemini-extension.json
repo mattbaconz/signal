@@ -1,6 +1,6 @@
 {
   "name": "signal",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "description": "SIGNAL — token-efficient agent replies, checkpoints, and one-shot git workflows (Agent Skills). Includes optional slash commands for git context.",
   "contextFileName": "GEMINI.md"
 }

@@ -1,10 +1,64 @@
 # SIGNAL
 
-**Token-efficient agent answers (templates · symbols · checkpoints) and one-shot git workflows — [Agent Skills](https://agentskills.io/) for Claude Code, Cursor, Gemini CLI, Codex, and more.**
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+[![Release](https://img.shields.io/github/v/release/mattbaconz/signal?label=release)](https://github.com/mattbaconz/signal/releases)
+[![CI](https://img.shields.io/github/actions/workflow/status/mattbaconz/signal/verify.yml?label=CI)](https://github.com/mattbaconz/signal/actions/workflows/verify.yml)
+[![Discord](https://img.shields.io/badge/Discord-chat-5865F2?logo=discord&logoColor=white)](https://discord.gg/4Dkt9CaK8M)
 
-[v0.1.2](CHANGELOG.md) · [MIT](LICENSE) · [Discord](https://discord.gg/4Dkt9CaK8M) · Full protocol: `[signal/SKILL.md](signal/SKILL.md)`
+**Less noise, same signal.** Token-efficient answers (templates · symbols · checkpoints) and one-shot git workflows — **[Agent Skills](https://agentskills.io/)** for Claude Code, Cursor, Gemini CLI, Codex, and more.
 
-**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See [Evidence](#evidence-what-we-measure), **[`docs/token-metrics.md`](docs/token-metrics.md)** (prompt vs output vs history), and the table below.
+| | |
+|--|--|
+| **Repo** | [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) |
+| **Chat** | [Discord](https://discord.gg/4Dkt9CaK8M) |
+| **Protocol** | [`signal/SKILL.md`](signal/SKILL.md) · [Changelog](CHANGELOG.md) |
+
+**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Single-turn Gemini runs with **matched** project `GEMINI.md` show lower **`tokens.total`** and much shorter replies vs verbose control — see [Evidence](#evidence-what-we-measure) and [Benchmark snapshot](#benchmark-snapshot). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See **[`docs/token-metrics.md`](docs/token-metrics.md)** (prompt vs output vs history) and the table below.
+
+## How it fits together
+
+**Where tokens go** (three buckets to measure separately):
+
+```mermaid
+flowchart LR
+  subgraph input [Prompt]
+    P1[System_and_rules]
+    P2["GEMINI.md / CLAUDE.md"]
+    P3[Skills_and_user]
+  end
+  subgraph gen [Generation]
+    G1[Assistant_reply]
+  end
+  subgraph hist [History]
+    H1[Prior_turns]
+    H2[CKPT_atom]
+  end
+  input --> gen
+  hist --> gen
+```
+
+**Tiers** (activate the `signal` skill):
+
+```mermaid
+flowchart LR
+  s1["/signal SIGNAL-1"]
+  s2["/signal2 + BOOT aliases delta"]
+  s3["/signal3 + auto CKPT"]
+  s1 --> s2 --> s3
+```
+
+**Host integrations in this repo:** skills (`npx skills add`), Gemini extension + Claude plugin, repo-local rules (`.cursor`, `.windsurf`, `.clinerules`, Copilot), optional [Claude hooks](hooks/README.md) and [Codex SessionStart](.codex/hooks.json).
+
+## Benchmark snapshot
+
+Single-turn **Gemini CLI** runs (`gemini-3.1-pro-preview`, same [`prompt.txt`](benchmark/benchmark%20chess/prompt.txt)); [reproduce](benchmark/benchmark%20chess/run_chess_compare.ps1). API **429** can require retry.
+
+| Pair | What it shows | Highlights |
+|------|-----------------|------------|
+| **EqualContext** (`-Pair EqualContext`) | Matched project `GEMINI.md` size; fair **prompt** comparison | **~flat prompt** (+0.3%); **`tokens.total` max** −1.9% vs verbose; **~74% fewer** reply characters |
+| **Default** | No `GEMINI.md` vs SIGNAL project file | **~88% fewer** reply chars; **higher** prompt/total on SIGNAL arm (input tax) — see [`docs/token-metrics.md`](docs/token-metrics.md) |
+
+Full tables: [Evidence](#evidence-what-we-measure) · JSON: [`results_chess_equal_compare.json`](benchmark/benchmark%20chess/results_chess_equal_compare.json), [`results_chess_compare.json`](benchmark/benchmark%20chess/results_chess_compare.json).
 
 ---
 
@@ -13,10 +67,10 @@
 
 | Scenario                       | Without SIGNAL                                                                                                                                                                                                             | With SIGNAL                                                                                                  |
 | ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Bug diagnosis                  | "The issue is in auth.js around line 47. There's a null reference error occurring when the array is empty. You should add a guard clause to handle this case. I'm fairly confident this is the root cause." *(~60 tokens)* | `auth.js:47                                                                                                  |
-| Session state after 10 turns   | ~2,400 tokens of conversation history                                                                                                                                                                                      | `CKPT[2]: §project=api §stack=node+jwt progress=[login✓,refresh✓,logout/] next=finish logout` *(~35 tokens)* |
-| "I'm fairly confident that..." | 6 tokens                                                                                                                                                                                                                   | `[0.95]` *(1 token)*                                                                                         |
-| Architecture decision          | "There are several approaches you might consider. One possible option would be PostgreSQL, which offers ACID guarantees..." *(~80 tokens)*                                                                                 | `use_postgres                                                                                                |
+| Bug diagnosis                  | Verbose prose with hedging *(~60 tokens)* | `auth.js:47` · `null on empty arr` · `fix: guard` · `[0.85]` *(~15 tokens)* |
+| Session state after 10 turns   | ~2,400 tokens of conversation history | `CKPT[2]: §project=api §stack=node+jwt progress=[login✓,refresh✓,logout/] next=finish logout` *(~35 tokens)* |
+| "I'm fairly confident that..." | 6 tokens | `[0.95]` *(1 token)* |
+| Architecture decision          | Long prose comparing options *(~80 tokens)* | `use_postgres` · `why: ACID` · `[0.8]` *(~12 tokens)* |
 
 
 ---
@@ -56,20 +110,23 @@ Per-host paths and activation: [Cross-tool porting](#cross-tool-porting).
 
 **Table of contents**
 
-1. [Problem and approach](#problem-and-approach)
-2. [Skill catalog](#skill-catalog--what-ships-in-this-repo)
-3. [Tier specification](#tier-specification-signal-1--2--3)
-4. [When to use which tier](#when-to-use-which-tier-canonical)
-5. [Compression layers](#compression-layers-summary)
-6. [Installation options](#installation-options) (includes [maximize token savings](#maximize-token-savings))
-7. [Cross-tool porting](#cross-tool-porting)
-8. [Verify and safe first use](#verify-and-safe-first-use)
-9. [Workflow skills (git) on Windows](#workflow-skills-git-on-windows)
-10. [BOOT presets](#boot-presets)
-11. [Rules of the road](#rules-of-the-road)
-12. [Repository layout](#repository-layout)
-13. [Releases and community](#releases-and-community)
-14. [Further reading](#further-reading)
+1. [How it fits together](#how-it-fits-together)
+2. [Benchmark snapshot](#benchmark-snapshot)
+3. [Problem and approach](#problem-and-approach)
+4. [Skill catalog](#skill-catalog--what-ships-in-this-repo)
+5. [Tier specification](#tier-specification-signal-1--2--3)
+6. [When to use which tier](#when-to-use-which-tier-canonical)
+7. [Compression layers](#compression-layers-summary)
+8. [Installation options](#installation-options) (includes [maximize token savings](#maximize-token-savings))
+9. [Cross-tool porting](#cross-tool-porting)
+10. [Verify and safe first use](#verify-and-safe-first-use)
+11. [Workflow skills (git) on Windows](#workflow-skills-git-on-windows)
+12. [BOOT presets](#boot-presets)
+13. [Rules of the road](#rules-of-the-road)
+14. [Repository layout](#repository-layout)
+15. [Releases and community](#releases-and-community)
+16. [Further reading](#further-reading)
+17. [Star history](#star-history)
 
 ---
 
@@ -85,7 +142,7 @@ Per-host paths and activation: [Cross-tool porting](#cross-tool-porting).
 
 ## Skill catalog — what ships in this repo
 
-These six directories are the **core bundle** versioned together as **v0.1.2**:
+These six directories are the **core bundle** versioned together as **v0.2.0**:
 
 
 | Skill folder                       | Role                                                                                          | Loads when                                                                                         |
@@ -207,17 +264,28 @@ Do not treat "5+ turns" by itself as the trigger. Five tiny turns are still tiny
 
 ### Evidence (what we measure)
 
-**Primary (cumulative / history):** SIGNAL’s tier design targets **long, agentic sessions** where **chat history** and **verbose output** compound. In a **full clone** of this repo, run `benchmark/long-session/run_long_session.ps1` (see `benchmark/long-session/README.md` on disk) — baseline keeps full transcript each turn vs SIGNAL-3-style **CKPT** replacement on a schedule. That is the fairest **net** story for “SIGNAL vs verbose defaults” on Gemini CLI.
+All of this is about **SIGNAL’s tiers, output shape, checkpoints, and optional project `GEMINI.md`** — not generic LLM advice.
 
-**Supporting (single-turn / style):** **Checkpoint vs. transcript** — same idea as the **~94% / ~18×** intro example: a multi-turn slice collapsed to a `CKPT` atom (rough token estimate, ~4 chars/token heuristic).
+**1. Primary — long sessions / history (SIGNAL-3, `CKPT`)**  
+SIGNAL’s design targets **agentic sessions** where **chat history** and **verbose output** compound. In a **full clone** of this repo, run `benchmark/long-session/run_long_session.ps1` (see `benchmark/long-session/README.md` on disk): baseline keeps a full transcript each turn vs SIGNAL-3-style **`CKPT`** replacement on a schedule. That is the main **net** story for SIGNAL vs verbose defaults on Gemini CLI.
 
-**Full host runs:** some CLIs replay a large payload on **session reset** (~60k–80k tokens mentioned above for punishing hosts), so net savings show up once history or per-turn output is large enough to outweigh that tax.
+**2. Supporting — heuristic bundle (`scripts/benchmark.ps1`)**  
+Same idea as the **~94% / ~18×** intro table: transcript slice vs one `CKPT` line using **ceil(charLength / 4)** — illustrative, not API-billed tokens.
 
-**Supplementary — Gemini CLI chess (paired cwd):** same `prompt.txt`, **`--approval-mode plan`**, **default pair**: baseline folder **without** project `GEMINI.md` vs SIGNAL folder **with** [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md)-style defaults. One paired run (`gemini-3.1-pro-preview`, CLI 0.38.x): **~88% fewer characters** in the assistant reply with SIGNAL; **`tokens.total` from the CLI was ~13% higher** in the SIGNAL cwd because **prompt tokens** increased (project instructions + skills). That is a **single-turn** tradeoff, not the primary cumulative proof. Raw numbers: [`benchmark/benchmark chess/results_chess_compare.json`](benchmark/benchmark%20chess/results_chess_compare.json). Reproduce: [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1) (may hit API **429** / capacity; retry later). For **both arms with project `GEMINI.md`**, use `-Pair EqualContext` — see that README.
+**3. Session reset cost (tier choice)**  
+Some hosts replay a large payload after a checkpoint **session reset** (~60k–80k tokens in punishing cases). Net savings from SIGNAL-3 show up when **history + output** outweigh that tax — see [When to use which tier](#when-to-use-which-tier-canonical).
+
+**4. Gemini CLI — chess harness (single-turn, archived JSON)**  
+Same [`prompt.txt`](benchmark/benchmark%20chess/prompt.txt), **`--approval-mode plan`**, model **`gemini-3.1-pro-preview`** (runs vary; API **429** possible — retry). Read **`stats`** in `-o json` per [`docs/token-metrics.md`](docs/token-metrics.md).
+
+| Pair | What it tests | Archived result (see JSON) |
+|------|----------------|------------------------------|
+| **EqualContext** (`-Pair EqualContext`) | **Fair:** both cwd have **matched** project [`GEMINI.md`](benchmark/benchmark%20chess/chess%20equal%20verbose/GEMINI.md) size (~2% chars apart); only **Style** differs (verbose vs SIGNAL-1). | **`prompt_tokens` ~flat** (+25 / **+0.3%**); **`tokens.total` max lower** on SIGNAL (−157 / **−1.9%**); **~74% fewer** assistant **response characters** vs verbose. [`results_chess_equal_compare.json`](benchmark/benchmark%20chess/results_chess_equal_compare.json) |
+| **Default** | **Illustrates input tax:** baseline has **no** `GEMINI.md`; SIGNAL cwd uses project instructions (like [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md)). **Not** a fair prompt head-to-head. | **~88% fewer** response chars; **`prompt_tokens`** and **`tokens.total`** **higher** on SIGNAL (+430 / +5.7% prompt) because extra context loads. [`results_chess_compare.json`](benchmark/benchmark%20chess/results_chess_compare.json) |
+
+Reproduce: [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1) — prefer **`-Pair EqualContext`** for comparable **prompt**; use **Default** only to show why thick project files raise **prompt** tokens.
 
 **Definitions:** **[`docs/token-metrics.md`](docs/token-metrics.md)** — prompt vs output vs history; why `tokens.total` can rise when replies shrink.
-
-Optional local `benchmark/` folders (gitignored) can hold your own scripts and raw numbers; nothing in git claims a single universal “score.”
 
 ---
 
@@ -331,27 +399,17 @@ SIGNAL only wins when **both** sides of the pipe stay lean: what the host inject
 
 Savings are **maximized when the model follows the skill**. If the assistant drifts into prose, token count drifts with it — say **“follow SIGNAL strictly”** or re-issue `**/signal2`**.
 
-### SIGNAL vs Caveman (token compression)
+### Related: Caveman (optional comparison)
 
-[Caveman](https://github.com/JuliusBrussee/caveman) inspired a lot of the thinking here. The two are not direct competitors — they target **different parts of the prompt pipe** and are safe to run together.
-
-| Axis                                | Caveman                                          | SIGNAL                                                        |
-| ----------------------------------- | ------------------------------------------------ | ------------------------------------------------------------- |
-| **Assistant output shape**          | Terse voice; strips filler                       | Tiers (`/signal`, `/signal2`, `/signal3`), templates, symbols |
-| **Input / memory compression**      | `caveman-compress` (rewrites memory files)       | [`docs/signal-compress.md`](docs/signal-compress.md) + [`scripts/signal-compress.ps1`](scripts/signal-compress.ps1) (backup + copy-paste prompt) |
-| **Long-thread history**             | —                                                | `signal-ckpt` + SIGNAL-3 checkpoint state                     |
-| **Git workflows**                   | `caveman-commit` (phrasing)                      | `signal-commit` / `-push` / `-pr` / `-review` (full cycle, scripts) |
-| **Per-host packaging**              | Skill pack                                       | Skills + **Claude plugin** (`claude-signal/`) + **Gemini extension** (`gemini-signal/`) |
-
-**When to use both:** run `caveman-compress` (or [`scripts/signal-compress.ps1`](scripts/signal-compress.ps1)) once against a thick `GEMINI.md`, then use SIGNAL tiers for day-to-day replies and git workflows. Input-side compression and output-side compression are orthogonal; they stack.
-
-Measurement caveat: a single cold turn that adds *any* project `GEMINI.md` will usually **increase prompt tokens** even when the reply is much shorter. Read [`docs/token-metrics.md`](docs/token-metrics.md) before comparing two skills on `tokens.total` alone.
+[Caveman](https://github.com/JuliusBrussee/caveman) is another terse-output skill. **SIGNAL** adds **tiers**, **templates / symbols**, **checkpoints** (`signal-ckpt`, SIGNAL-3), and **full git workflow** skills; for **input-side** file rewrites use [`docs/signal-compress.md`](docs/signal-compress.md). The two can stack (compress memory once, then run SIGNAL day-to-day). Details: [`docs/token-metrics.md`](docs/token-metrics.md).
 
 ---
 
 ## Cross-tool porting
 
 SIGNAL uses the [Agent Skills](https://agentskills.io/) shape (`SKILL.md` + optional `references/`, `scripts/`). Each host loads skills from different directories and layers **persistent context** (always on) separately from **skills** (on-demand). Optimizing tokens means using the right layer per tool.
+
+**Repo-local rules (Cursor, Windsurf, Cline, GitHub Copilot):** this repository ships generated copies under [`.cursor/rules/signal.mdc`](.cursor/rules/signal.mdc), [`.windsurf/rules/signal.md`](.windsurf/rules/signal.md), [`.clinerules/signal.md`](.clinerules/signal.md), and [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Edit [`templates/host-always-on.body.md`](templates/host-always-on.body.md) and run **`scripts/sync-host-integrations.ps1`** (also run by **`scripts/verify.ps1`**).
 
 Before choosing a tier, read [When to use which tier (canonical)](#when-to-use-which-tier-canonical) above. The short version is: default to `**/signal`** or `**/signal2`** for most work, and reserve `**/signal3`** for sessions where conversation history is large enough to justify checkpoint behavior on the current host.
 
@@ -468,14 +526,7 @@ gemini skills install /path/to/your/clone/signal --consent
 
 Or copy directories into `~/.gemini/skills/`, `~/.claude/skills/`, etc., preserving folder names (`signal`, `signal-commit`, …).
 
-### References (official / primary)
-
-- Agent Skills standard — [agentskills.io](https://agentskills.io/)
-- Gemini CLI — [Agent Skills](https://geminicli.com/docs/cli/skills/), [GEMINI.md](https://geminicli.com/docs/cli/gemini-md)
-- Google Antigravity — [Agent Skills](https://antigravity.google/docs/skills)
-- Claude Code — [Skills](https://code.claude.com/docs/en/skills)
-- Cursor — [Agent Skills](https://cursor.com/docs/skills)
-- OpenAI Codex — [Introducing the Codex app](https://openai.com/index/introducing-the-codex-app/), [Developers Codex](https://developers.openai.com/codex/)
+**Host product docs** are linked from the [platform matrix](#platform-matrix) above; SIGNAL follows the shared [Agent Skills](https://agentskills.io/) format.
 
 ---
 
@@ -574,9 +625,19 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 ├── CHANGELOG.md
 ├── docs/
 │   ├── token-metrics.md      ← prompt vs output vs history (reading CLI stats)
-│   └── signal-compress.md    ← shrink GEMINI.md / notes (Caveman-compress-style)
+│   └── signal-compress.md    ← shrink GEMINI.md / notes (input-side compression)
+├── hooks/                    ← Claude Code SessionStart + statusline; see hooks/README.md
+├── .codex/                   ← Codex hooks (SessionStart → signal-session-reminder.js)
+├── .cursor/rules/            ← Cursor (generated from templates/host-always-on.body.md)
+├── .windsurf/rules/          ← Windsurf
+├── .clinerules/              ← Cline
+├── .github/
+│   ├── workflows/verify.yml
+│   └── copilot-instructions.md  ← GitHub Copilot (generated)
+├── benchmark/
+│   ├── benchmark chess/      ← Gemini CLI paired-cwd harness (see README there)
+│   └── long-session/         ← history vs CKPT (full clone; README on disk)
 ├── contrib/                  ← optional patches (e.g. awesome-agent-skills PR)
-├── .github/workflows/verify.yml
 ├── gemini-signal/            ← Gemini CLI extension (gemini-extension.json, synced skills/)
 ├── claude-signal/            ← Claude Code plugin (synced skills/)
 ├── signal/
@@ -592,6 +653,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 └── scripts/
     ├── install-signal-all.ps1
     ├── sync-integration-packages.ps1
+    ├── sync-host-integrations.ps1  ← IDE rules from templates/host-always-on.body.md
     ├── prepare-awesome-agent-skills-pr.ps1
     ├── benchmark.ps1
     ├── signal-compress.ps1   ← backup + copy-paste prompt for input-side compression
@@ -606,7 +668,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 **Versioning:** Ship **`signal_bundle_version`** in core `SKILL.md` frontmatter with the tag you cut; add a section to [`CHANGELOG.md`](CHANGELOG.md); push an annotated git tag (`git tag -a v0.x.y -m "…"`); optional GitHub Release from that tag. Keep the three aligned per release.
 
-- **GitHub release:** Tag **`v0.1.2`** is published on the repo. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.1.2&title=SIGNAL%20v0.1.2) (same tag), paste a short summary from [`CHANGELOG.md`](CHANGELOG.md), publish.
+- **GitHub release:** Tag **`v0.2.0`**. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.2.0&title=SIGNAL%20v0.2.0) (same tag), paste a short summary from [`CHANGELOG.md`](CHANGELOG.md), publish.
 - **CI:** [Actions](https://github.com/mattbaconz/signal/actions) runs `scripts/verify.ps1` on pushes/PRs to `main`.
 - **Discord:** [Join](https://discord.gg/4Dkt9CaK8M). Useful pins for mods: install `npx skills add mattbaconz/signal -y -g`, benchmark `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1`, link to this repo.
 - **skills.sh / awesome list:** Installs via `npx skills` help discovery on [skills.sh](https://skills.sh). **Checklist:** fork [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) → run [`scripts/prepare-awesome-agent-skills-pr.ps1`](scripts/prepare-awesome-agent-skills-pr.ps1) or apply [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) → push branch → open PR — details in [`contrib/README.md`](contrib/README.md).
@@ -620,13 +682,26 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 | Document                                   | Use it when                                               |
 | ------------------------------------------ | --------------------------------------------------------- |
 | [`docs/token-metrics.md`](docs/token-metrics.md) | Prompt vs output vs history; reading CLI `stats`    |
-| [`docs/signal-compress.md`](docs/signal-compress.md) | Shrink `GEMINI.md` / notes (Caveman-compress-style) |
+| [`docs/signal-compress.md`](docs/signal-compress.md) | Shorter `GEMINI.md` / notes (SIGNAL-1 rewrite workflow) |
+| [`benchmark/benchmark chess/README.md`](benchmark/benchmark%20chess/README.md) | Gemini CLI chess harness; **EqualContext** vs **Default** pairs |
 | [`signal/SKILL.md`](signal/SKILL.md)       | Exact activation strings, layers, `SIGNAL_DRIFT` protocol |
 | [`signal/references/`](signal/references/) | Symbol grammar, BOOT presets, checkpoint format           |
-
+| [`hooks/README.md`](hooks/README.md) | Claude Code optional hooks + `[SIGNAL]` statusline |
 
 ---
 
-*v0.1.2 — six core skills: `signal`, `signal-commit`, `signal-push`, `signal-pr`, `signal-review`, `signal-ckpt`; packaged Claude plugin + Gemini extension*
+## Star history
 
-See `[LICENSE](LICENSE)` (MIT).
+<a href="https://www.star-history.com/?repos=mattbaconz%2Fsignal&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&legend=top-left" />
+ </picture>
+</a>
+
+---
+
+*v0.2.0 — six core skills: `signal`, `signal-commit`, `signal-push`, `signal-pr`, `signal-review`, `signal-ckpt`; packaged Claude plugin + Gemini extension; IDE rules + optional hooks*
+
+See [`LICENSE`](LICENSE) (MIT).

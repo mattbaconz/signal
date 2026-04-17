@@ -1,0 +1,44 @@
+﻿{
+    "pair":  "EqualContext",
+    "prompt_file":  "prompt.txt",
+    "gemini_js":  "C:\\Users\\mattbaconz\\scoop\\apps\\nodejs\\current\\bin\\node_modules\\@google\\gemini-cli\\bundle\\gemini.js",
+    "model_flag":  "",
+    "generated_at":  "2026-04-17T13:08:30.1047873+07:00",
+    "runs":  [
+                 {
+                     "label":  "baseline",
+                     "ok":  true,
+                     "model":  "gemini-3.1-pro-preview",
+                     "tokens_primary_max":  8457,
+                     "prompt_tokens":  7779,
+                     "response_chars":  2293,
+                     "session_id":  "b3a55ee2-9587-420d-a887-bac2f1c5ec4b"
+                 },
+                 {
+                     "label":  "signal",
+                     "ok":  true,
+                     "model":  "gemini-3.1-pro-preview",
+                     "tokens_primary_max":  8300,
+                     "prompt_tokens":  7804,
+                     "response_chars":  591,
+                     "session_id":  "cad4955d-9e17-4549-99e4-233f5443b024"
+                 }
+             ],
+    "compare":  {
+                    "baseline_tokens_primary_max":  8457,
+                    "signal_tokens_primary_max":  8300,
+                    "delta_tokens_primary_max":  -157,
+                    "delta_pct_total_vs_baseline":  -1.9,
+                    "baseline_prompt_tokens":  7779,
+                    "signal_prompt_tokens":  7804,
+                    "delta_prompt_tokens":  25,
+                    "delta_pct_prompt_vs_baseline":  0.3,
+                    "baseline_response_chars":  2293,
+                    "signal_response_chars":  591,
+                    "pct_fewer_response_chars_vs_baseline":  74.2,
+                    "baseline_gemini_md_chars":  289,
+                    "signal_gemini_md_chars":  296,
+                    "gemini_md_size_delta_pct":  2.4,
+                    "note":  "tokens_primary_max is max(stats.models.*.tokens.total). EqualContext: matched GEMINI.md structure (shared Preservation block; Style differs). Check baseline_gemini_md_chars vs signal_gemini_md_chars; small size delta means fairer prompt_tokens comparison than Default."
+                }
+}

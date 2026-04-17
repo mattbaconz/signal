@@ -1,0 +1,5 @@
+{
+  "name": "signal-claude-hooks",
+  "private": true,
+  "description": "Claude Code hooks for SIGNAL (installed to ~/.claude/hooks)"
+}

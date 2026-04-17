@@ -28,6 +28,12 @@ Output compression alone cannot hide a 200-line `GEMINI.md`. To shrink **prompt*
 
 - Default to [`templates/gemini-GEMINI.min.md`](../templates/gemini-GEMINI.min.md) / [`templates/claude-CLAUDE.min.md`](../templates/claude-CLAUDE.min.md) for always-on context.
 - For long project memory or notes, rewrite with [`docs/signal-compress.md`](signal-compress.md) (Caveman-compress-style workflow: backup, rewrite, diff review).
+- **Do not paste** the full skill body into `GEMINI.md` — use a short routing block and activate **`signal`** when needed (progressive disclosure on hosts that support it).
+- **Deduplicate** rules: one canonical place for “never compress code/paths/errors” so you are not billed for the same text three times.
+
+**Benchmarks:** Single-turn [`benchmark/benchmark chess`](../benchmark/benchmark%20chess/README.md) uses **`-Pair EqualContext`** when you need matched project files; **`Default`** intentionally has no `GEMINI.md` on one side, so **`prompt_tokens` are not a fair head-to-head**.
+
+**Repo-local IDE rules:** always-on SIGNAL text for Cursor / Windsurf / Cline / Copilot is generated from [`templates/host-always-on.body.md`](../templates/host-always-on.body.md) into [`.cursor/rules/`](../.cursor/rules/), etc. Optional **Claude Code** hooks: [`hooks/README.md`](../hooks/README.md).
 
 ## Further reading in this repo
 

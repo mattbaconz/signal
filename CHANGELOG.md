@@ -2,7 +2,24 @@
 
 All notable changes to this project are documented here. The format is informal; this repo tracks the SIGNAL skill suite as one deliverable.
 
-**Versioning:** For each release, align **`signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see README *Releases and community*).
+**Versioning:** For each release, align `**signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see README *Releases and community*).
+
+## v0.2.0 — 2026-04-17
+
+Git tag: **`v0.2.0`**.
+
+### Added
+
+- **Host IDE rules (single source):** [`templates/host-always-on.body.md`](templates/host-always-on.body.md) + [`scripts/sync-host-integrations.ps1`](scripts/sync-host-integrations.ps1) generate [`.cursor/rules/signal.mdc`](.cursor/rules/signal.mdc), [`.windsurf/rules/signal.md`](.windsurf/rules/signal.md), [`.clinerules/signal.md`](.clinerules/signal.md), [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Run automatically from [`scripts/verify.ps1`](scripts/verify.ps1).
+- **OpenAI Codex:** [`.codex/config.toml`](.codex/config.toml) + [`.codex/hooks.json`](.codex/hooks.json) — SessionStart runs [`hooks/signal-session-reminder.js`](hooks/signal-session-reminder.js) (stdout reminder; Windows Codex may disable hooks — see README).
+- **Claude Code hooks (optional):** [`hooks/install.ps1`](hooks/install.ps1) / [`hooks/install.sh`](hooks/install.sh), [`hooks/uninstall.ps1`](hooks/uninstall.ps1) / [`hooks/uninstall.sh`](hooks/uninstall.sh), [`hooks/signal-activate.js`](hooks/signal-activate.js), [`hooks/signal-statusline.ps1`](hooks/signal-statusline.ps1) / [`hooks/signal-statusline.sh`](hooks/signal-statusline.sh), [`hooks/README.md`](hooks/README.md).
+
+### Changed
+
+- `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.2.0** (aligned with extension/plugin manifests).
+- **README:** badges (license, release, CI, Discord), slogan (*Less noise, same signal.*), mermaid diagrams (token buckets + tiers), benchmark snapshot, Star History chart, repository layout for hooks/IDE paths; cross-tool section documents repo-local rules.
+- **Chess benchmark:** `EqualContext` arms use **matched** `GEMINI.md` layout; `run_chess_compare.ps1` reports on-disk sizes and JSON parity fields; README Evidence tables archived results.
+- [`docs/token-metrics.md`](docs/token-metrics.md): input checklist, benchmark pointer, repo-local rules + hooks pointer.
 
 ## v0.1.2 — 2026-04-16
 
@@ -10,17 +27,17 @@ Git tag: **`v0.1.2`**.
 
 ### Added
 
-- [`docs/signal-compress.md`](docs/signal-compress.md) — input-side compression workflow (shrink `GEMINI.md` / notes; backup, rewrite, diff review).
-- [`templates/signal-compress-prompt.md`](templates/signal-compress-prompt.md) — copy-paste SIGNAL-1 compression prompt for memory files.
-- [`scripts/signal-compress.ps1`](scripts/signal-compress.ps1) — backup helper (`-Path`, `-DryRun`, optional `-InvokeGemini` that only prints the command).
+- `[docs/signal-compress.md](docs/signal-compress.md)` — input-side compression workflow (shrink `GEMINI.md` / notes; backup, rewrite, diff review).
+- `[templates/signal-compress-prompt.md](templates/signal-compress-prompt.md)` — copy-paste SIGNAL-1 compression prompt for memory files.
+- `[scripts/signal-compress.ps1](scripts/signal-compress.ps1)` — backup helper (`-Path`, `-DryRun`, optional `-InvokeGemini` that only prints the command).
 
 ### Changed
 
 - `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.1.2** (aligned with extension/plugin manifests).
 - README: new **SIGNAL vs Caveman (token compression)** subsection under *Maximize token savings*; repository layout and *Further reading* list the new docs/script.
-- [`docs/token-metrics.md`](docs/token-metrics.md): new *Reducing input tokens* subsection linking the thin templates and `signal-compress.md`.
-- [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1): JSON now surfaces `baseline_prompt_tokens` / `signal_prompt_tokens` / `delta_prompt_tokens` / `delta_pct_prompt_vs_baseline`; adds a three-line stdout summary (prompt / total / response_chars).
-- [`benchmark/benchmark chess/README.md`](benchmark/benchmark%20chess/README.md): clarified that `tokens.total` mixes prompt and generation and documented `response_chars` as the fallback output signal.
+- `[docs/token-metrics.md](docs/token-metrics.md)`: new *Reducing input tokens* subsection linking the thin templates and `signal-compress.md`.
+- `[benchmark/benchmark chess/run_chess_compare.ps1](benchmark/benchmark%20chess/run_chess_compare.ps1)`: JSON now surfaces `baseline_prompt_tokens` / `signal_prompt_tokens` / `delta_prompt_tokens` / `delta_pct_prompt_vs_baseline`; adds a three-line stdout summary (prompt / total / response_chars).
+- `[benchmark/benchmark chess/README.md](benchmark/benchmark%20chess/README.md)`: clarified that `tokens.total` mixes prompt and generation and documented `response_chars` as the fallback output signal.
 
 ## v0.1.1 — 2026-04-16
 
@@ -28,12 +45,11 @@ Git tag: **`v0.1.1`**.
 
 ### Added
 
-- **[`scripts/benchmark.ps1`](scripts/benchmark.ps1)** — reproducible token-estimate scenarios (4 chars/token heuristic).
-
-- **[`gemini-signal/`](gemini-signal/)** — Gemini CLI extension (`gemini-extension.json`, bundled `GEMINI.md`, synced `skills/`, `commands/signal/*.toml`, `bin/run-commit.*` / `run-push.*`).
-- **[`claude-signal/`](claude-signal/)** — Claude Code plugin (`.claude-plugin/plugin.json`, synced `skills/`).
-- **[`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)** — marketplace catalog for `/plugin install signal@signal-suite`.
-- **[`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1)** — copies the six core skill folders into `gemini-signal/skills/` and `claude-signal/skills/` (also run automatically at the start of [`scripts/verify.ps1`](scripts/verify.ps1)).
+- `**[scripts/benchmark.ps1](scripts/benchmark.ps1)**` — reproducible token-estimate scenarios (4 chars/token heuristic).
+- `**[gemini-signal/](gemini-signal/)**` — Gemini CLI extension (`gemini-extension.json`, bundled `GEMINI.md`, synced `skills/`, `commands/signal/*.toml`, `bin/run-commit.*` / `run-push.*`).
+- `**[claude-signal/](claude-signal/)**` — Claude Code plugin (`.claude-plugin/plugin.json`, synced `skills/`).
+- `**[.claude-plugin/marketplace.json](.claude-plugin/marketplace.json)**` — marketplace catalog for `/plugin install signal@signal-suite`.
+- `**[scripts/sync-integration-packages.ps1](scripts/sync-integration-packages.ps1)**` — copies the six core skill folders into `gemini-signal/skills/` and `claude-signal/skills/` (also run automatically at the start of `[scripts/verify.ps1](scripts/verify.ps1)`).
 
 ### Changed
 
@@ -41,8 +57,7 @@ Git tag: **`v0.1.1`**.
 
 ### Documentation
 
-- [`contrib/README.md`](contrib/README.md) + [`contrib/awesome-agent-skills-add-signal.patch`](contrib/awesome-agent-skills-add-signal.patch) — optional PR to [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills); README notes [skills.sh](https://skills.sh) discovery.
-
+- `[contrib/README.md](contrib/README.md)` + `[contrib/awesome-agent-skills-add-signal.patch](contrib/awesome-agent-skills-add-signal.patch)` — optional PR to [VoltAgent/awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills); README notes [skills.sh](https://skills.sh) discovery.
 - README: [Discord](https://discord.gg/4Dkt9CaK8M) community server link in the header.
 
 ### Fixed
@@ -68,5 +83,5 @@ Git tag: **`v0.1.1`**.
 - README: Agent Skills compatibility, `v0.1.0`, choosing a tier, scripts on Windows, verification entry point, brand logo under `assets/`.
 - Long-session harness (if maintained locally under `benchmark/`): `RESULTS.md` / JSON artifacts stay private to the clone.
 - README: spec-style onboarding (skill catalog, invocation map, tier summary, TOC); clarifies normative docs vs this file.
-- Repository: `.gitignore` for common OS, env, editor, and tooling artifacts; optional **untracked** root markdown overlays and **`benchmark/`** for local notes and reproducibility scripts while README stays canonical in git.
+- Repository: `.gitignore` for common OS, env, editor, and tooling artifacts; optional **untracked** root markdown overlays and `**benchmark/`** for local notes and reproducibility scripts while README stays canonical in git.
 

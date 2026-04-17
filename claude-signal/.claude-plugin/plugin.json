@@ -1,7 +1,7 @@
 {
   "name": "signal",
   "description": "SIGNAL — token-efficient agent output, checkpoints, and one-shot git workflows (Agent Skills).",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "author": {
     "name": "SIGNAL"
   },

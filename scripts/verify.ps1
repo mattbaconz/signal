@@ -70,6 +70,29 @@ if (-not $script:VerifyFailed) { Ok 'claude-signal structure' }
 $mkt = Join-Path $RepoRoot '.claude-plugin\marketplace.json'
 if (-not (Test-Path -LiteralPath $mkt)) { Fail "missing $mkt" } else { Ok '.claude-plugin/marketplace.json' }
 
+# --- 0a) Host IDE rules (Cursor, Windsurf, Cline, Copilot) from templates/host-always-on.body.md
+$hostSync = Join-Path $RepoRoot 'scripts\sync-host-integrations.ps1'
+if (-not (Test-Path -LiteralPath $hostSync)) {
+  Fail "missing $hostSync"
+} else {
+  & powershell -NoProfile -ExecutionPolicy Bypass -File $hostSync
+  if ($LASTEXITCODE -ne 0) { Fail 'sync-host-integrations.ps1 failed'; exit 1 }
+  Ok 'sync-host-integrations.ps1'
+}
+$canonSnippet = 'SIGNAL-1'
+$hostFiles = @(
+  (Join-Path $RepoRoot '.cursor\rules\signal.mdc'),
+  (Join-Path $RepoRoot '.windsurf\rules\signal.md'),
+  (Join-Path $RepoRoot '.clinerules\signal.md'),
+  (Join-Path $RepoRoot '.github\copilot-instructions.md')
+)
+foreach ($hf in $hostFiles) {
+  if (-not (Test-Path -LiteralPath $hf)) { Fail "host integration missing: $hf" }
+  $htxt = Get-Content -LiteralPath $hf -Raw
+  if ($htxt -notmatch [regex]::Escape($canonSnippet)) { Fail "host file missing canon marker ($canonSnippet): $hf" }
+}
+if (-not $script:VerifyFailed) { Ok 'host IDE rules (synced + spot-check)' }
+
 # --- 0b) gemini-signal/bin/run-commit.ps1 --dry (uses bundled skill copy) ---
 $geminiCommitWrapper = Join-Path $RepoRoot 'gemini-signal\bin\run-commit.ps1'
 if (-not (Test-Path -LiteralPath $geminiCommitWrapper)) {
