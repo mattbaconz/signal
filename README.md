@@ -37,7 +37,7 @@
 | **Chat** | [Discord](https://discord.gg/4Dkt9CaK8M) |
 | **Protocol** | [signal/SKILL.md](signal/SKILL.md) · [Changelog](CHANGELOG.md) |
 
-**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Single-turn Gemini runs with **matched** project `GEMINI.md` show lower **`tokens.total`** and much shorter replies vs verbose control — see [Evidence](#evidence-what-we-measure) and [Benchmark snapshot](#benchmark-snapshot). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See **[docs/token-metrics.md](docs/token-metrics.md)** (prompt vs output vs history) and the table below.
+**Token savings (typical targets):** SIGNAL targets **~35%** remaining (SIGNAL-1), **~20%** (SIGNAL-2), and **<10%** on long sessions when SIGNAL-3 checkpoints dominate. Replacing a long transcript with one checkpoint line reached **~6%** of baseline in one representative run (~18×; rough estimate, ~4 chars/token). Single-turn Gemini runs with **matched** project `GEMINI.md` show lower **`tokens.total`** and much shorter replies vs verbose control — see [Evidence](#evidence-what-we-measure) and [Benchmark snapshot](#benchmark-snapshot). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See **[docs/token-metrics.md](docs/token-metrics.md)** (prompt vs output vs history) and the table below.
 
 ## How it fits together
 
@@ -205,14 +205,13 @@ Packaged installs: [Claude Code plugin and Gemini CLI extension](#claude-code-pl
 Normative tier definitions live in [signal/SKILL.md](signal/SKILL.md). Summary:
 
 
-| Tier         | Trigger    | Active capabilities (incremental)              | Typical remaining output size*                   |
+| Tier         | Trigger    | Active capabilities (incremental)              | Typical remaining output*                        |
 | ------------ | ---------- | ---------------------------------------------- | ------------------------------------------------ |
-| **SIGNAL-1** | `/signal`  | Symbol grammar, filler drop, no preamble       | ~65% of unconstrained                            |
-| **SIGNAL-2** | `/signal2` | + BOOT declarations, aliases, delta-only turns | ~80% savings vs verbose                          |
-| **SIGNAL-3** | `/signal3` | All layers + **auto checkpoint every 5 turns** | ~90%+ on long sessions when checkpoints dominate |
+| **SIGNAL-1** | `/signal`  | Symbol grammar, filler drop, no preamble       | ~35% of baseline                                 |
+| **SIGNAL-2** | `/signal2` | + BOOT declarations, aliases, delta-only turns | ~20% of baseline                                 |
+| **SIGNAL-3** | `/signal3` | All layers + **auto checkpoint every 5 turns** | ~8% on long sessions (history reset)             |
 
-
-Order-of-magnitude; actual savings depend on task and host. Do not treat percentages as guarantees — treat them as **design targets**.
+*Percentages = tokens remaining as % of verbose baseline. Lower = more efficient. Targets based on EqualContext benchmarks.*
 
 **Choosing a tier:** use [When to use which tier (canonical)](#when-to-use-which-tier-canonical) below. Rule of thumb: default to **`/signal`** or **`/signal2`**; reserve **`/signal3`** for sessions where history growth justifies checkpointing.
 

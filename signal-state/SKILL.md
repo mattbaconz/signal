@@ -14,18 +14,15 @@ keywords:
 This skill manages the **Continuous State Engine** for the SIGNAL protocol. It transitions the context window from an ephemeral chat history to a persistent `.signal_state.md` file on disk.
 
 ## When to use
-
-- **At the start of a session:** If `.signal_state.md` exists in the workspace, you MUST read it before taking any other action. It holds your context.
-- **After significant actions:** When you complete a sub-task, merge a PR, or shift focus, you MUST update the state file.
-- **When the user says `/signal-state`**: Immediately refresh the state file based on the current reality of the workspace.
+- **Start of session**: Read `.signal_state.md` if it exists. It IS your context.
+- **Significant actions**: Update state on sub-task completion, PR merge, or focus shift.
+- **Trigger**: `/signal-state` → refresh file immediately.
 
 ## How it works
+Use `write_file` or `replace` to modify `.signal_state.md` in project root. No scripts required.
 
-You do not need a special bash script to interact with state. You just use your native file-editing tools (e.g., `write_to_file`, `replace_file_content`) to modify `.signal_state.md` in the project root.
-
-### The State Format (`.signal_state.md`)
-
-The file MUST strictly adhere to this format: YAML frontmatter for machine-readable context, separating into 3 functional blocks.
+### Format (`.signal_state.md`)
+YAML frontmatter + 3 blocks: Context, Progress, Next.
 
 ```markdown
 ---

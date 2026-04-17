@@ -6,37 +6,37 @@ All notable changes to this project are documented here. The format is informal;
 
 ## v0.2.1 — 2026-04-18
 
-Git tag: **`v0.2.1`** (recommended after merge).
+Git tag: `**v0.2.1`** (recommended after merge).
 
 ### Added
 
-- **[`signal/references/karpathy-coding-norms.md`](signal/references/karpathy-coding-norms.md)** — Karpathy-inspired coding discipline for implementation/editing (think before coding, simplicity first, surgical changes, goal-driven execution), adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT) with attribution; mapped to SIGNAL templates and `SIGNAL_DRIFT`. Wired into [`signal/SKILL.md`](signal/SKILL.md), [`templates/host-always-on.body.md`](templates/host-always-on.body.md), [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md) / [`claude-CLAUDE.md`](templates/claude-CLAUDE.md) (+ `.min`), and [`gemini-signal/GEMINI.md`](gemini-signal/GEMINI.md).
+- `**[signal/references/karpathy-coding-norms.md](signal/references/karpathy-coding-norms.md)**` — Karpathy-inspired coding discipline for implementation/editing (think before coding, simplicity first, surgical changes, goal-driven execution), adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT) with attribution; mapped to SIGNAL templates and `SIGNAL_DRIFT`. Wired into `[signal/SKILL.md](signal/SKILL.md)`, `[templates/host-always-on.body.md](templates/host-always-on.body.md)`, `[templates/gemini-GEMINI.md](templates/gemini-GEMINI.md)` / `[claude-CLAUDE.md](templates/claude-CLAUDE.md)` (+ `.min`), and `[gemini-signal/GEMINI.md](gemini-signal/GEMINI.md)`.
 
 ### Changed
 
 - `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.2.1** (aligned with extension/plugin manifests).
-- **Gemini extension at repository root** (from prior unreleased work): [`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1) mirrors `gemini-signal/` to the repo root for **[geminicli.com/extensions](https://geminicli.com/extensions/browse/)** and `gemini extensions install https://github.com/mattbaconz/signal` ([releasing](https://geminicli.com/docs/extensions/releasing)); add topic **`gemini-cli-extension`** on this repo.
+- **Gemini extension at repository root** (from prior unreleased work): `[scripts/sync-integration-packages.ps1](scripts/sync-integration-packages.ps1)` mirrors `gemini-signal/` to the repo root for **[geminicli.com/extensions](https://geminicli.com/extensions/browse/)** and `gemini extensions install https://github.com/mattbaconz/signal` ([releasing](https://geminicli.com/docs/extensions/releasing)); add topic `**gemini-cli-extension`** on this repo.
 
 ## v0.2.0 — 2026-04-17
 
-Git tag: **`v0.2.0`**.
+Git tag: `**v0.2.0**`.
 
 ### Added
 
-- **Host IDE rules (single source):** [`templates/host-always-on.body.md`](templates/host-always-on.body.md) + [`scripts/sync-host-integrations.ps1`](scripts/sync-host-integrations.ps1) generate [`.cursor/rules/signal.mdc`](.cursor/rules/signal.mdc), [`.windsurf/rules/signal.md`](.windsurf/rules/signal.md), [`.clinerules/signal.md`](.clinerules/signal.md), [`.github/copilot-instructions.md`](.github/copilot-instructions.md). Run automatically from [`scripts/verify.ps1`](scripts/verify.ps1).
-- **OpenAI Codex:** [`.codex/config.toml`](.codex/config.toml) + [`.codex/hooks.json`](.codex/hooks.json) — SessionStart runs [`hooks/signal-session-reminder.js`](hooks/signal-session-reminder.js) (stdout reminder; Windows Codex may disable hooks — see README).
-- **Claude Code hooks (optional):** [`hooks/install.ps1`](hooks/install.ps1) / [`hooks/install.sh`](hooks/install.sh), [`hooks/uninstall.ps1`](hooks/uninstall.ps1) / [`hooks/uninstall.sh`](hooks/uninstall.sh), [`hooks/signal-activate.js`](hooks/signal-activate.js), [`hooks/signal-statusline.ps1`](hooks/signal-statusline.ps1) / [`hooks/signal-statusline.sh`](hooks/signal-statusline.sh), [`hooks/README.md`](hooks/README.md).
+- **Host IDE rules (single source):** `[templates/host-always-on.body.md](templates/host-always-on.body.md)` + `[scripts/sync-host-integrations.ps1](scripts/sync-host-integrations.ps1)` generate `[.cursor/rules/signal.mdc](.cursor/rules/signal.mdc)`, `[.windsurf/rules/signal.md](.windsurf/rules/signal.md)`, `[.clinerules/signal.md](.clinerules/signal.md)`, `[.github/copilot-instructions.md](.github/copilot-instructions.md)`. Run automatically from `[scripts/verify.ps1](scripts/verify.ps1)`.
+- **OpenAI Codex:** `[.codex/config.toml](.codex/config.toml)` + `[.codex/hooks.json](.codex/hooks.json)` — SessionStart runs `[hooks/signal-session-reminder.js](hooks/signal-session-reminder.js)` (stdout reminder; Windows Codex may disable hooks — see README).
+- **Claude Code hooks (optional):** `[hooks/install.ps1](hooks/install.ps1)` / `[hooks/install.sh](hooks/install.sh)`, `[hooks/uninstall.ps1](hooks/uninstall.ps1)` / `[hooks/uninstall.sh](hooks/uninstall.sh)`, `[hooks/signal-activate.js](hooks/signal-activate.js)`, `[hooks/signal-statusline.ps1](hooks/signal-statusline.ps1)` / `[hooks/signal-statusline.sh](hooks/signal-statusline.sh)`, `[hooks/README.md](hooks/README.md)`.
 
 ### Changed
 
 - `signal_bundle_version` in core `SKILL.md` frontmatter set to **0.2.0** (aligned with extension/plugin manifests).
 - **README:** badges (license, release, CI, Discord), slogan (*Less noise, same signal.*), mermaid diagrams (token buckets + tiers), benchmark snapshot, Star History chart, repository layout for hooks/IDE paths; cross-tool section documents repo-local rules.
 - **Chess benchmark:** `EqualContext` arms use **matched** `GEMINI.md` layout; `run_chess_compare.ps1` reports on-disk sizes and JSON parity fields; README Evidence tables archived results.
-- [`docs/token-metrics.md`](docs/token-metrics.md): input checklist, benchmark pointer, repo-local rules + hooks pointer.
+- `[docs/token-metrics.md](docs/token-metrics.md)`: input checklist, benchmark pointer, repo-local rules + hooks pointer.
 
 ## v0.1.2 — 2026-04-16
 
-Git tag: **`v0.1.2`**.
+Git tag: `**v0.1.2`**.
 
 ### Added
 
@@ -54,7 +54,7 @@ Git tag: **`v0.1.2`**.
 
 ## v0.1.1 — 2026-04-16
 
-Git tag: **`v0.1.1`**.
+Git tag: `**v0.1.1`**.
 
 ### Added
 
@@ -97,4 +97,3 @@ Git tag: **`v0.1.1`**.
 - Long-session harness (if maintained locally under `benchmark/`): `RESULTS.md` / JSON artifacts stay private to the clone.
 - README: spec-style onboarding (skill catalog, invocation map, tier summary, TOC); clarifies normative docs vs this file.
 - Repository: `.gitignore` for common OS, env, editor, and tooling artifacts; optional **untracked** root markdown overlays and `**benchmark/`** for local notes and reproducibility scripts while README stays canonical in git.
-
