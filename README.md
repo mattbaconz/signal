@@ -1,25 +1,43 @@
-<div align="center">
-  <img src="assets/signal-logo.png" alt="SIGNAL" width="320" />
-</div>
+<p align="center">
+  <img src="assets/signal-logo.png" alt="SIGNAL" width="128" />
+</p>
 
-# SIGNAL
+<h1 align="center">SIGNAL</h1>
 
-[License: MIT](LICENSE)
-[Release](https://github.com/mattbaconz/signal/releases)
-[CI](https://github.com/mattbaconz/signal/actions/workflows/verify.yml)
-[Discord](https://discord.gg/4Dkt9CaK8M)
+<p align="center"><strong>Less noise, same signal.</strong></p>
 
-**Less noise, same signal.** Token-efficient answers (templates · symbols · checkpoints) and one-shot git workflows — **[Agent Skills](https://agentskills.io/)** for Claude Code, Cursor, Gemini CLI, Codex, and more.
+<p align="center">
+  Token-efficient answers (templates · symbols · checkpoints) and one-shot git workflows — <a href="https://agentskills.io/">Agent Skills</a> for Claude Code, Cursor, Gemini CLI, Codex, and more.
+</p>
 
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="License: MIT" /></a>
+  <a href="https://github.com/mattbaconz/signal/releases"><img src="https://img.shields.io/github/v/release/mattbaconz/signal?label=release" alt="Release" /></a>
+  <a href="https://github.com/mattbaconz/signal/actions/workflows/verify.yml"><img src="https://img.shields.io/github/actions/workflow/status/mattbaconz/signal/verify.yml?branch=main&amp;label=CI" alt="CI" /></a>
+  <a href="https://github.com/mattbaconz/signal/stargazers"><img src="https://img.shields.io/github/stars/mattbaconz/signal?style=flat&amp;label=stars" alt="GitHub stars" /></a>
+  <a href="https://discord.gg/4Dkt9CaK8M"><img src="https://img.shields.io/badge/Discord-chat-5865F2?logo=discord&amp;logoColor=white" alt="Discord" /></a>
+</p>
 
-|              |                                                                      |
-| ------------ | -------------------------------------------------------------------- |
-| **Repo**     | [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) |
-| **Chat**     | [Discord](https://discord.gg/4Dkt9CaK8M)                             |
-| **Protocol** | `[signal/SKILL.md](signal/SKILL.md)` · [Changelog](CHANGELOG.md)     |
+<p align="center">
+  <a href="#install">Install</a>
+  · <a href="#before--after">Before / After</a>
+  · <a href="#tier-specification-signal-1--2--3">Tiers</a>
+  · <a href="#commands">Commands</a>
+  · <a href="#benchmark-snapshot">Benchmark</a>
+  · <a href="#evidence-what-we-measure">Evidence</a>
+  · <a href="#cross-tool-porting">Hosts</a>
+  · <a href="#repository-layout">Layout</a>
+</p>
 
+---
 
-**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Single-turn Gemini runs with **matched** project `GEMINI.md` show lower `**tokens.total`** and much shorter replies vs verbose control — see [Evidence](#evidence-what-we-measure) and [Benchmark snapshot](#benchmark-snapshot). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See `**[docs/token-metrics.md](docs/token-metrics.md)**` (prompt vs output vs history) and the table below.
+| | |
+| -- | -- |
+| **Repo** | [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) |
+| **Chat** | [Discord](https://discord.gg/4Dkt9CaK8M) |
+| **Protocol** | [signal/SKILL.md](signal/SKILL.md) · [Changelog](CHANGELOG.md) |
+
+**Token savings (typical ranges, not guarantees):** tier design targets are **~65%** (SIGNAL-1), **~80%** (SIGNAL-2), and **~90%+** on long sessions when SIGNAL-3 checkpoints dominate output cost vs verbose replies. Replacing a long transcript with one checkpoint line reached **~94%** fewer tokens than verbatim history in one representative run (~18×; rough estimate, ~4 chars/token). Single-turn Gemini runs with **matched** project `GEMINI.md` show lower **`tokens.total`** and much shorter replies vs verbose control — see [Evidence](#evidence-what-we-measure) and [Benchmark snapshot](#benchmark-snapshot). Per-turn wins vary by task; hosts can add large fixed overhead (e.g. session reset). See **[docs/token-metrics.md](docs/token-metrics.md)** (prompt vs output vs history) and the table below.
 
 ## How it fits together
 
