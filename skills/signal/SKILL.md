@@ -38,7 +38,7 @@ Brutalist token compression protocol. One install. Every tool. ~85% fewer tokens
 - Use **`/signal2`** for longer multi-turn work when you want BOOT defaults, aliases, and delta-only turns without checkpoint reset risk.
 - Use **`/signal3`** only when the conversation history is large enough that checkpoint replacement outweighs the host's reset cost.
 
-Host-aware guidance lives in [`../../../README.md`](../../../README.md) (section **When to use which tier (canonical)**).
+Host-aware guidance lives in [`../../README.md`](../../README.md) (section **When to use which tier (canonical)**).
 
 ## If you cannot follow the active template
 

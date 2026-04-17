@@ -8,7 +8,7 @@ All notable changes to this project are documented here. The format is informal;
 
 ### Added
 
-- **Gemini extension (gallery):** [`templates/gemini-standalone-README.md`](templates/gemini-standalone-README.md), [`templates/gemini-standalone-PUBLISHING.md`](templates/gemini-standalone-PUBLISHING.md), and [`scripts/sync-gemini-standalone-repo.ps1`](scripts/sync-gemini-standalone-repo.ps1) publish `gemini-signal/` to a sibling repo with `gemini-extension.json` at the **repository root** ([Gemini releasing guide](https://geminicli.com/docs/extensions/releasing)). Documented install: **[github.com/mattbaconz/gemini-signal](https://github.com/mattbaconz/gemini-signal)**.
+- **Gemini extension at repository root:** [`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1) now mirrors `gemini-signal/` to the repo root (`gemini-extension.json`, `GEMINI.md`, `skills/`, `commands/`, `bin/`) so **[geminicli.com/extensions](https://geminicli.com/extensions/browse/)** indexing and `gemini extensions install https://github.com/mattbaconz/signal` work without a second repository ([releasing](https://geminicli.com/docs/extensions/releasing)). Add GitHub topic **`gemini-cli-extension`** on this repo.
 
 ## v0.2.0 — 2026-04-17
 

@@ -1,20 +1,18 @@
-# SIGNAL — Gemini CLI extension
+# SIGNAL — Gemini CLI extension (packaged copy)
 
-This directory is a **Gemini CLI extension** (manifest: `gemini-extension.json`). Skill sources are copied from the repo root by `scripts/sync-integration-packages.ps1`.
+This directory mirrors the **Gemini CLI extension** layout (`gemini-extension.json`, `skills/`, `commands/`, `bin/`, `GEMINI.md`). Canonical skill sources are the six folders at the repo root (`signal/`, …); `scripts/sync-integration-packages.ps1` copies them here and **also mirrors the same extension tree to the repository root** so the [gallery indexer](https://geminicli.com/docs/extensions/releasing) sees `gemini-extension.json` at the **Git root**.
 
-## Gallery / remote install (`gemini-extension.json` at repo root)
+## Remote install (GitHub URL)
 
-For **`gemini extensions install https://github.com/...`** and the [extension gallery](https://geminicli.com/extensions/browse/), use the **standalone** repository (manifest at repository root, not nested):
-
-**[github.com/mattbaconz/gemini-signal](https://github.com/mattbaconz/gemini-signal)**
+From any machine:
 
 ```bash
-gemini extensions install https://github.com/mattbaconz/gemini-signal --consent
+gemini extensions install https://github.com/mattbaconz/signal --consent
 ```
 
-Sync from this monorepo: `scripts/sync-integration-packages.ps1` then `scripts/sync-gemini-standalone-repo.ps1` (see [`templates/gemini-standalone-PUBLISHING.md`](../templates/gemini-standalone-PUBLISHING.md)).
+The CLI clones the repo and uses the root-level `gemini-extension.json` (same layout as [extension reference](https://geminicli.com/docs/extensions/reference/)).
 
-## Install (local path / dev from this monorepo)
+## Local dev (this monorepo)
 
 From the repository root:
 
@@ -22,19 +20,19 @@ From the repository root:
 gemini extensions link ./gemini-signal
 ```
 
-Or:
+Or install the folder path:
 
 ```bash
 gemini extensions install ./gemini-signal --consent
 ```
 
-Restart the CLI after install. Remote URL install from **this** repo is awkward because the manifest is not at the Git root; prefer the standalone repo above or `link` with a local clone.
+Restart the CLI after install.
 
 ## Bundled pieces
 
 - `skills/` — six SIGNAL skills (synced copies).
 - `GEMINI.md` — short session defaults (merged into extension context).
-- `commands/signal/*.toml` — slash commands such as `/signal:commit` (git context + instructions).
-- `bin/run-commit.*`, `bin/run-push.*` — forward to bundled `commit.ps1` / `push.ps1`; run with **current directory = git repository root**.
+- `commands/signal/*.toml` — slash commands such as `/signal:commit`.
+- `bin/run-commit.*`, `bin/run-push.*` — forward to bundled scripts; run with **current directory = git repository root**.
 
 See the main [README.md](../README.md) for the full protocol and tier table.

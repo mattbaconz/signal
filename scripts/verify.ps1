@@ -60,6 +60,16 @@ foreach ($p in @($geminiExt, $geminiGem, $geminiSkill, $geminiBin)) {
 }
 if (-not $script:VerifyFailed) { Ok 'gemini-signal structure' }
 
+# Root-level Gemini extension mirror (gallery expects gemini-extension.json at Git root)
+$rootExt = Join-Path $RepoRoot 'gemini-extension.json'
+$rootGem = Join-Path $RepoRoot 'GEMINI.md'
+$rootSkill = Join-Path $RepoRoot 'skills\signal\SKILL.md'
+$rootBin = Join-Path $RepoRoot 'bin\run-commit.ps1'
+foreach ($p in @($rootExt, $rootGem, $rootSkill, $rootBin)) {
+  if (-not (Test-Path -LiteralPath $p)) { Fail "repo-root Gemini extension incomplete: missing $p" }
+}
+if (-not $script:VerifyFailed) { Ok 'repo-root Gemini extension (gallery layout)' }
+
 $claudePlug = Join-Path $RepoRoot 'claude-signal\.claude-plugin\plugin.json'
 $claudeSkill = Join-Path $RepoRoot 'claude-signal\skills\signal\SKILL.md'
 foreach ($p in @($claudePlug, $claudeSkill)) {
