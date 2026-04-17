@@ -10,6 +10,7 @@ Git tag: `**v0.2.1`** (recommended after merge).
 
 ### Added
 
+- **[docs/gemini-team-adoption.md](docs/gemini-team-adoption.md)** — playbook for org-wide Gemini CLI rollout (skills + committed project `GEMINI.md` + process); **[templates/team-pr-checklist.md](templates/team-pr-checklist.md)** — copy-paste PR checklist fragment for application repos. **[README.md](README.md)** links under *Installation options* (*Team rollout (Gemini CLI)*) and *Further reading*.
 - `**[signal/references/karpathy-coding-norms.md](signal/references/karpathy-coding-norms.md)**` — Karpathy-inspired coding discipline for implementation/editing (think before coding, simplicity first, surgical changes, goal-driven execution), adapted from [forrestchang/andrej-karpathy-skills](https://github.com/forrestchang/andrej-karpathy-skills) (MIT) with attribution; mapped to SIGNAL templates and `SIGNAL_DRIFT`. Wired into `[signal/SKILL.md](signal/SKILL.md)`, `[templates/host-always-on.body.md](templates/host-always-on.body.md)`, `[templates/gemini-GEMINI.md](templates/gemini-GEMINI.md)` / `[claude-CLAUDE.md](templates/claude-CLAUDE.md)` (+ `.min`), and `[gemini-signal/GEMINI.md](gemini-signal/GEMINI.md)`.
 
 ### Changed

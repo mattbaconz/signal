@@ -383,6 +383,10 @@ For Gemini CLI, **skills alone do not change the default session tone or greetin
 
 **Do not duplicate packaged integrations:** if you use the **Gemini extension** ([gemini-signal/](gemini-signal/)) or **Claude plugin** ([claude-signal/](claude-signal/)), avoid also copying the same skill folders into another discovery path for the same host (for example `~/.gemini/skills/signal` **and** the extension’s bundled `skills/`). Pick one install method per tool so discovery does not load two copies.
 
+### Team rollout (Gemini CLI)
+
+For **every developer** on a team: install skills globally (`npx skills add mattbaconz/signal -y -g`), then make SIGNAL **always-on** by committing a **project `GEMINI.md`** merged from [templates/gemini-GEMINI.min.md](templates/gemini-GEMINI.min.md) (or the fuller [templates/gemini-GEMINI.md](templates/gemini-GEMINI.md)). Add **process** (onboarding + review) so defaults are not stripped casually. Full playbook: [docs/gemini-team-adoption.md](docs/gemini-team-adoption.md). Optional PR fragment for **your app repo:** [templates/team-pr-checklist.md](templates/team-pr-checklist.md).
+
 ### Claude Code plugin and Gemini CLI extension
 
 
@@ -660,6 +664,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 ├── CHANGELOG.md
 ├── docs/
 │   ├── token-metrics.md      ← prompt vs output vs history (reading CLI stats)
+│   ├── gemini-team-adoption.md ← org rollout (Gemini CLI + committed GEMINI.md)
 │   └── signal-compress.md    ← shrink GEMINI.md / notes (input-side compression)
 ├── hooks/                    ← Claude Code SessionStart + statusline; see hooks/README.md
 ├── .codex/                   ← Codex hooks (SessionStart → signal-session-reminder.js)
@@ -724,6 +729,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 | Document                                                                       | Use it when                                                     |
 | ------------------------------------------------------------------------------ | --------------------------------------------------------------- |
 | [docs/token-metrics.md](docs/token-metrics.md)                               | Prompt vs output vs history; reading CLI `stats`                |
+| [docs/gemini-team-adoption.md](docs/gemini-team-adoption.md)                 | Rolling out SIGNAL to a whole team on Gemini CLI                |
 | [docs/signal-compress.md](docs/signal-compress.md)                           | Shorter `GEMINI.md` / notes (SIGNAL-1 rewrite workflow)         |
 | [benchmark/benchmark chess/README.md](benchmark/benchmark%20chess/README.md) | Gemini CLI chess harness; **EqualContext** vs **Default** pairs |
 | [signal/SKILL.md](signal/SKILL.md)                                           | Exact activation strings, layers, `SIGNAL_DRIFT` protocol       |
