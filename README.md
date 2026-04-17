@@ -355,7 +355,7 @@ For Gemini CLI, **skills alone do not change the default session tone or greetin
 | Package | What it is | Install |
 | --------|------------|---------|
 | **[`claude-signal/`](claude-signal/)** | Claude Code plugin (`.claude-plugin/plugin.json` + `skills/`). Slash skills are **namespaced**: `/signal:signal-commit`, etc. | Local: `claude --plugin-dir ./claude-signal`. Marketplace: add this repo, then `/plugin install signal@signal-suite` (see [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json)). |
-| **[`gemini-signal/`](gemini-signal/)** | Gemini CLI extension (`gemini-extension.json`, bundled `skills/`, optional `commands/` + `bin/` helpers). | Local: `gemini extensions link ./gemini-signal` or `gemini extensions install ./gemini-signal --consent`. Remote URL installs usually need `gemini-extension.json` at the **repo root**; nested paths work best via `link` or a local clone path. |
+| **[`gemini-signal/`](gemini-signal/)** | Gemini CLI extension (`gemini-extension.json`, bundled `skills/`, optional `commands/` + `bin/` helpers). | **Remote / gallery:** [github.com/mattbaconz/gemini-signal](https://github.com/mattbaconz/gemini-signal) (`gemini extensions install https://github.com/mattbaconz/gemini-signal --consent`). **This monorepo:** `gemini extensions link ./gemini-signal` or local `install` path. |
 
 After editing any root skill folder, run `scripts/sync-integration-packages.ps1` (or `scripts/verify.ps1`, which runs sync first) so `gemini-signal/skills/` and `claude-signal/skills/` stay in sync.
 
@@ -650,9 +650,12 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 ├── signal-ckpt/
 ├── signal-state/             ← optional
 ├── templates/
+│   ├── gemini-standalone-README.md   ← copied to sibling gemini-signal repo (gallery)
+│   └── gemini-standalone-PUBLISHING.md
 └── scripts/
     ├── install-signal-all.ps1
     ├── sync-integration-packages.ps1
+    ├── sync-gemini-standalone-repo.ps1  ← copy gemini-signal/ to ../gemini-signal (gallery root manifest)
     ├── sync-host-integrations.ps1  ← IDE rules from templates/host-always-on.body.md
     ├── prepare-awesome-agent-skills-pr.ps1
     ├── benchmark.ps1
@@ -668,6 +671,7 @@ your-clone/                   ← repository root (folder name may differ, e.g. 
 
 **Versioning:** Ship **`signal_bundle_version`** in core `SKILL.md` frontmatter with the tag you cut; add a section to [`CHANGELOG.md`](CHANGELOG.md); push an annotated git tag (`git tag -a v0.x.y -m "…"`); optional GitHub Release from that tag. Keep the three aligned per release.
 
+- **Gemini extension (gallery):** Standalone repo **[github.com/mattbaconz/gemini-signal](https://github.com/mattbaconz/gemini-signal)** — add topic **`gemini-cli-extension`** on GitHub; sync from this monorepo with [`scripts/sync-gemini-standalone-repo.ps1`](scripts/sync-gemini-standalone-repo.ps1) after `sync-integration-packages.ps1`.
 - **GitHub release:** Tag **`v0.2.0`**. [Draft a release](https://github.com/mattbaconz/signal/releases/new?tag=v0.2.0&title=SIGNAL%20v0.2.0) (same tag), paste a short summary from [`CHANGELOG.md`](CHANGELOG.md), publish.
 - **CI:** [Actions](https://github.com/mattbaconz/signal/actions) runs `scripts/verify.ps1` on pushes/PRs to `main`.
 - **Discord:** [Join](https://discord.gg/4Dkt9CaK8M). Useful pins for mods: install `npx skills add mattbaconz/signal -y -g`, benchmark `powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1`, link to this repo.

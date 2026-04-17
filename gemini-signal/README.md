@@ -2,7 +2,19 @@
 
 This directory is a **Gemini CLI extension** (manifest: `gemini-extension.json`). Skill sources are copied from the repo root by `scripts/sync-integration-packages.ps1`.
 
-## Install (local path / dev)
+## Gallery / remote install (`gemini-extension.json` at repo root)
+
+For **`gemini extensions install https://github.com/...`** and the [extension gallery](https://geminicli.com/extensions/browse/), use the **standalone** repository (manifest at repository root, not nested):
+
+**[github.com/mattbaconz/gemini-signal](https://github.com/mattbaconz/gemini-signal)**
+
+```bash
+gemini extensions install https://github.com/mattbaconz/gemini-signal --consent
+```
+
+Sync from this monorepo: `scripts/sync-integration-packages.ps1` then `scripts/sync-gemini-standalone-repo.ps1` (see [`templates/gemini-standalone-PUBLISHING.md`](../templates/gemini-standalone-PUBLISHING.md)).
+
+## Install (local path / dev from this monorepo)
 
 From the repository root:
 
@@ -16,7 +28,7 @@ Or:
 gemini extensions install ./gemini-signal --consent
 ```
 
-Restart the CLI after install. Remote `gemini extensions install <github-url>` expects `gemini-extension.json` at the **repository root**; this repo nests the extension here, so prefer `link` or install from a **local clone path** as above.
+Restart the CLI after install. Remote URL install from **this** repo is awkward because the manifest is not at the Git root; prefer the standalone repo above or `link` with a local clone.
 
 ## Bundled pieces
 

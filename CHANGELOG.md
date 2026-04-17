@@ -4,6 +4,12 @@ All notable changes to this project are documented here. The format is informal;
 
 **Versioning:** For each release, align `**signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see README *Releases and community*).
 
+## Unreleased
+
+### Added
+
+- **Gemini extension (gallery):** [`templates/gemini-standalone-README.md`](templates/gemini-standalone-README.md), [`templates/gemini-standalone-PUBLISHING.md`](templates/gemini-standalone-PUBLISHING.md), and [`scripts/sync-gemini-standalone-repo.ps1`](scripts/sync-gemini-standalone-repo.ps1) publish `gemini-signal/` to a sibling repo with `gemini-extension.json` at the **repository root** ([Gemini releasing guide](https://geminicli.com/docs/extensions/releasing)). Documented install: **[github.com/mattbaconz/gemini-signal](https://github.com/mattbaconz/gemini-signal)**.
+
 ## v0.2.0 — 2026-04-17
 
 Git tag: **`v0.2.0`**.
