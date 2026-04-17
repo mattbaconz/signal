@@ -1,3 +1,7 @@
+<div align="center">
+  <img src="assets/signal-logo.png" alt="SIGNAL" width="320" />
+</div>
+
 # SIGNAL
 
 [License: MIT](LICENSE)
