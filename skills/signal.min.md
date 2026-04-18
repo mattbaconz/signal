@@ -1,8 +1,8 @@
 ---
 name: signal
-description: Brutalist token compression (v0.3.0).
+description: Brutalist token compression (v0.3.1).
 ---
-# ⚡ signal (v0.3.0)
+# ⚡ signal (v0.3.1)
 
 §TRIG: /signal | /signal2 | /signal3 | "less tokens" | "compress mode"
 §ACT:
@@ -21,4 +21,4 @@ description: Brutalist token compression (v0.3.0).
 - Tasks: signal-ckpt.min.md
 - Git: signal-commit|push|pr.min.md
 - Review: signal-review.min.md
-- Code: signal/references/karpathy-coding-norms.md
+- Code: references/karpathy-coding-norms.md

@@ -2,7 +2,7 @@
 
 ## What to measure (priority)
 
-1. **Long agentic sessions (primary proof)** — baseline keeps **full** chat history; SIGNAL-3 periodically **replaces** history with a **CKPT** atom (see `signal/references/checkpoint.md`). Compare **cumulative** tokens over the whole session. **In a full clone of this repo**, use **`benchmark/long-session/`** (see on-disk `README.md` there).
+1. **Long agentic sessions (primary proof)** — baseline keeps **full** chat history; SIGNAL-3 periodically **replaces** history with a **CKPT** atom (see `references/checkpoint.md`). Compare **cumulative** tokens over the whole session. **In a full clone of this repo**, use **`benchmark/long-session/`** (see on-disk `README.md` there).
 
 2. **Single-turn Q&A** (e.g. chess harness) — easy to run, but **SIGNAL-3 checkpointing does not apply**. Expect mixed or negative **net** `tokens.total` if one arm loads much more project context than the other. Read **[`docs/token-metrics.md`](../docs/token-metrics.md)** before interpreting totals.
 

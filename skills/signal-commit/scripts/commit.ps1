@@ -1,4 +1,4 @@
-# SIGNAL v0.3.0 - commit.ps1
+# SIGNAL v0.3.1 - commit.ps1
 # Usage: .\commit.ps1 [-dry] "message"
 
 $dry = $args -contains "-dry"

@@ -6,7 +6,7 @@ description: >
   turns, alias system, and checkpoint compression. Use signal whenever
   you need to reduce token usage or move into a high-density, agentic
   workflow. Supports three intensity tiers: /signal, /signal2, /signal3.
-signal_bundle_version: "0.3.0"
+signal_bundle_version: "0.3.1"
 ---
 
 # ⚡ SIGNAL — Core Compression Skill

@@ -2,7 +2,7 @@
 name: signal-diff
 description: High-density change summaries.
 ---
-# ⚡ signal-diff (v0.3.0)
+# ⚡ signal-diff (v0.3.1)
 
 §TRIG: /signal-diff | "summarize diff" | "what changed?"
 §ACT: raw_diff → logical_summary (∅raw)

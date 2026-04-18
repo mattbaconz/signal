@@ -1,5 +1,5 @@
 #Requires -Version 5.1
-# SIGNAL v0.3.0 - sync-integration-packages.ps1
+# SIGNAL v0.3.1 - sync-integration-packages.ps1
 # Source of truth: root skills/ directory.
 # Mirrors canonical skills into gemini-signal/skills and claude-signal/skills.
 
@@ -53,7 +53,15 @@ $geminiPack = Join-Path $RepoRoot 'gemini-signal'
 
 # Root Gemini extension (gallery + gemini extensions install <github-url>)
 Copy-Item -LiteralPath (Join-Path $geminiPack 'gemini-extension.json') -Destination (Join-Path $RepoRoot 'gemini-extension.json') -Force
-Copy-Item -LiteralPath (Join-Path $geminiPack 'GEMINI.md') -Destination (Join-Path $RepoRoot 'GEMINI.md') -Force
+
+# Root GEMINI.md: same content as gemini-signal/GEMINI.md but paths are repo-root-relative (no ../).
+$geminiSrc = Join-Path $geminiPack 'GEMINI.md'
+$geminiDst = Join-Path $RepoRoot 'GEMINI.md'
+# UTF-8 throughout (source files are UTF-8; default ReadAllText can mis-detect on Windows without BOM).
+$utf8 = [System.Text.Encoding]::UTF8
+$geminiBody = [System.IO.File]::ReadAllText($geminiSrc, $utf8)
+$geminiBody = $geminiBody.Replace('../skills/', 'skills/').Replace('../references/', 'references/')
+[System.IO.File]::WriteAllText($geminiDst, $geminiBody, $utf8)
 
 # Robocopy for directories
 $syncDirs = @('commands', 'bin')
@@ -67,5 +75,5 @@ foreach ($dir in $syncDirs) {
     }
 }
 
-Write-Host "sync-integration-packages: OK (v0.3.0 logic)" -ForegroundColor Green
+Write-Host "sync-integration-packages: OK (v0.3.1 logic)" -ForegroundColor Green
 exit 0

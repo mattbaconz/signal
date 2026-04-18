@@ -2,7 +2,7 @@
 name: signal-push
 description: Commit + push to remote.
 ---
-# ⚡ signal-push (v0.3.0)
+# ⚡ signal-push (v0.3.1)
 
 §TRIG: /signal-push | "push [everything|this|changes]" | "ship it" | /signal-commit --push
 §ACT: signal-commit → git push (∅conf)

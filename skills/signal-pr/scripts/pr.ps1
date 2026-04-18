@@ -1,4 +1,4 @@
-# SIGNAL v0.3.0 - pr.ps1
+# SIGNAL v0.3.1 - pr.ps1
 # Usage: .\pr.ps1 [-dry] "message"
 
 $dry = $args -contains "-dry"

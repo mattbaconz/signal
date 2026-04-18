@@ -1,5 +1,5 @@
 #Requires -Version 5.1
-# SIGNAL v0.3.0 - shrink.ps1
+# SIGNAL v0.3.1 - shrink.ps1
 # Automates minification of SKILL.md into SKILL.min.md using Symbol Grammar.
 
 [CmdletBinding()]
@@ -41,7 +41,7 @@ function Shrink-File([string]$target) {
 }
 
 if ($All) {
-    # Only check top-level skills directory and root for canonical v0.3.0 pairs
+    # Only check top-level skills directory and root for canonical v0.3.1 pairs
     Get-ChildItem -Path "$repoRoot\skills" -Filter "*.md" | Where-Object { $_.Name -notmatch "\.min\.md$" -and $_.Name -ne "signal-core.min.md" } | ForEach-Object {
         Shrink-File $_.FullName
     }

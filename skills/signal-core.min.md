@@ -1,4 +1,4 @@
-# ⚡ signal-core (v0.3.0)
+# ⚡ signal-core (v0.3.1)
 
 §CORE:
 - !∅prose | !∅preamble | !∅hedge | Δ:on

@@ -2,7 +2,7 @@
 name: signal-state
 description: Continuous disk-backed state engine.
 ---
-# ⚡ signal-state (v0.3.0)
+# ⚡ signal-state (v0.3.1)
 
 §TRIG: /signal-state | Start:session | End:sub-task
 §ACT: ephemeral → persistent (.signal_state.md)

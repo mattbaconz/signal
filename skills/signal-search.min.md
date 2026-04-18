@@ -2,7 +2,7 @@
 name: signal-search
 description: High-density search/grep summaries.
 ---
-# ⚡ signal-search (v0.3.0)
+# ⚡ signal-search (v0.3.1)
 
 §TRIG: /signal-search | "find [this|pattern]" | "search for [x]"
 §ACT: raw_search → summarized_results (∅raw)

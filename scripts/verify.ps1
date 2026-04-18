@@ -7,7 +7,7 @@ param(
 
 <#
 .SYNOPSIS
-  Verification harness for SIGNAL v0.3.0
+  Verification harness for SIGNAL v0.3.1
 
   Run from repo root:
     powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
@@ -21,7 +21,7 @@ $RepoRoot = Split-Path $PSScriptRoot -Parent
 $rootSkillsDir = Join-Path $RepoRoot 'skills'
 
 if (-not (Test-Path $rootSkillsDir)) {
-  Write-Host 'x Run this script from the singal-skill repo (skills/ directory not found).'
+  Write-Host 'x Run this script from the SIGNAL repo (skills/ directory not found).'
   exit 1
 }
 
@@ -61,7 +61,7 @@ $rootBin = Join-Path $RepoRoot 'bin\run-commit.ps1'
 foreach ($p in @($rootExt, $rootGem, $rootSkill, $rootMinSkill, $rootBin)) {
   if (-not (Test-Path -LiteralPath $p)) { Fail "repo-root incomplete: missing $p" }
 }
-if (-not $script:VerifyFailed) { Ok 'repo-root structure (v0.3.0)' }
+if (-not $script:VerifyFailed) { Ok 'repo-root structure (v0.3.1)' }
 
 # Extension mirroring structure
 $geminiSkill = Join-Path $RepoRoot 'gemini-signal\skills\signal\SKILL.md'
@@ -72,7 +72,7 @@ $claudeMinSkill = Join-Path $RepoRoot 'claude-signal\skills\signal\SKILL.min.md'
 foreach ($p in @($geminiSkill, $claudeSkill, $geminiMinSkill, $claudeMinSkill)) {
   if (-not (Test-Path -LiteralPath $p)) { Fail "host extension incomplete: missing $p" }
 }
-if (-not $script:VerifyFailed) { Ok 'host extensions structure (v0.3.0 mirrored)' }
+if (-not $script:VerifyFailed) { Ok 'host extensions structure (v0.3.1 mirrored)' }
 
 # --- 0b) bin/run-commit.ps1 --dry ---
 $commitWrapper = Join-Path $RepoRoot 'bin\run-commit.ps1'
@@ -148,5 +148,5 @@ if ($script:VerifyFailed) {
   Write-Host "`nx One or more checks failed." -ForegroundColor Red
   exit 1
 }
-Write-Host "`n+ All required checks passed (v0.3.0)." -ForegroundColor Green
+Write-Host "`n+ All required checks passed (v0.3.1)." -ForegroundColor Green
 exit 0

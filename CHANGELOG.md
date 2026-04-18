@@ -4,6 +4,23 @@ All notable changes to this project are documented here. The format is informal;
 
 **Versioning:** For each release, align `**signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see README *Releases and community*).
 
+## v0.3.1 — 2026-04-18
+
+Patch release: version + path consistency across the bundle and host packages.
+
+### Fixed
+
+- **`signal_bundle_version`:** set to **0.3.1** everywhere it was still **0.2.1** (canonical `skills/*.md`, mirrored host `SKILL.md` files after sync).
+- **Obsolete paths:** replaced **`signal/references/*`** and **`../skills/signal/references/*`** with repo-root **`references/*`** in skills, `GEMINI.md`, templates, IDE rules, Copilot instructions, and benchmark copy.
+- **Benchmark cross-links:** added [`references/checkpoint.md`](references/checkpoint.md); updated [`scripts/benchmark.ps1`](scripts/benchmark.ps1), [`assets/benchmark-terminal-preview.html`](assets/benchmark-terminal-preview.html), and [`benchmark/README.md`](benchmark/README.md).
+- **`scripts/verify.ps1`:** error message typo (**SIGNAL** repo).
+
+### Changed
+
+- **Extension manifests:** [`gemini-extension.json`](gemini-extension.json) (root + [`gemini-signal/`](gemini-signal/gemini-extension.json)), [`claude-signal/.claude-plugin/plugin.json`](claude-signal/.claude-plugin/plugin.json), [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) → **0.3.1**.
+- **Skill headers / scripts:** version strings bumped to **v0.3.1** where applicable.
+- **`scripts/sync-integration-packages.ps1`:** when writing root [`GEMINI.md`](GEMINI.md), rewrite `../skills/` → `skills/` and `../references/` → `references/`; read/write **UTF-8** so Unicode symbols are preserved.
+
 ## v0.3.0 — 2026-04-18
 
 "The Shrinking Session" — Major architecture upgrade for token density and statefulness.

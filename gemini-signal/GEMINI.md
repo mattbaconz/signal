@@ -1,4 +1,4 @@
-# ⚡ SIGNAL (v0.3.0) — Gemini CLI
+# ⚡ SIGNAL (v0.3.1) — Gemini CLI
 
 Brutalist token compression. §CORE⊂`../skills/signal-core.min.md`.
 
@@ -8,7 +8,7 @@ Brutalist token compression. §CORE⊂`../skills/signal-core.min.md`.
 - Small talk: 1-line fragment (e.g., `hi|ready`)
 - ∅compress: code, paths, line #, errors, tech terms
 
-## ⚡ High-Density Skills (v0.3.0)
+## ⚡ High-Density Skills (v0.3.1)
 - /signal[2|3]: follow `../skills/signal.min.md`
 - /signal-ckpt: follow `../skills/signal-ckpt.min.md` (Auto-S3: every 5 turns)
 - /signal-state: follow `../skills/signal-state.min.md` (.signal_state.md = !state)
@@ -19,7 +19,7 @@ Brutalist token compression. §CORE⊂`../skills/signal-core.min.md`.
 ## ⚡ Coding & Testing (Karpathy+)
 - Logic Δ: !reproduce ⊕ !test ⊕ !verify
 - surgical updates | ∅filler | ∅unrelated_refactor
-- Ref: `../skills/signal/references/karpathy-coding-norms.md`
+- Ref: `../references/karpathy-coding-norms.md`
 
 ---
 

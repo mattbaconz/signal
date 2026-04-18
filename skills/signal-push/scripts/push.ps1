@@ -1,4 +1,4 @@
-# SIGNAL v0.3.0 - push.ps1
+# SIGNAL v0.3.1 - push.ps1
 # Usage: .\push.ps1 [-dry] "message"
 
 $dry = $args -contains "-dry"

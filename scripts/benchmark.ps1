@@ -20,7 +20,7 @@ Write-Host ''
 Write-Host 'SIGNAL benchmark - estimated tokens (ceil(charLength/4); not billed API tokens)' -ForegroundColor Cyan
 Write-Host ''
 
-# --- Fixture A: 10-turn transcript vs checkpoint (from signal/references/checkpoint.md) ---
+# --- Fixture A: 10-turn transcript vs checkpoint (see references/checkpoint.md) ---
 $transcriptA = @'
 Turn 1: User asked to add JWT auth to Express API. We discussed strategy.
 Turn 2: Decided to use jsonwebtoken library, store refresh tokens in Redis.
@@ -62,7 +62,7 @@ Write-Host ''
 Write-Host ("Checkpoint A: verbatim ~{0} tok; CKPT ~{1} tok -> ~{2}% fewer than full transcript (~{3}x compression)." -f $vA, $sA, $pctA, $ratioA) -ForegroundColor Green
 $tokA = Get-EstimatedTokens $transcriptA
 Write-Host ''
-Write-Host ("Note: Scenario A uses the compact 10-line summary from signal/references/checkpoint.md (~{0} tok here). A fuller thread (README ~2400 tok row) would show a larger ratio vs the same CKPT." -f $tokA) -ForegroundColor DarkGray
+Write-Host ("Note: Scenario A uses the compact 10-line summary (see references/checkpoint.md; ~{0} tok here). A fuller thread would show a larger ratio vs the same CKPT." -f $tokA) -ForegroundColor DarkGray
 Write-Host 'Real sessions vary by model, tool output, and host overhead.' -ForegroundColor DarkGray
 Write-Host ''
 exit 0

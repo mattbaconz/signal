@@ -2,7 +2,7 @@
 name: signal-commit
 description: Stage + conventional commit (0 conf).
 ---
-# ⚡ signal-commit (min)
+# ⚡ signal-commit (v0.3.1)
 
 §TRIG: /signal-commit | "commit [everything|this|changes]" | ∅msg_commit
 §ACT: ∅conf | Δ:on | TMPL:git

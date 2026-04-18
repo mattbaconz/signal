@@ -6,7 +6,7 @@ description: >
   user types /signal-review, "review this", "review my code", "check this PR",
   "review this file", or asks for a code review on any file, diff, or PR.
   Works standalone or as part of a SIGNAL session.
-signal_bundle_version: "0.2.1"
+signal_bundle_version: "0.3.1"
 ---
 
 # ⚡ signal-review — Templated Code Review
@@ -151,7 +151,7 @@ The summary line covers all files combined.
 
 ## BOOT Integration
 
-If `BOOT:review` is active (see `signal/references/boot-presets.md`):
+If `BOOT:review` is active (see [`references/boot-presets.md`](../references/boot-presets.md)):
 - Output format is already set to `TMPL:rev`
 - Severity is already required by `severity_required`
 - No preamble, no summary prose — just the lines and the `∑` line

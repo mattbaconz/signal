@@ -1,5 +1,7 @@
 # SIGNAL Benchmarks
 
+Fixture notes for scripted runs: [`checkpoint.md`](checkpoint.md).
+
 Targets:
 - S1: ~35% tokens remaining
 - S2: ~20% tokens remaining
