@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>SIGNAL benchmark — screenshot helper</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #0c0c0c;
+      color: #cccccc;
+      font-family: "Cascadia Code", "Consolas", "Monaco", monospace;
+      font-size: 15px;
+      line-height: 1.45;
+      padding: 28px 32px;
+    }
+    .shell {
+      max-width: 920px;
+      border: 1px solid #333;
+      border-radius: 8px;
+      padding: 20px 24px;
+      background: #0d1117;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.45);
+    }
+    .title { color: #58a6ff; font-weight: 600; margin-bottom: 4px; }
+    .subtitle { color: #8b949e; font-size: 13px; margin-bottom: 18px; }
+    .path { color: #7ee787; margin-bottom: 16px; }
+    .out { white-space: pre-wrap; margin: 0; color: #e6edf3; }
+    .dim { color: #8b949e; font-size: 13px; margin-top: 16px; }
+    .note {
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px solid #30363d;
+      color: #8b949e;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="title">SIGNAL benchmark — estimated tokens</div>
+    <div class="subtitle">ceil(charLength / 4) · not billed API tokens · run: scripts/benchmark.ps1</div>
+    <div class="path">PS C:\skills\signal&gt; .\scripts\benchmark.ps1</div>
+    <pre class="out">SIGNAL benchmark - estimated tokens (ceil(charLength/4); not billed API tokens)
+
+Scenarios:
+  A: 10-turn history vs CKPT       verbose ~  167 tok | SIGNAL ~  45 tok | save ~  122 tok ( 73.1% smaller, 3.7x vs SIGNAL)
+  B: bug paragraph vs SIGNAL line  verbose ~   51 tok | SIGNAL ~   7 tok | save ~   44 tok ( 86.3% smaller, 7.3x vs SIGNAL)
+  C: hedging vs [conf]             verbose ~    8 tok | SIGNAL ~   2 tok | save ~    6 tok (   75% smaller, 4x vs SIGNAL)
+
+Checkpoint A: verbatim ~167 tok; CKPT ~45 tok -&gt; ~73.1% fewer than full transcript (~3.7x compression).
+
+Note: Scenario A uses the compact 10-line summary from signal/references/checkpoint.md (~167 tok here). A fuller thread (README ~2400 tok row) would show a larger ratio vs the same CKPT.
+Real sessions vary by model, tool output, and host overhead.</pre>
+    <p class="dim">Tip: maximize this window (F11), then Win+Shift+S to capture.</p>
+    <p class="note">Regenerate exact output anytime from repo root: <code style="color:#79c0ff">powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1</code></p>
+  </div>
+</body>
+</html>
