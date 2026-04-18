@@ -1,81 +1,71 @@
 #Requires -Version 5.1
-# Copy canonical skill folders into gemini-signal/skills and claude-signal/skills.
-# Run from repo root:  powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\sync-integration-packages.ps1
+# SIGNAL v0.3.0 - sync-integration-packages.ps1
+# Source of truth: root skills/ directory.
+# Mirrors canonical skills into gemini-signal/skills and claude-signal/skills.
+
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $RepoRoot = Split-Path $PSScriptRoot -Parent
-if (-not (Test-Path (Join-Path $RepoRoot 'signal\SKILL.md'))) {
-  Write-Error "Run from SIGNAL repo root (signal\SKILL.md not found)."
-  exit 1
+$rootSkillsDir = Join-Path $RepoRoot 'skills'
+
+if (-not (Test-Path $rootSkillsDir)) {
+    Write-Error "Run from SIGNAL repo root (skills\ directory not found)."
+    exit 1
 }
 
-$skillDirs = @('signal', 'signal-commit', 'signal-push', 'signal-pr', 'signal-review', 'signal-ckpt')
+# 1. Ensure all .min.md are up to date
+& powershell -NoProfile -ExecutionPolicy Bypass -File (Join-Path $PSScriptRoot 'shrink.ps1') -All
+if ($LASTEXITCODE -ne 0) { Write-Error "shrink.ps1 failed"; exit 1 }
+
 $targets = @(
-  (Join-Path $RepoRoot 'gemini-signal\skills'),
-  (Join-Path $RepoRoot 'claude-signal\skills')
+    (Join-Path $RepoRoot 'gemini-signal\skills'),
+    (Join-Path $RepoRoot 'claude-signal\skills')
 )
 
 foreach ($destRoot in $targets) {
-  if (-not (Test-Path $destRoot)) {
+    if (Test-Path $destRoot) {
+        Remove-Item -LiteralPath $destRoot -Recurse -Force
+    }
     New-Item -ItemType Directory -Path $destRoot -Force | Out-Null
-  }
-  foreach ($name in $skillDirs) {
-    $src = Join-Path $RepoRoot $name
-    $dst = Join-Path $destRoot $name
-    if (-not (Test-Path $src)) {
-      Write-Error "Missing skill folder: $src"
-      exit 1
+    
+    # Mirror individual files from skills/ into their own folders in the extensions
+    # This maintains the /signal-commit/SKILL.md structure for host compatibility
+    Get-ChildItem -Path $rootSkillsDir -Filter "*.md" | ForEach-Object {
+        $baseName = $_.BaseName.Replace(".min", "")
+        $targetDir = Join-Path $destRoot $baseName
+        
+        if (-not (Test-Path $targetDir)) {
+            New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
+        }
+        
+        # Determine if this is a .min.md or .md
+        $isMin = $_.Name.EndsWith(".min.md")
+        $destName = if ($isMin) { "SKILL.min.md" } else { "SKILL.md" }
+        
+        Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $targetDir $destName) -Force
+        Write-Host "  synced $($_.Name) -> $targetDir\$destName"
     }
-    if (Test-Path $dst) {
-      Remove-Item -LiteralPath $dst -Recurse -Force
-    }
-    Copy-Item -LiteralPath $src -Destination $dst -Recurse -Force
-    Write-Host "  synced $name -> $destRoot"
-  }
 }
 
-function Set-SignalSkillReadmeLink {
-  param(
-    [Parameter(Mandatory = $true)][string]$SkillMdPath,
-    [Parameter(Mandatory = $true)][ValidateRange(2, 5)][int]$ParentLevelsToRepoRoot
-  )
-  if (-not (Test-Path -LiteralPath $SkillMdPath)) { return }
-  $prefix = '../' * $ParentLevelsToRepoRoot
-  $oldLink = '[`' + '../README.md' + '`' + '](../README.md)'
-  $newLink = '[`' + $prefix + 'README.md' + '`](' + $prefix + 'README.md)'
-  $raw = Get-Content -LiteralPath $SkillMdPath -Raw -Encoding utf8
-  if (-not $raw.Contains($oldLink)) { return }
-  Set-Content -LiteralPath $SkillMdPath -Value ($raw.Replace($oldLink, $newLink)) -Encoding utf8
-}
-
-# --- Gemini extension at repository root (gallery + `gemini extensions install <github-url>`) ---
-# See https://geminicli.com/docs/extensions/releasing — indexer expects gemini-extension.json at Git root.
+# 2. Sync root manifests and binaries
 $geminiPack = Join-Path $RepoRoot 'gemini-signal'
-$extJson = Join-Path $geminiPack 'gemini-extension.json'
-$extGem = Join-Path $geminiPack 'GEMINI.md'
-if (-not (Test-Path -LiteralPath $extJson)) {
-  Write-Error "Missing $extJson"
-  exit 1
-}
-Copy-Item -LiteralPath $extJson -Destination (Join-Path $RepoRoot 'gemini-extension.json') -Force
-Copy-Item -LiteralPath $extGem -Destination (Join-Path $RepoRoot 'GEMINI.md') -Force
-& robocopy.exe (Join-Path $geminiPack 'skills') (Join-Path $RepoRoot 'skills') /E /NFL /NDL /NJH /NJS
-if ($LASTEXITCODE -ge 8) { Write-Error "robocopy skills -> repo root failed: $LASTEXITCODE"; exit 1 }
-& robocopy.exe (Join-Path $geminiPack 'commands') (Join-Path $RepoRoot 'commands') /E /NFL /NDL /NJH /NJS
-if ($LASTEXITCODE -ge 8) { Write-Error "robocopy commands -> repo root failed: $LASTEXITCODE"; exit 1 }
-& robocopy.exe (Join-Path $geminiPack 'bin') (Join-Path $RepoRoot 'bin') /E /NFL /NDL /NJH /NJS
-if ($LASTEXITCODE -ge 8) { Write-Error "robocopy bin -> repo root failed: $LASTEXITCODE"; exit 1 }
 
-# Mirrored signal/SKILL.md: ../README.md only works from signal/; deeper paths need extra .. segments.
-$signalSkillMirrors = @(
-  @{ Path = (Join-Path $RepoRoot 'skills\signal\SKILL.md'); Levels = 2 },
-  @{ Path = (Join-Path $RepoRoot 'gemini-signal\skills\signal\SKILL.md'); Levels = 3 },
-  @{ Path = (Join-Path $RepoRoot 'claude-signal\skills\signal\SKILL.md'); Levels = 3 }
-)
-foreach ($m in $signalSkillMirrors) {
-  Set-SignalSkillReadmeLink -SkillMdPath $m.Path -ParentLevelsToRepoRoot $m.Levels
+# Root Gemini extension (gallery + gemini extensions install <github-url>)
+Copy-Item -LiteralPath (Join-Path $geminiPack 'gemini-extension.json') -Destination (Join-Path $RepoRoot 'gemini-extension.json') -Force
+Copy-Item -LiteralPath (Join-Path $geminiPack 'GEMINI.md') -Destination (Join-Path $RepoRoot 'GEMINI.md') -Force
+
+# Robocopy for directories
+$syncDirs = @('commands', 'bin')
+foreach ($dir in $syncDirs) {
+    $src = Join-Path $geminiPack $dir
+    $dst = Join-Path $RepoRoot $dir
+    if (Test-Path $src) {
+        if (-not (Test-Path $dst)) { New-Item -ItemType Directory -Path $dst -Force | Out-Null }
+        & robocopy.exe $src $dst /E /NFL /NDL /NJH /NJS /PURGE
+        if ($LASTEXITCODE -ge 8) { Write-Error "robocopy $dir failed: $LASTEXITCODE"; exit 1 }
+    }
 }
 
-Write-Host "sync-integration-packages: OK" -ForegroundColor Green
+Write-Host "sync-integration-packages: OK (v0.3.0 logic)" -ForegroundColor Green
 exit 0

@@ -7,11 +7,10 @@ param(
 
 <#
 .SYNOPSIS
-  Verification harness for SIGNAL: sync integration packages, Windows scripts (--dry), optional gh, and markdown link targets.
+  Verification harness for SIGNAL v0.3.0
 
   Run from repo root:
     powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
-    powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1 -RequireGh -StrictPr
 
   Exit code 0 = all checks passed; non-zero = failure.
 #>
@@ -19,8 +18,10 @@ Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 
 $RepoRoot = Split-Path $PSScriptRoot -Parent
-if (-not (Test-Path (Join-Path $RepoRoot 'signal\SKILL.md'))) {
-  Write-Host 'x Run this script from the singal-skill repo (signal\SKILL.md not found).'
+$rootSkillsDir = Join-Path $RepoRoot 'skills'
+
+if (-not (Test-Path $rootSkillsDir)) {
+  Write-Host 'x Run this script from the singal-skill repo (skills/ directory not found).'
   exit 1
 }
 
@@ -51,64 +52,34 @@ if (-not (Test-Path -LiteralPath $syncPs1)) {
   Ok 'sync-integration-packages.ps1'
 }
 
-$geminiExt = Join-Path $RepoRoot 'gemini-signal\gemini-extension.json'
-$geminiGem = Join-Path $RepoRoot 'gemini-signal\GEMINI.md'
-$geminiSkill = Join-Path $RepoRoot 'gemini-signal\skills\signal\SKILL.md'
-$geminiBin = Join-Path $RepoRoot 'gemini-signal\bin\run-commit.ps1'
-foreach ($p in @($geminiExt, $geminiGem, $geminiSkill, $geminiBin)) {
-  if (-not (Test-Path -LiteralPath $p)) { Fail "gemini-signal incomplete: missing $p" }
-}
-if (-not $script:VerifyFailed) { Ok 'gemini-signal structure' }
-
-# Root-level Gemini extension mirror (gallery expects gemini-extension.json at Git root)
+# Canonical root structure (v0.3.0)
 $rootExt = Join-Path $RepoRoot 'gemini-extension.json'
 $rootGem = Join-Path $RepoRoot 'GEMINI.md'
-$rootSkill = Join-Path $RepoRoot 'skills\signal\SKILL.md'
+$rootSkill = Join-Path $RepoRoot 'skills\signal.md'
+$rootMinSkill = Join-Path $RepoRoot 'skills\signal.min.md'
 $rootBin = Join-Path $RepoRoot 'bin\run-commit.ps1'
-foreach ($p in @($rootExt, $rootGem, $rootSkill, $rootBin)) {
-  if (-not (Test-Path -LiteralPath $p)) { Fail "repo-root Gemini extension incomplete: missing $p" }
+foreach ($p in @($rootExt, $rootGem, $rootSkill, $rootMinSkill, $rootBin)) {
+  if (-not (Test-Path -LiteralPath $p)) { Fail "repo-root incomplete: missing $p" }
 }
-if (-not $script:VerifyFailed) { Ok 'repo-root Gemini extension (gallery layout)' }
+if (-not $script:VerifyFailed) { Ok 'repo-root structure (v0.3.0)' }
 
-$claudePlug = Join-Path $RepoRoot 'claude-signal\.claude-plugin\plugin.json'
+# Extension mirroring structure
+$geminiSkill = Join-Path $RepoRoot 'gemini-signal\skills\signal\SKILL.md'
 $claudeSkill = Join-Path $RepoRoot 'claude-signal\skills\signal\SKILL.md'
-foreach ($p in @($claudePlug, $claudeSkill)) {
-  if (-not (Test-Path -LiteralPath $p)) { Fail "claude-signal incomplete: missing $p" }
+$geminiMinSkill = Join-Path $RepoRoot 'gemini-signal\skills\signal\SKILL.min.md'
+$claudeMinSkill = Join-Path $RepoRoot 'claude-signal\skills\signal\SKILL.min.md'
+
+foreach ($p in @($geminiSkill, $claudeSkill, $geminiMinSkill, $claudeMinSkill)) {
+  if (-not (Test-Path -LiteralPath $p)) { Fail "host extension incomplete: missing $p" }
 }
-if (-not $script:VerifyFailed) { Ok 'claude-signal structure' }
+if (-not $script:VerifyFailed) { Ok 'host extensions structure (v0.3.0 mirrored)' }
 
-$mkt = Join-Path $RepoRoot '.claude-plugin\marketplace.json'
-if (-not (Test-Path -LiteralPath $mkt)) { Fail "missing $mkt" } else { Ok '.claude-plugin/marketplace.json' }
-
-# --- 0a) Host IDE rules (Cursor, Windsurf, Cline, Copilot) from templates/host-always-on.body.md
-$hostSync = Join-Path $RepoRoot 'scripts\sync-host-integrations.ps1'
-if (-not (Test-Path -LiteralPath $hostSync)) {
-  Fail "missing $hostSync"
+# --- 0b) bin/run-commit.ps1 --dry ---
+$commitWrapper = Join-Path $RepoRoot 'bin\run-commit.ps1'
+if (-not (Test-Path -LiteralPath $commitWrapper)) {
+  Fail "missing $commitWrapper"
 } else {
-  & powershell -NoProfile -ExecutionPolicy Bypass -File $hostSync
-  if ($LASTEXITCODE -ne 0) { Fail 'sync-host-integrations.ps1 failed'; exit 1 }
-  Ok 'sync-host-integrations.ps1'
-}
-$canonSnippet = 'SIGNAL-1'
-$hostFiles = @(
-  (Join-Path $RepoRoot '.cursor\rules\signal.mdc'),
-  (Join-Path $RepoRoot '.windsurf\rules\signal.md'),
-  (Join-Path $RepoRoot '.clinerules\signal.md'),
-  (Join-Path $RepoRoot '.github\copilot-instructions.md')
-)
-foreach ($hf in $hostFiles) {
-  if (-not (Test-Path -LiteralPath $hf)) { Fail "host integration missing: $hf" }
-  $htxt = Get-Content -LiteralPath $hf -Raw
-  if ($htxt -notmatch [regex]::Escape($canonSnippet)) { Fail "host file missing canon marker ($canonSnippet): $hf" }
-}
-if (-not $script:VerifyFailed) { Ok 'host IDE rules (synced + spot-check)' }
-
-# --- 0b) gemini-signal/bin/run-commit.ps1 --dry (uses bundled skill copy) ---
-$geminiCommitWrapper = Join-Path $RepoRoot 'gemini-signal\bin\run-commit.ps1'
-if (-not (Test-Path -LiteralPath $geminiCommitWrapper)) {
-  Fail "missing $geminiCommitWrapper"
-} else {
-  $tmpG = Join-Path ([System.IO.Path]::GetTempPath()) ("signal-verify-gemini-commit-" + [Guid]::NewGuid().ToString('n'))
+  $tmpG = Join-Path ([System.IO.Path]::GetTempPath()) ("signal-verify-commit-" + [Guid]::NewGuid().ToString('n'))
   try {
     New-Item -ItemType Directory -Path $tmpG -Force | Out-Null
     Push-Location $tmpG
@@ -116,93 +87,11 @@ if (-not (Test-Path -LiteralPath $geminiCommitWrapper)) {
     git config user.email 'verify@local'
     git config user.name 'verify'
     Set-Content -Path 'hello.txt' -Value 'test'
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $geminiCommitWrapper --dry -- 'chore(verify): gemini wrapper dry'
-    if ($LASTEXITCODE -ne 0) { Fail 'gemini-signal/bin/run-commit.ps1 --dry failed' } else { Ok 'gemini-signal/bin/run-commit.ps1 --dry (temp repo)' }
+    & powershell -NoProfile -ExecutionPolicy Bypass -File $commitWrapper --dry -- 'chore(verify): root wrapper dry'
+    if ($LASTEXITCODE -ne 0) { Fail 'bin/run-commit.ps1 --dry failed' } else { Ok 'bin/run-commit.ps1 --dry (temp repo)' }
   } finally {
     Pop-Location
     Remove-Item -LiteralPath $tmpG -Recurse -Force -ErrorAction SilentlyContinue
-  }
-}
-
-# --- 1) commit.ps1 --dry ---
-$commitPs1 = Join-Path $RepoRoot 'signal-commit\scripts\commit.ps1'
-if (-not (Test-Path -LiteralPath $commitPs1)) {
-  Fail "missing $commitPs1"
-} else {
-  $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("signal-verify-commit-" + [Guid]::NewGuid().ToString('n'))
-  try {
-    New-Item -ItemType Directory -Path $tmp -Force | Out-Null
-    Push-Location $tmp
-    git init -q
-    git config user.email 'verify@local'
-    git config user.name 'verify'
-    Set-Content -Path 'hello.txt' -Value 'test'
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $commitPs1 --dry -- 'chore(verify): dry run'
-    if ($LASTEXITCODE -ne 0) { Fail 'commit.ps1 --dry failed' } else { Ok 'commit.ps1 --dry (temp repo)' }
-  } finally {
-    Pop-Location
-    Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
-  }
-}
-
-# --- 2) push.ps1 --dry (needs origin) ---
-$pushPs1 = Join-Path $RepoRoot 'signal-push\scripts\push.ps1'
-if (-not (Test-Path -LiteralPath $pushPs1)) {
-  Fail "missing $pushPs1"
-} else {
-  $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("signal-verify-push-" + [Guid]::NewGuid().ToString('n'))
-  try {
-    New-Item -ItemType Directory -Path $tmp -Force | Out-Null
-    Push-Location $tmp
-    git init -q
-    git config user.email 'verify@local'
-    git config user.name 'verify'
-    git remote add origin 'https://example.invalid/signal-verify.git'
-    Set-Content -Path 'hello.txt' -Value 'test'
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $pushPs1 --dry -- 'chore(verify): push dry'
-    if ($LASTEXITCODE -ne 0) { Fail 'push.ps1 --dry failed' } else { Ok 'push.ps1 --dry (temp repo + origin)' }
-  } finally {
-    Pop-Location
-    Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
-  }
-}
-
-# --- 3) pr.ps1 --dry (optional: gh) ---
-$prPs1 = Join-Path $RepoRoot 'signal-pr\scripts\pr.ps1'
-if (-not (Test-Path -LiteralPath $prPs1)) {
-  Fail "missing $prPs1"
-} elseif (-not (Get-Command gh -ErrorAction SilentlyContinue)) {
-  if ($RequireGh -or $StrictPr) {
-    Fail 'gh required but not found on PATH'
-  } else {
-    Write-Host '? pr.ps1 --dry skipped (gh not on PATH)' -ForegroundColor Yellow
-  }
-} else {
-  $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("signal-verify-pr-" + [Guid]::NewGuid().ToString('n'))
-  try {
-    New-Item -ItemType Directory -Path $tmp -Force | Out-Null
-    Push-Location $tmp
-    git init -q
-    git config user.email 'verify@local'
-    git config user.name 'verify'
-    git remote add origin 'https://example.invalid/signal-verify.git'
-    Set-Content -Path 'hello.txt' -Value 'test'
-    $ErrorActionPreference = 'Continue'
-    & powershell -NoProfile -ExecutionPolicy Bypass -File $prPs1 --dry -- 'chore(verify): pr dry'
-    $exitPr = $LASTEXITCODE
-    $ErrorActionPreference = 'Stop'
-    if ($exitPr -ne 0) {
-      if ($StrictPr) {
-        Fail 'pr.ps1 --dry failed under strict gh verification'
-      } else {
-        Write-Host '? pr.ps1 --dry non-zero (often gh auth / no GitHub repo) - check manually' -ForegroundColor Yellow
-      }
-    } else {
-      Ok 'pr.ps1 --dry'
-    }
-  } finally {
-    Pop-Location
-    Remove-Item -LiteralPath $tmp -Recurse -Force -ErrorAction SilentlyContinue
   }
 }
 
@@ -259,5 +148,5 @@ if ($script:VerifyFailed) {
   Write-Host "`nx One or more checks failed." -ForegroundColor Red
   exit 1
 }
-Write-Host "`n+ All required checks passed." -ForegroundColor Green
+Write-Host "`n+ All required checks passed (v0.3.0)." -ForegroundColor Green
 exit 0

@@ -17,7 +17,7 @@ When SIGNAL is installed as a skill, keep **this block short** so every session 
 
 ## Coding tasks (Karpathy-inspired norms)
 
-When **implementing or editing code**, follow the `**signal`** skill section *Coding tasks (Karpathy-inspired norms)* and the full reference `[karpathy-coding-norms.md](../signal/references/karpathy-coding-norms.md)` in the installed bundle (assumptions, simplicity, minimal diff, verifiable goals). They complement terse output; they do not replace tiers.
+When **implementing or editing code**, follow the `**signal`** skill section *Coding tasks (Karpathy-inspired norms)* and the full reference `[karpathy-coding-norms.md](../references/karpathy-coding-norms.md)` in the installed bundle (assumptions, simplicity, minimal diff, verifiable goals). They complement terse output; they do not replace tiers.
 
 ---
 

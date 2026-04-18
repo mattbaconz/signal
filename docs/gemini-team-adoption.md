@@ -92,4 +92,4 @@ There is no guarantee of perfect symbol grammar on every turn; persistent `GEMIN
 
 - [README — Installation options](../README.md#installation-options)
 - [README — Cross-tool porting](../README.md#cross-tool-porting) (Gemini CLI row)
-- [signal/SKILL.md](../signal/SKILL.md) (activation lines, `SIGNAL_DRIFT`)
+- [skills/signal.md](../skills/signal.md) (activation lines, `SIGNAL_DRIFT`)
