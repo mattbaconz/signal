@@ -1,25 +1,69 @@
-# ⚡ SIGNAL (v0.3.0)
+<p align="center">
+  <img src="assets/signal-logo.png" alt="SIGNAL logo" width="140" />
+</p>
 
-**Less noise, more signal.** Brutalist token compression for agentic workflows: Symbol Grammar plus minified skills so instructions stay small and repeatable.
+<h1 align="center">🌐 SIGNAL · v0.3.0</h1>
 
-[Why SIGNAL](#why-signal) · [Quick start](#quick-start-for-developers) · [Architecture](#architecture) · [Coding norms (Karpathy)](#coding-norms-karpathy-style) · [Git workflows & CI](#git-workflows--ci) · [Tiers](#tiers) · [Commands](#commands) · [Symbol grammar](#symbol-grammar-snippet) · [Benchmark](#benchmark) · [Repository layout](#repository-layout) · [Install](#install)
+<p align="center"><strong>Why burn the whole window when a tight spec fits?</strong><br />
+Agent skills + symbol grammar + checkpoints. Fewer tokens on instructions, more room for code.</p>
+
+<p align="center">
+  <a href="https://github.com/mattbaconz/signal/stargazers"><img src="https://img.shields.io/github/stars/mattbaconz/signal?style=flat-square&logo=github&label=stars" alt="GitHub stars" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mattbaconz/signal?style=flat-square" alt="License" /></a>
+  <a href="https://github.com/mattbaconz/signal/commits/main"><img src="https://img.shields.io/github/last-commit/mattbaconz/signal/main?style=flat-square&label=last%20commit" alt="Last commit" /></a>
+  <a href="https://github.com/mattbaconz/signal/actions"><img src="https://img.shields.io/github/actions/workflow/status/mattbaconz/signal/verify.yml?branch=main&style=flat-square&label=CI" alt="CI" /></a>
+  <img src="https://img.shields.io/badge/shrinking%20session-v0.3.0-5865F2?style=flat-square" alt="Version" />
+</p>
+
+<p align="center">
+  <a href="#before--after">Before / After</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#tiers">Tiers</a> ·
+  <a href="#commands">Commands</a> ·
+  <a href="#benchmark">Benchmark</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#coding-norms-karpathy-style">Karpathy norms</a> ·
+  <a href="#git-workflows--ci">Git &amp; CI</a> ·
+  <a href="#star-history">Stars</a>
+</p>
 
 ---
 
+**SIGNAL** is a **brutalist compression layer** for agentic workflows: minified `.min.md` skills, a small **symbol vocabulary** (`→` `∅` `Δ` `!` `[n]`), and **checkpoints** instead of pasting entire threads. Inspired by the idea that *dense* beats *polite* when the meter is running—same job, fewer tokens.
 
-|              |                                                                      |
-| ------------ | -------------------------------------------------------------------- |
-| **Repo**     | [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) |
-| **Version**  | **v0.3.0** (Shrinking Session)                                       |
-| **Protocol** | [`skills/signal.min.md`](skills/signal.min.md)                       |
-| **Symbols**  | [`skills/signal-core.min.md`](skills/signal-core.min.md)             |
+Repo · [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · Protocol · [`skills/signal.min.md`](skills/signal.min.md) · Symbols · [`skills/signal-core.min.md`](skills/signal-core.min.md)
 
+---
+
+## Before / after
+
+| 👤 **Verbose agent** | 🌐 **SIGNAL** |
+| --- | --- |
+| “I think the problem might be in `auth.js` around line 47. When the array is empty there could potentially be a null reference. You might want to consider adding a guard clause. I'm fairly confident this is the issue.” | `auth.js:47` · null ref · guard — same fix, **~7× fewer tokens** in the scripted benchmark. |
+| Paste 10 turns of chat + tool noise into context so “nothing is lost.” | **CKPT atom**: project stack, progress, next step — transcript stays out of the window. |
+| One giant `SKILL.md` tree + references forever. | **Canonical `.md`** for humans, **`.min.md`** for the agent — **~87% smaller** across the seven main skill pairs (see [Benchmark](#benchmark)). |
+
+---
+
+## Install
+
+```bash
+npx skills add mattbaconz/signal
+```
+
+Global:
+
+```bash
+npx skills add mattbaconz/signal -y -g
+```
+
+**Quick start:** read [`skills/signal.min.md`](skills/signal.min.md) → pick a tier → pull in workflow skills (`signal-commit`, `signal-push`, …) only when needed. Canonical specs sit next to minified ones in [`skills/`](skills/).
 
 ---
 
 ## Why SIGNAL
 
-Long system prompts and verbose chat habits burn context. SIGNAL gives you a **shared compression protocol**: symbols instead of paragraphs, checkpoints instead of full transcripts, and **`.min.md` skills** that ship a fraction of the bytes of the canonical docs.
+Long prompts and hedging eat context. SIGNAL standardizes **how** you shrink: symbols instead of paragraphs, **`.signal_state.md`** for durable state, **signal-diff** / **signal-search** for summarized context instead of raw dumps.
 
 ```mermaid
 flowchart LR
@@ -48,21 +92,87 @@ flowchart LR
 
 ---
 
-## Quick start for developers
+## Tiers
 
-1. **Install the skills** (see [Install](#install)) so your agent loads the `skills/` definitions.
-2. **Read the protocol first:** [`skills/signal.min.md`](skills/signal.min.md) — triggers, tier rules, and pointers to other modules.
-3. **Pick a tier** with `/signal`, `/signal2`, or `/signal3` (see [Tiers](#tiers)).
-4. **Use workflow skills** when you need git or review: `signal-commit`, `signal-push`, `signal-pr`, `signal-review`, `signal-ckpt`, `signal-state`, `signal-diff`, `signal-search` (each has a `.min.md` under `skills/`).
-5. **Optional:** run the [benchmark script](#reproduce-the-benchmark) locally to reproduce token estimates.
+Use `/signal`, `/signal2`, or `/signal3`.
 
-Canonical (readable) sources live beside minified ones in `skills/` — e.g. [`skills/signal-commit.md`](skills/signal-commit.md) vs [`skills/signal-commit.min.md`](skills/signal-commit.min.md). Prefer **`.min.md` in production context**; use the long form when editing or learning the spec.
+| Tier | You get | Rough habit savings |
+| --- | --- | --- |
+| **S1** | Symbols, no preamble, no hedge, terse | ~35% |
+| **S2** | S1 + BOOT, aliases, delta-friendly turns | another ~20% on top |
+| **S3** | S2 + **auto-checkpoint every 5 turns** | long sessions stay bounded |
+
+---
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| `/signal` | S1 — entry tier |
+| `/signal2` | S2 — strong default |
+| `/signal3` | S3 — auto-CKPT |
+| `/signal-commit` | Stage + conventional commit |
+| `/signal-push` | Commit + push |
+| `/signal-pr` | Push + PR (`gh`) |
+| `/signal-review` | One-line review, severity required |
+| `/signal-state` | `.signal_state.md` |
+| `/signal-diff` | Summarized changes |
+| `/signal-search` | Summarized search |
+
+---
+
+## Symbol grammar (snippet)
+
+| Symbol | Meaning | Example |
+| --- | --- | --- |
+| `→` | causes / produces | `nullref→crash` |
+| `∅` | none / remove / empty | `cache=∅` |
+| `Δ` | change / diff | `Δ+cache→~5ms` |
+| `!` | required / must | `!fix before deploy` |
+| `[n]` | confidence 0.0–1.0 | `fix logic [0.95]` |
+
+Full reference: [`skills/signal-core.min.md`](skills/signal-core.min.md).
+
+---
+
+## Benchmark
+
+Heuristic: **`ceil(characters / 4)`** — not billed API tokens; good for comparing shapes.
+
+![SIGNAL v0.3.0 benchmark](assets/signal-benchmark-results.png)
+
+### Scenarios (scripted)
+
+| Scenario | Verbose | SIGNAL | Saved |
+| --- | ---: | ---: | ---: |
+| A: 10-turn history vs CKPT | ~167 | ~45 | ~73% · ~3.7× |
+| B: Bug paragraph vs one line | ~51 | ~7 | ~86% · ~7.3× |
+| C: Hedging vs `[conf]` | ~8 | ~2 | ~75% · ~4× |
+
+### Skill pairs (canonical `.md` → `.min.md`)
+
+| Pair | Bytes (≈) | Est. tok (≈) | Shrink |
+| --- | --- | --- | --- |
+| signal | 2.8K → 0.7K | ~712 → ~182 | ~75% |
+| signal-ckpt | 5.6K → 0.7K | ~1389 → ~163 | ~88% |
+| signal-commit | 8.3K → 0.7K | ~2071 → ~178 | ~91% |
+| signal-pr | 4.7K → 0.5K | ~1177 → ~130 | ~89% |
+| signal-push | 3.7K → 0.5K | ~936 → ~131 | ~86% |
+| signal-review | 5.5K → 0.6K | ~1378 → ~145 | ~90% |
+| signal-state | 2.0K → 0.7K | ~511 → ~163 | ~68% |
+| **7 pairs total** | **~32.7K → ~4.4K** | **~8173 → ~1090** | **~87%** |
+
+Min-only helpers (`signal-core`, `signal-diff`, `signal-search`) ≈ **1.6K** bytes (~**389** est. tokens).
+
+**Reproduce:**
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1
+```
 
 ---
 
 ## Architecture
-
-How the pieces fit together for an integration author or power user:
 
 ```mermaid
 flowchart TB
@@ -92,7 +202,7 @@ flowchart TB
   ST --> STATE
 ```
 
-**Tier ladder** (what each activation adds on top of the previous):
+**Tier ladder:**
 
 ```mermaid
 flowchart LR
@@ -107,131 +217,35 @@ flowchart LR
 
 ## Coding norms (Karpathy-style)
 
-SIGNAL’s terse tiers apply to **chat compression**. For **implementation work** (edits, refactors, fixes), the bundle still points at **Karpathy-inspired norms**: think before coding, small diffs, clear assumptions, verifiable goals.
+Tiers compress **chat**. For **code edits**, the bundle still points at **Karpathy-style** discipline: small diffs, clear assumptions, verify goals.
 
-- **Full reference:** [`references/karpathy-coding-norms.md`](references/karpathy-coding-norms.md)
-- **Where it shows up in skills:** [`skills/signal.md`](skills/signal.md) (Coding tasks), [`skills/signal-core.min.md`](skills/signal-core.min.md) (`KarpathyNorms`), and commit rules in [`skills/signal-commit.min.md`](skills/signal-commit.min.md) (`followKarpathy`).
-- **Host templates** (Gemini / Claude snippets) repeat the same pointer so always-on rules stay aligned—see [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md) and [`templates/claude-CLAUDE.md`](templates/claude-CLAUDE.md).
+| Resource | Link |
+| --- | --- |
+| Full norms | [`references/karpathy-coding-norms.md`](references/karpathy-coding-norms.md) |
+| In skills | [`skills/signal.md`](skills/signal.md), [`skills/signal-core.min.md`](skills/signal-core.min.md) (`KarpathyNorms`), [`skills/signal-commit.min.md`](skills/signal-commit.min.md) (`followKarpathy`) |
+| Host templates | [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md), [`templates/claude-CLAUDE.md`](templates/claude-CLAUDE.md) |
 
 ---
 
 ## Git workflows & CI
 
-**Agent-facing git skills** (install via `npx skills add`; load the `.min.md` in context when you want zero-fluff git automation):
-
 | Skill | Role |
 | --- | --- |
-| [`skills/signal-commit.min.md`](skills/signal-commit.min.md) | Stage all, conventional commit, optional `--draft` / `--split` |
+| [`skills/signal-commit.min.md`](skills/signal-commit.min.md) | Stage all, conventional commit (`--draft` / `--split`) |
 | [`skills/signal-push.min.md`](skills/signal-push.min.md) | Commit + push |
 | [`skills/signal-pr.min.md`](skills/signal-pr.min.md) | Commit + push + `gh pr create` |
 
-Canonical long-form specs live beside them (`signal-commit.md`, etc.) if you need the full prose.
-
-**Repo CI:** [`.github/workflows/verify.yml`](.github/workflows/verify.yml) runs on `main` / PRs and executes [`scripts/verify.ps1`](scripts/verify.ps1) on Windows (PowerShell, git, temp repos, `gh` checks)—so skill scripts and packaging stay honest as the tree changes.
+**CI:** [`.github/workflows/verify.yml`](.github/workflows/verify.yml) runs [`scripts/verify.ps1`](scripts/verify.ps1) on Windows for `main` and PRs.
 
 ---
 
 ## What's new in v0.3.0
 
-- **Minified skills:** Core instructions compressed heavily (example: `signal-commit` canonical ~8.3KB vs min ~711B).
-- **Symbol grammar:** Clause-style markers (`→` `⊕` `∅` `Δ` `!`, confidence `[n]`).
-- **State-driven development:** `.signal_state.md` as a durable, atomic session anchor.
-- **High-density tools:** `signal-diff` and `signal-search` for summarized context.
-- **Testing discipline:** Logic changes require reproduction plus automated tests where applicable.
-
----
-
-## Symbol grammar (snippet)
-
-
-| Symbol | Meaning               | Example              |
-| ------ | --------------------- | -------------------- |
-| `→`    | causes / produces     | `nullref→crash`      |
-| `∅`    | none / remove / empty | `cache=∅`            |
-| `Δ`    | change / diff         | `Δ+cache→~5ms`       |
-| `!`    | required / must       | `!fix before deploy` |
-| `[n]`  | confidence 0.0–1.0    | `fix logic [0.95]`   |
-
-
-Full table: [`skills/signal-core.min.md`](skills/signal-core.min.md).
-
----
-
-## Tiers
-
-Activate via `/signal`, `/signal2`, or `/signal3`.
-
-
-| Tier   | Capabilities                                     | Typical savings                  |
-| ------ | ------------------------------------------------ | -------------------------------- |
-| **S1** | Symbols, drop preamble, drop hedge, terse output | ~35%                             |
-| **S2** | S1 plus BOOT, aliases, delta-friendly turns      | ~20% more on top of habit change |
-| **S3** | S2 plus **auto-checkpoint every 5 turns**        | keeps long sessions bounded      |
-
-
----
-
-## Commands
-
-
-| Command          | Role                        | Notes                                 |
-| ---------------- | --------------------------- | ------------------------------------- |
-| `/signal`        | S1 — short replies, symbols | Entry tier                            |
-| `/signal2`       | S2 — structured multi-turn  | Strong default                        |
-| `/signal3`       | S3 — history-heavy sessions | Auto-CKPT                             |
-| `/signal-commit` | Stage and commit            | Conventional commits, minimal prompts |
-| `/signal-push`   | Commit and push             |                                       |
-| `/signal-pr`     | Push and open PR            | Needs `gh` CLI                        |
-| `/signal-review` | One-line review format      | Severity required                     |
-| `/signal-state`  | Persistent state            | Writes `.signal_state.md`             |
-| `/signal-diff`   | Summarized changes          | No raw code dumps                     |
-| `/signal-search` | Summarized search           | High-density results                  |
-
-
----
-
-## Benchmark
-
-Estimated tokens use **`ceil(character_count / 4)`** (rough heuristic; not the same as provider billed tokens).
-
-![SIGNAL v0.3.0 benchmark — scenario savings and skill payload shrink](assets/signal-benchmark-results.png)
-
-### Scenario benchmark (scripted fixtures)
-
-
-| Scenario                            | Verbose | SIGNAL | Saved | Ratio                  |
-| ----------------------------------- | ------- | ------ | ----- | ---------------------- |
-| A: 10-turn history vs checkpoint    | ~167    | ~45    | ~122  | ~73% smaller (~3.7×) |
-| B: Bug paragraph vs one SIGNAL line | ~51     | ~7     | ~44   | ~86% smaller (~7.3×) |
-| C: Hedging vs `[conf]`              | ~8      | ~2     | ~6    | ~75% smaller (~4×)   |
-
-
-### Skill payload shrink (`skills/` canonical `.md` → `.min.md`)
-
-
-| Pair              | Bytes (approx.)    | Est. tokens (approx.) | Shrink   |
-| ----------------- | ------------------ | --------------------- | -------- |
-| signal            | 2.8K → 0.7K        | ~712 → ~182           | ~75%     |
-| signal-ckpt       | 5.6K → 0.7K        | ~1389 → ~163          | ~88%     |
-| signal-commit     | 8.3K → 0.7K        | ~2071 → ~178          | ~91%     |
-| signal-pr         | 4.7K → 0.5K        | ~1177 → ~130          | ~89%     |
-| signal-push       | 3.7K → 0.5K        | ~936 → ~131           | ~86%     |
-| signal-review     | 5.5K → 0.6K        | ~1378 → ~145          | ~90%     |
-| signal-state      | 2.0K → 0.7K        | ~511 → ~163           | ~68%     |
-| **7 pairs total** | **~32.7K → ~4.4K** | **~8173 → ~1090**     | **~87%** |
-
-
-Min-only helpers (`signal-core`, `signal-diff`, `signal-search`) add ~1.6K raw bytes (~389 est. tokens).
-
-### Reproduce the benchmark
-
-From the repo root (Windows PowerShell):
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1
-```
-
-Real sessions vary by model tokenizer, tool output, and host system prompts.
+- Minified skills (example: `signal-commit` ~8.3KB → ~711B min).
+- Symbol grammar + confidence scores.
+- `.signal_state.md` as session anchor.
+- `signal-diff` / `signal-search` for dense context.
+- Tests expected when logic changes.
 
 ---
 
@@ -239,30 +253,23 @@ Real sessions vary by model tokenizer, tool output, and host system prompts.
 
 ```
 signal/
-├── skills/                    # Canonical + minified skills (*.md / *.min.md)
-├── assets/                    # Benchmark art, previews
-├── templates/                 # Host snippets (Gemini, Claude, etc.)
-├── scripts/                   # benchmark.ps1, shrink.ps1, verify.ps1, …
-├── gemini-signal/             # Gemini CLI extension
-├── claude-signal/             # Claude Code plugin
-├── hooks/                     # Optional session hooks
-└── GEMINI.md                  # Root context file (v0.3.0)
+├── skills/              # *.md + *.min.md
+├── assets/              # logos, benchmark art
+├── templates/           # Gemini / Claude snippets
+├── references/          # e.g. karpathy-coding-norms
+├── scripts/             # benchmark.ps1, shrink.ps1, verify.ps1
+├── gemini-signal/       # Gemini CLI extension
+├── claude-signal/       # Claude Code plugin
+├── hooks/
+└── GEMINI.md
 ```
 
 ---
 
-## Install
+## Star History
 
-```bash
-npx skills add mattbaconz/signal
-```
-
-Global install:
-
-```bash
-npx skills add mattbaconz/signal -y -g
-```
+[![Star History Chart](https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&legend=top-left)](https://www.star-history.com/?repos=mattbaconz%2Fsignal&type=date&legend=top-left)
 
 ---
 
-*v0.3.0 — The Shrinking Session. Brutalist token compression.*
+*v0.3.0 — Shrinking Session. Brutalist token compression.*
