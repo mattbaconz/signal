@@ -1,6 +1,6 @@
 #Requires -Version 5.1
 # Run shared prompt.txt in two cwd pairs; compare Gemini CLI JSON stats.
-# Uses node + gemini.js -p (not stdin) so JSON is not mixed with node stderr noise.
+# Uses node + gemini.js -p (same bundle as `gemini` on PATH) for stable JSON.
 param(
   [string]$Model = $null,
   [ValidateSet('Default', 'EqualContext')]
@@ -11,13 +11,15 @@ $ErrorActionPreference = "Stop"
 $here = $PSScriptRoot
 Set-Location -LiteralPath $here
 
-$geminiCmd = (Get-Command gemini -ErrorAction Stop).Source
-$geminiBin = Split-Path $geminiCmd
-$geminiJs = Join-Path $geminiBin "node_modules\@google\gemini-cli\bundle\gemini.js"
-if (-not (Test-Path -LiteralPath $geminiJs)) {
-  Write-Error "Could not find gemini.js at $geminiJs (install @google/gemini-cli)."
-}
-$node = (Get-Command node -ErrorAction Stop).Source
+$lib = Join-Path (Split-Path $here -Parent) "lib\gemini-invoke.ps1"
+. $lib
+
+$bundle = Get-GeminiNodeBundle
+$geminiJs = $bundle.GeminiJs
+$node = $bundle.NodeExe
+
+$repoRoot = (Resolve-Path (Join-Path $here "..\..")).Path
+$runMeta = New-BenchmarkRunMetadata -RepoRoot $repoRoot
 
 $promptPath = Join-Path $here "prompt.txt"
 if (-not (Test-Path -LiteralPath $promptPath)) {
@@ -44,32 +46,6 @@ foreach ($d in @($baselineDir, $signalDir)) {
   }
 }
 
-function Get-TokenPrimaryMax {
-  param($stats)
-  if (-not $stats -or -not $stats.models) { return 0 }
-  $max = 0
-  foreach ($p in $stats.models.PSObject.Properties) {
-    $m = $p.Value
-    if ($m.tokens -and $null -ne $m.tokens.total) {
-      $t = [int]$m.tokens.total
-      if ($t -gt $max) { $max = $t }
-    }
-  }
-  return $max
-}
-
-function Get-PromptTokens {
-  param($stats)
-  if (-not $stats -or -not $stats.models) { return $null }
-  foreach ($p in $stats.models.PSObject.Properties) {
-    $m = $p.Value
-    if ($m.tokens -and $null -ne $m.tokens.prompt) {
-      return [int]$m.tokens.prompt
-    }
-  }
-  return $null
-}
-
 function Get-GeminiMdCharCount {
   param([string]$Dir)
   $p = Join-Path $Dir 'GEMINI.md'
@@ -79,25 +55,8 @@ function Get-GeminiMdCharCount {
   return $raw.Length
 }
 
-function Invoke-GeminiJson {
-  param([string]$WorkingDir)
-  Push-Location -LiteralPath $WorkingDir
-  try {
-    if ($Model) {
-      $raw = & $node $geminiJs -m $Model -p $promptText -o json --approval-mode plan 2>$null
-    } else {
-      $raw = & $node $geminiJs -p $promptText -o json --approval-mode plan 2>$null
-    }
-    if (-not $raw) {
-      throw "empty stdout from gemini"
-    }
-    return ($raw | ConvertFrom-Json)
-  } finally {
-    Pop-Location
-  }
-}
-
 Write-Host "Pair=$Pair  (folders: baseline=$(Split-Path $baselineDir -Leaf) vs signal=$(Split-Path $signalDir -Leaf))" -ForegroundColor Cyan
+Write-Host "gemini.js=$geminiJs  run_id=$($runMeta.run_id)" -ForegroundColor DarkGray
 if ($Model) {
   Write-Host "Model=$Model" -ForegroundColor Cyan
 }
@@ -119,23 +78,20 @@ foreach ($label in @("baseline", "signal")) {
   $dir = if ($label -eq "baseline") { $baselineDir } else { $signalDir }
   Write-Host "=== $label ===" -ForegroundColor Yellow
   try {
-    $obj = Invoke-GeminiJson -WorkingDir $dir
-    if ($obj.error) {
-      throw $obj.error.message
-    }
+    $raw = Invoke-GeminiNodePromptJson -WorkingDir $dir -PromptText $promptText -Model $Model -GeminiJs $geminiJs -NodeExe $node
+    $obj = Parse-GeminiJson $raw
     $tokP = Get-TokenPrimaryMax $obj.stats
     $promptTok = Get-PromptTokens $obj.stats
+    $f = Get-FirstModelTokenFields $obj.stats
     $resp = if ($obj.response) { [string]$obj.response } else { "" }
-    $modelName = $null
-    if ($obj.stats -and $obj.stats.models) {
-      $modelName = @($obj.stats.models.PSObject.Properties.Name)[0]
-    }
+    $modelName = $f.model
     $runs += [PSCustomObject]@{
       label = $label
       ok = $true
       model = $modelName
       tokens_primary_max = $tokP
       prompt_tokens = $promptTok
+      tokens_output_est_first_model = $f.output
       response_chars = $resp.Length
       session_id = [string]$obj.session_id
     }
@@ -189,6 +145,7 @@ $out = [PSCustomObject]@{
   prompt_file = "prompt.txt"
   gemini_js = $geminiJs
   model_flag = $Model
+  run_metadata = $runMeta
   generated_at = (Get-Date).ToString("o")
   runs = @($runs)
   compare = [PSCustomObject]@{

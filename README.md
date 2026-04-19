@@ -52,11 +52,9 @@ Repo · [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · 
 
 ## Demo
 
-![SIGNAL benchmark — scenario savings and skill payload shrink](assets/signal-benchmark-results.png)
+![SIGNAL benchmark — scripted scenarios, skill shrink, and live Gemini snapshot](assets/signal-benchmark-results.png)
 
-Heuristic token estimates use **`ceil(characters / 4)`** — useful for comparing shapes, not billed API tokens. Full tables: [Benchmark](#benchmark). Reproduce: [`scripts/benchmark.ps1`](scripts/benchmark.ps1).
-
-**Video/GIF:** A short install or benchmark run GIF is planned; see [`assets/README.md`](assets/README.md) to record **`assets/signal-demo.gif`** and swap it into this section later.
+**Figure:** scripted scenario savings (A–C), aggregate **`.md` → `.min.md`** skill payload shrink (~87% on seven pairs), and one **live Gemini CLI** row (single-turn `EqualContext` chess harness — `tokens.total` vs matched `prompt_tokens` vs reply length). Heuristic token estimates use **`ceil(characters / 4)`** for scenarios and skills; live row uses API-reported stats ([`docs/token-metrics.md`](docs/token-metrics.md)). Full tables: [Benchmark](#benchmark). Reproduce: [`scripts/benchmark.ps1`](scripts/benchmark.ps1); live: [`benchmark/README.md`](benchmark/README.md).
 
 ---
 
@@ -148,6 +146,8 @@ flowchart LR
   M --> D3
 ```
 
+**Cumulative** transcript savings (baseline vs checkpoint-style history) are covered in [`benchmark/README.md`](benchmark/README.md) (`benchmark/long-session/` after a full clone). **Prompt vs output vs `tokens.total`** — hosts report different scopes; see [`docs/token-metrics.md`](docs/token-metrics.md).
+
 ---
 
 ## Tiers
@@ -182,6 +182,10 @@ Same chart as [Demo](#demo); numbers below are the tables behind it.
 
 Heuristic: **`ceil(characters / 4)`** — not billed API tokens; good for comparing shapes.
 
+### Reading the numbers
+
+[`docs/token-metrics.md`](docs/token-metrics.md) explains why **`tokens.total`** can rise when you add project instructions while replies get shorter (compare **prompt** and **output** separately). For **multi-turn / cumulative** proof, run **`benchmark/long-session/`** ([`benchmark/README.md`](benchmark/README.md)) in a full clone—the tables below are reproducible snapshots from [`scripts/benchmark.ps1`](scripts/benchmark.ps1), not a substitute for long-session measurement.
+
 ### Scenarios (scripted)
 
 | Scenario | Verbose | SIGNAL | Saved |
@@ -205,7 +209,25 @@ Heuristic: **`ceil(characters / 4)`** — not billed API tokens; good for compar
 
 Min-only helpers (`signal-core`, `signal-diff`, `signal-search`) ≈ **1.6K** bytes (~**389** est. tokens).
 
-**Reproduce:**
+### Live Gemini (representative single-turn)
+
+From [`benchmark/benchmark chess/run_chess_compare.ps1`](benchmark/benchmark%20chess/run_chess_compare.ps1) **`-Pair EqualContext`** (matched `GEMINI.md` ~289 vs ~296 chars). Model **`gemini-3.1-pro-preview`**. *Totals mix prompt + generation — when prompt is large, `tokens.total` moves a little even if the reply shrinks a lot.*
+
+| Metric | Baseline | SIGNAL-style | Notes |
+| --- | ---: | ---: | --- |
+| `tokens.total` (max per model) | ~9,039 | ~8,333 | ~**7.8%** lower |
+| `prompt_tokens` | ~8,060 | ~8,061 | Matched context (fair pair) |
+| Reply (chars) | ~1,823 | ~604 | ~**67%** fewer chars |
+
+### Reproduce
+
+**Live** (Gemini CLI on `PATH`, auth required — refreshes JSON under `benchmark/benchmark chess/`):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\benchmark\run.ps1 -Mode Chess -Pair EqualContext
+```
+
+**Static** (heuristic scenarios; no API):
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1
@@ -258,7 +280,15 @@ flowchart LR
 
 ## Coding norms (Karpathy-style)
 
-Tiers compress **chat**. For **code edits**, the bundle still points at **Karpathy-style** discipline: small diffs, clear assumptions, verify goals.
+**Tiers** shape **assistant chat** (symbols, templates, checkpoints). **Karpathy-style norms** shape **implementation work** (how you edit code and ship commits): orthogonal axes—activating `/signal3` does not replace surgical diffs or explicit assumptions.
+
+Norms in brief (canonical list: [`references/karpathy-coding-norms.md`](references/karpathy-coding-norms.md)):
+
+1. **Assumptions** — explicit over implicit; say when unsure.
+2. **Simplicity** — avoid over-engineering.
+3. **Surgical diffs** — minimal changes tied to the goal.
+4. **Verifiable goals** — reproduce, test, or verify where it matters.
+5. **No filler** — skip “here is the code”; show the code.
 
 | Resource | Link |
 | --- | --- |

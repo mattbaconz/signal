@@ -59,7 +59,7 @@ Copy the chosen file’s body into your app repo’s `GEMINI.md` (or merge caref
 | **`npx skills add mattbaconz/signal`** | Skills in user discovery paths; works across projects. |
 | **`gemini extensions install https://github.com/mattbaconz/signal --consent`** | Bundled extension + skills aligned with releases; good for “install once” ergonomics ([releasing](https://geminicli.com/docs/extensions/releasing)). |
 
-**Do not load the same skill twice.** If you use the extension **and** a manual copy under another discovery path, Gemini may warn about conflicts. Pick **one** install path per machine. Details: [README — Installation options](../README.md#installation-options).
+**Do not load the same skill twice.** If you use the extension **and** a manual copy under another discovery path, Gemini may warn about conflicts. Pick **one** install path per machine. Install commands: [README — Install](../README.md#install); mirrored host trees (`gemini-signal/`, `claude-signal/`): [README — Repo map](../README.md#repo-map).
 
 ---
 
@@ -82,7 +82,7 @@ Models often switch to tutorial tone on **how-to** or setup questions even when 
 
 - Re-issue **`/signal2`** or **`/signal3`** when you need BOOT + structure on long threads.
 - Say explicitly: **follow SIGNAL strictly** or **stay in TMPL** for one turn.
-- Tier choice is host- and session-dependent: [README — When to use which tier (canonical)](../README.md#when-to-use-which-tier-canonical).
+- Tier choice is host- and session-dependent: [README — Tiers](../README.md#tiers).
 
 There is no guarantee of perfect symbol grammar on every turn; persistent `GEMINI.md` + occasional tier activation is the practical combination.
 
@@ -90,6 +90,6 @@ There is no guarantee of perfect symbol grammar on every turn; persistent `GEMIN
 
 ## See also
 
-- [README — Installation options](../README.md#installation-options)
-- [README — Cross-tool porting](../README.md#cross-tool-porting) (Gemini CLI row)
+- [README — Install](../README.md#install)
+- [README — Repo map](../README.md#repo-map) (`gemini-signal/`, `claude-signal/`, `skills/`)
 - [skills/signal.md](../skills/signal.md) (activation lines, `SIGNAL_DRIFT`)

@@ -37,7 +37,8 @@ Output compression alone cannot hide a 200-line `GEMINI.md`. To shrink **prompt*
 
 ## Further reading in this repo
 
-- [README.md — Maximize token savings](../README.md#maximize-token-savings) — practical knobs.
-- [README.md — Evidence](../README.md#evidence-what-we-measure) — what we claim and what we do not.
+- [README.md — Why SIGNAL](../README.md#why-signal) — motivation and what SIGNAL standardizes.
+- [README.md — Tiers](../README.md#tiers) — `/signal`, `/signal2`, `/signal3` habits.
+- [README.md — Benchmark](../README.md#benchmark) — scripted scenarios, skill pairs, and reading the numbers.
 - [templates/gemini-GEMINI.min.md](../templates/gemini-GEMINI.min.md) — thinnest always-on Gemini defaults.
 - [docs/signal-compress.md](signal-compress.md) — shrink `GEMINI.md` / notes.

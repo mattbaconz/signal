@@ -34,6 +34,8 @@ Keep **prompt** small without dropping safety:
 
 **Run**
 
+From repo root you can also: `powershell -File .\benchmark\run.ps1 -Mode Chess -Pair EqualContext`
+
 ```powershell
 cd benchmark\benchmark chess
 .\run_chess_compare.ps1 -Pair EqualContext
@@ -41,7 +43,7 @@ cd benchmark\benchmark chess
 .\run_chess_compare.ps1 -Model <model-id>   # optional; default = CLI default model
 ```
 
-The script invokes `node …/gemini.js -p <prompt> -o json --approval-mode plan` once per folder (separate cold starts), parses `stats` from JSON, and writes:
+The script invokes `node …/gemini.js -p <prompt> -o json --approval-mode plan` once per folder (separate cold starts), parses `stats` from JSON, and writes (with **`run_metadata`**: CLI version, auth hint, git short hash; **retries** on transient 429/quota via [`../lib/gemini-invoke.ps1`](../lib/gemini-invoke.ps1)):
 
 - **`Default`:** `results_chess_compare.json`
 - **`EqualContext`:** `results_chess_equal_compare.json`
@@ -50,7 +52,7 @@ It also prints **on-disk `GEMINI.md` character counts** before the runs and stor
 
 **429 / capacity**
 
-If Google returns **429** (*No capacity* / *RESOURCE_EXHAUSTED*), wait and **retry later**, or pass **`-Model`** to a different model your CLI supports. The script does not auto-retry (keeps runs deterministic).
+If Google returns **429** (*No capacity* / *RESOURCE_EXHAUSTED*), the runner **retries with backoff** a few times; if it still fails, wait and retry later, or pass **`-Model`** to a different model your CLI supports.
 
 **Interpreting tokens**
 
