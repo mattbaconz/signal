@@ -54,9 +54,22 @@ venv/
 /WHEN-TO-USE.md
 /PORTING.md
 
-# Local benchmark harness (repro scripts, JSON artifacts — not published)
+# Benchmark harness — versioned scripts + docs; local run artifacts stay ignored
 benchmark/*
 !benchmark/README.md
-# Versioned: Gemini CLI chess pair harness + proof JSON (see README Evidence)
+!benchmark/run.ps1
+!benchmark/lib/
+!benchmark/lib/**
+# Long-session runner + scenario (ignore generated JSON log and RESULTS append)
+!benchmark/long-session/
+!benchmark/long-session/README.md
+!benchmark/long-session/run_long_session.ps1
+!benchmark/long-session/turns.json
+benchmark/long-session/results_*.json
+benchmark/long-session/RESULTS.md
+# Gemini CLI chess pair harness + fixtures + optional proof JSON
 !benchmark/benchmark chess/
 !benchmark/benchmark chess/**
+# Optional ckpt compression helper
+!benchmark/ckpt-compression/
+!benchmark/ckpt-compression/**

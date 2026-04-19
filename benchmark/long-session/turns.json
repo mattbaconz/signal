@@ -1,0 +1,17 @@
+[
+  "We have a chess move validator in this repo. First, list what you need to know to help: files, language, test command.",
+  "Assume TypeScript in src/move.ts. Describe how you would test legality of a knight move only.",
+  "Add a minimal edge case: knight jumping off board should return false. How would you name the test?",
+  "What about a knight on a1 jumping to b3 — legal. a1 to c2 — also legal. Any ambiguity in SAN vs coordinates?",
+  "If the board is 8x8 with 0-based ranks/files, give the formula mapping square name 'e4' to indices.",
+  "We found a bug: castling flags are ignored when validating king moves. What's the smallest fix strategy?",
+  "Should castling rights be passed as a struct or separate booleans? One sentence tradeoff.",
+  "After fixing, what regression test proves castling can't cross check?",
+  "Performance: validating one move allocates arrays each time. Suggest one micro-optimization without changing public API.",
+  "Security angle: user-supplied FEN string — what's one validation you must do before parsing?",
+  "Summarize the top 3 risks we haven't covered yet in this validator.",
+  "Write a one-line conventional commit message for the castling fix only.",
+  "If CI runs tests in parallel, could there be flake? When would you serialize?",
+  "Documentation: one paragraph for README 'Move validation' section — outline only.",
+  "Final: give a 5-bullet handoff for the next developer continuing this work."
+]
