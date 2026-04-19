@@ -1,6 +1,6 @@
 # Demo asset: `signal-demo.gif`
 
-The main [README](../README.md) references an optional **`signal-demo.gif`** in this folder for the hero section. The file is **not** committed until you record it locally.
+The main [README](../README.md) **[Demo](../README.md#demo)** section uses the benchmark PNG today and points here for a future **GIF** hero. Optional **`signal-demo.gif`** is **not** committed until you record it locally.
 
 ## Suggested recording (Windows)
 

@@ -1,31 +1,72 @@
 
+<p align="center">
+  <img src="assets/signal-logo.png" alt="SIGNAL logo" width="130" />
+</p>
 
-# 🌐 SIGNAL · v0.3.1
+<h1 align="center">🌐 SIGNAL · v0.3.1</h1>
 
-**Why burn the whole window when a tight spec fits?**  
-Agent skills + symbol grammar + checkpoints. Fewer tokens on instructions, more room for code.
+<p align="center"><strong>Why burn the whole window when a tight spec fits?</strong></p>
 
+<p align="center">Fewer tokens on instructions. More room for code. Agent skills + symbol grammar + checkpoints.</p>
 
+<p align="center">
+  <a href="https://github.com/mattbaconz/signal/stargazers"><img src="https://img.shields.io/github/stars/mattbaconz/signal?style=flat-square&logo=github&label=stars" alt="GitHub stars" /></a>
+  <a href="LICENSE"><img src="https://img.shields.io/github/license/mattbaconz/signal?style=flat-square" alt="License" /></a>
+  <a href="https://github.com/mattbaconz/signal/commits/main"><img src="https://img.shields.io/github/last-commit/mattbaconz/signal/main?style=flat-square&label=last%20commit" alt="Last commit" /></a>
+  <a href="https://github.com/mattbaconz/signal/actions"><img src="https://img.shields.io/github/actions/workflow/status/mattbaconz/signal/verify.yml?branch=main&style=flat-square&label=CI" alt="CI" /></a>
+  <img src="https://img.shields.io/badge/release-v0.3.1-5865F2?style=flat-square" alt="Version" />
+</p>
 
-[Before / After](#before--after) · [Install](#install) · [Tiers](#tiers) · [Commands](#commands) · [Benchmark](#benchmark) · [Architecture](#architecture) · [Karpathy norms](#coding-norms-karpathy-style) · [Git & CI](#git-workflows--ci) · [Stars](#star-history)
+<p align="center">
+  <a href="#demo">Demo</a> ·
+  <a href="#before--after">Before / After</a> ·
+  <a href="#install">Install</a> ·
+  <a href="#commands">Commands</a> ·
+  <a href="#repo-map">Repo map</a> ·
+  <a href="#tiers">Tiers</a> ·
+  <a href="#benchmark">Benchmark</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#coding-norms-karpathy-style">Karpathy norms</a> ·
+  <a href="#git-workflows--ci">Git &amp; CI</a> ·
+  <a href="#changelog">Changelog</a> ·
+  <a href="#star-history">Stars</a> ·
+  <a href="#maintainers">Maintainers</a>
+</p>
+
+<p align="center">
+  <code>skills/</code> <em>(source)</em> ·
+  <code>gemini-signal/</code> ·
+  <code>claude-signal/</code> <em>(mirrored hosts)</em>
+  — <strong>you are here:</strong> clone root
+</p>
 
 ---
 
-**SIGNAL** is a **brutalist compression layer** for agentic workflows: minified `.min.md` skills, a small **symbol vocabulary** (`→` `∅` `Δ` `!` `[n]`), and **checkpoints** instead of pasting entire threads. Inspired by the idea that *dense* beats *polite* when the meter is running—same job, fewer tokens.
+**SIGNAL** is a **brutalist compression layer** for agentic workflows: minified `.min.md` skills, a small **symbol vocabulary** (`→` `∅` `Δ` `!` `[n]`), and **checkpoints** instead of pasting entire threads. *Dense beats polite when the meter is running.*
 
 Repo · [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · Protocol · [`skills/signal.min.md`](skills/signal.min.md) · Symbols · [`skills/signal-core.min.md`](skills/signal-core.min.md)
+
+**Latest changes:** [CHANGELOG.md](CHANGELOG.md) (v0.3.1 patch notes, v0.3.0 “Shrinking Session”, and earlier). **Contributing / min skills:** [CONTRIBUTING.md](CONTRIBUTING.md).
+
+---
+
+## Demo
+
+![SIGNAL benchmark — scenario savings and skill payload shrink](assets/signal-benchmark-results.png)
+
+Heuristic token estimates use **`ceil(characters / 4)`** — useful for comparing shapes, not billed API tokens. Full tables: [Benchmark](#benchmark). Reproduce: [`scripts/benchmark.ps1`](scripts/benchmark.ps1).
+
+**Video/GIF:** A short install or benchmark run GIF is planned; see [`assets/README.md`](assets/README.md) to record **`assets/signal-demo.gif`** and swap it into this section later.
 
 ---
 
 ## Before / after
 
-
-| 👤 **Verbose agent**                                                                                                                                                                                                       | 🌐 **SIGNAL**                                                                                                                                   |
-| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| “I think the problem might be in `auth.js` around line 47. When the array is empty there could potentially be a null reference. You might want to consider adding a guard clause. I'm fairly confident this is the issue.” | `auth.js:47` · null ref · guard — same fix, **~7× fewer tokens** in the scripted benchmark.                                                     |
-| Paste 10 turns of chat + tool noise into context so “nothing is lost.”                                                                                                                                                     | **CKPT atom**: project stack, progress, next step — transcript stays out of the window.                                                         |
-| One giant `SKILL.md` tree + references forever.                                                                                                                                                                            | **Canonical `.md`** for humans, `**.min.md**` for the agent — **~87% smaller** across the seven main skill pairs (see [Benchmark](#benchmark)). |
-
+| 👤 **Verbose agent** | 🌐 **SIGNAL** |
+| --- | --- |
+| “I think the problem might be in `auth.js` around line 47…” | `auth.js:47` · null ref · guard — **~7× fewer tokens** in the scripted benchmark. |
+| Paste 10 turns of chat + tool noise into context. | **CKPT atom**: stack, progress, next step — transcript stays out of the window. |
+| One giant `SKILL.md` tree + references forever. | **Canonical `.md`** for humans, **`.min.md`** for the agent — **~87%** smaller on the seven main pairs ([Benchmark](#benchmark)). |
 
 ---
 
@@ -41,7 +82,40 @@ Global:
 npx skills add mattbaconz/signal -y -g
 ```
 
-**Quick start:** read [`skills/signal.min.md`](skills/signal.min.md) → pick a tier → pull in workflow skills (`signal-commit`, `signal-push`, …) only when needed. Canonical specs sit next to minified ones in [`skills/`](skills/).
+**Quick start:** read [`skills/signal.min.md`](skills/signal.min.md) → pick a tier → pull in workflow skills (`signal-commit`, `signal-push`, …) only when needed.
+
+---
+
+## Commands
+
+| Command | What it does |
+| --- | --- |
+| `/signal` | S1 — entry tier |
+| `/signal2` | S2 — strong default |
+| `/signal3` | S3 — auto-CKPT |
+| `/signal-commit` | Stage + conventional commit |
+| `/signal-push` | Commit + push |
+| `/signal-pr` | Push + PR (`gh`) |
+| `/signal-review` | One-line review, severity required |
+| `/signal-state` | `.signal_state.md` |
+| `/signal-diff` | Summarized changes |
+| `/signal-search` | Summarized search |
+
+Tier detail: [Tiers](#tiers).
+
+---
+
+## Repo map
+
+There is **no** legacy top-level `signal/` directory in this repo—ignore older docs that referred to it. This table is what you actually open after cloning.
+
+| Location | What it is | You need it if… |
+| --- | --- | --- |
+| [`skills/`](skills/) | **Canonical** skill specs: `*.md` (readable) + `*.min.md` (dense) | You install via `npx skills add` or copy skills into an agent |
+| [`gemini-signal/`](gemini-signal/), [`claude-signal/`](claude-signal/) | **Mirrored** host extension layouts (`SKILL.md` per tool) | You ship the Gemini CLI or Claude Code plugin from this tree |
+| [`references/`](references/) | Shared refs (symbols, Karpathy norms, benchmarks, checkpoint notes) | You cite norms or symbols |
+| [`templates/`](templates/) | Snippets to merge into a **project’s** GEMINI / CLAUDE files | You integrate SIGNAL into an app repo |
+| [`scripts/`](scripts/) | `shrink.ps1`, `sync-integration-packages.ps1`, `verify.ps1`, `benchmark.ps1` | You contribute or verify locally ([CONTRIBUTING.md](CONTRIBUTING.md)) |
 
 ---
 
@@ -80,46 +154,23 @@ flowchart LR
 
 Use `/signal`, `/signal2`, or `/signal3`.
 
-
-| Tier   | You get                                  | Rough habit savings        |
-| ------ | ---------------------------------------- | -------------------------- |
-| **S1** | Symbols, no preamble, no hedge, terse    | ~35%                       |
-| **S2** | S1 + BOOT, aliases, delta-friendly turns | another ~20% on top        |
-| **S3** | S2 + **auto-checkpoint every 5 turns**   | long sessions stay bounded |
-
-
----
-
-## Commands
-
-
-| Command          | What it does                       |
-| ---------------- | ---------------------------------- |
-| `/signal`        | S1 — entry tier                    |
-| `/signal2`       | S2 — strong default                |
-| `/signal3`       | S3 — auto-CKPT                     |
-| `/signal-commit` | Stage + conventional commit        |
-| `/signal-push`   | Commit + push                      |
-| `/signal-pr`     | Push + PR (`gh`)                   |
-| `/signal-review` | One-line review, severity required |
-| `/signal-state`  | `.signal_state.md`                 |
-| `/signal-diff`   | Summarized changes                 |
-| `/signal-search` | Summarized search                  |
-
+| Tier | You get | Rough habit savings |
+| --- | --- | --- |
+| **S1** | Symbols, no preamble, no hedge, terse | ~35% |
+| **S2** | S1 + BOOT, aliases, delta-friendly turns | another ~20% on top |
+| **S3** | S2 + **auto-checkpoint every 5 turns** | long sessions stay bounded |
 
 ---
 
 ## Symbol grammar (snippet)
 
-
-| Symbol | Meaning               | Example              |
-| ------ | --------------------- | -------------------- |
-| `→`    | causes / produces     | `nullref→crash`      |
-| `∅`    | none / remove / empty | `cache=∅`            |
-| `Δ`    | change / diff         | `Δ+cache→~5ms`       |
-| `!`    | required / must       | `!fix before deploy` |
-| `[n]`  | confidence 0.0–1.0    | `fix logic [0.95]`   |
-
+| Symbol | Meaning | Example |
+| --- | --- | --- |
+| `→` | causes / produces | `nullref→crash` |
+| `∅` | none / remove / empty | `cache=∅` |
+| `Δ` | change / diff | `Δ+cache→~5ms` |
+| `!` | required / must | `!fix before deploy` |
+| `[n]` | confidence 0.0–1.0 | `fix logic [0.95]` |
 
 Full reference: [`skills/signal-core.min.md`](skills/signal-core.min.md).
 
@@ -127,34 +178,30 @@ Full reference: [`skills/signal-core.min.md`](skills/signal-core.min.md).
 
 ## Benchmark
 
-Heuristic: **`ceil(characters / 4)`** — not billed API tokens; good for comparing shapes.
+Same chart as [Demo](#demo); numbers below are the tables behind it.
 
-SIGNAL v0.3.1 benchmark
+Heuristic: **`ceil(characters / 4)`** — not billed API tokens; good for comparing shapes.
 
 ### Scenarios (scripted)
 
-
-| Scenario                     | Verbose | SIGNAL | Saved        |
-| ---------------------------- | ------- | ------ | ------------ |
-| A: 10-turn history vs CKPT   | ~167    | ~45    | ~73% · ~3.7× |
-| B: Bug paragraph vs one line | ~51     | ~7     | ~86% · ~7.3× |
-| C: Hedging vs `[conf]`       | ~8      | ~2     | ~75% · ~4×   |
-
+| Scenario | Verbose | SIGNAL | Saved |
+| --- | ---: | ---: | --- |
+| A: 10-turn history vs CKPT | ~167 | ~45 | ~73% · ~3.7× |
+| B: Bug paragraph vs one line | ~51 | ~7 | ~86% · ~7.3× |
+| C: Hedging vs `[conf]` | ~8 | ~2 | ~75% · ~4× |
 
 ### Skill pairs (canonical `.md` → `.min.md`)
 
-
-| Pair              | Bytes (≈)          | Est. tok (≈)      | Shrink   |
-| ----------------- | ------------------ | ----------------- | -------- |
-| signal            | 2.8K → 0.7K        | ~712 → ~182       | ~75%     |
-| signal-ckpt       | 5.6K → 0.7K        | ~1389 → ~163      | ~88%     |
-| signal-commit     | 8.3K → 0.7K        | ~2071 → ~178      | ~91%     |
-| signal-pr         | 4.7K → 0.5K        | ~1177 → ~130      | ~89%     |
-| signal-push       | 3.7K → 0.5K        | ~936 → ~131       | ~86%     |
-| signal-review     | 5.5K → 0.6K        | ~1378 → ~145      | ~90%     |
-| signal-state      | 2.0K → 0.7K        | ~511 → ~163       | ~68%     |
+| Pair | Bytes (≈) | Est. tok (≈) | Shrink |
+| --- | --- | --- | --- |
+| signal | 2.8K → 0.7K | ~712 → ~182 | ~75% |
+| signal-ckpt | 5.6K → 0.7K | ~1389 → ~163 | ~88% |
+| signal-commit | 8.3K → 0.7K | ~2071 → ~178 | ~91% |
+| signal-pr | 4.7K → 0.5K | ~1177 → ~130 | ~89% |
+| signal-push | 3.7K → 0.5K | ~936 → ~131 | ~86% |
+| signal-review | 5.5K → 0.6K | ~1378 → ~145 | ~90% |
+| signal-state | 2.0K → 0.7K | ~511 → ~163 | ~68% |
 | **7 pairs total** | **~32.7K → ~4.4K** | **~8173 → ~1090** | **~87%** |
-
 
 Min-only helpers (`signal-core`, `signal-diff`, `signal-search`) ≈ **1.6K** bytes (~**389** est. tokens).
 
@@ -213,56 +260,45 @@ flowchart LR
 
 Tiers compress **chat**. For **code edits**, the bundle still points at **Karpathy-style** discipline: small diffs, clear assumptions, verify goals.
 
-
-| Resource       | Link                                                                                                                                                                                                |
-| -------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Full norms     | [`references/karpathy-coding-norms.md`](references/karpathy-coding-norms.md)                                                                                                                        |
-| In skills      | [`skills/signal.md`](skills/signal.md), [`skills/signal-core.min.md`](skills/signal-core.min.md) (`KarpathyNorms`), [`skills/signal-commit.min.md`](skills/signal-commit.min.md) (`followKarpathy`) |
-| Host templates | [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md), [`templates/claude-CLAUDE.md`](templates/claude-CLAUDE.md)                                                                              |
-
+| Resource | Link |
+| --- | --- |
+| Full norms | [`references/karpathy-coding-norms.md`](references/karpathy-coding-norms.md) |
+| In skills | [`skills/signal.md`](skills/signal.md), [`skills/signal-core.min.md`](skills/signal-core.min.md) (`KarpathyNorms`), [`skills/signal-commit.min.md`](skills/signal-commit.min.md) (`followKarpathy`) |
+| Host templates | [`templates/gemini-GEMINI.md`](templates/gemini-GEMINI.md), [`templates/claude-CLAUDE.md`](templates/claude-CLAUDE.md) |
 
 ---
 
 ## Git workflows & CI
 
-
-| Skill                                                        | Role                                                   |
-| ------------------------------------------------------------ | ------------------------------------------------------ |
+| Skill | Role |
+| --- | --- |
 | [`skills/signal-commit.min.md`](skills/signal-commit.min.md) | Stage all, conventional commit (`--draft` / `--split`) |
-| [`skills/signal-push.min.md`](skills/signal-push.min.md)     | Commit + push                                          |
-| [`skills/signal-pr.min.md`](skills/signal-pr.min.md)         | Commit + push + `gh pr create`                         |
-
+| [`skills/signal-push.min.md`](skills/signal-push.min.md) | Commit + push |
+| [`skills/signal-pr.min.md`](skills/signal-pr.min.md) | Commit + push + `gh pr create` |
 
 **CI:** [`.github/workflows/verify.yml`](.github/workflows/verify.yml) runs [`scripts/verify.ps1`](scripts/verify.ps1) on Windows for `main` and PRs.
 
 ---
 
-## What's new in v0.3.1
+## Changelog
 
-- **Version alignment:** `signal_bundle_version` **0.3.1** across canonical skills, `gemini-extension.json`, Claude plugin, and marketplace metadata.
-- **Path fix:** all Karpathy / checkpoint / boot-preset pointers use repo-root **`references/*`** (removed obsolete `signal/references/*` and `skills/signal/references/*`).
-- **Docs:** new [`references/checkpoint.md`](references/checkpoint.md) describing benchmark CKPT fixtures; [`scripts/benchmark.ps1`](scripts/benchmark.ps1) and preview HTML reference it.
-- **Chore:** `verify.ps1` user-facing error message typo (**SIGNAL** repo).
-
-### Prior release — v0.3.0 (“Shrinking Session”)
-
-- Minified `.min.md` skills, symbol grammar, `.signal_state.md`, `signal-diff` / `signal-search`, tiered activation. See [CHANGELOG.md](CHANGELOG.md).
+All releases: [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
-## Repository layout
+## Repository layout (clone root)
 
 ```
-signal/
-├── skills/              # *.md + *.min.md
-├── assets/              # logos, benchmark art
-├── templates/           # Gemini / Claude snippets
-├── references/          # e.g. karpathy-coding-norms
-├── scripts/             # benchmark.ps1, shrink.ps1, verify.ps1
-├── gemini-signal/       # Gemini CLI extension
-├── claude-signal/       # Claude Code plugin
+./
+├── skills/              # canonical *.md + *.min.md (edit here; see CONTRIBUTING.md)
+├── assets/              # logos, benchmark art, GIF instructions
+├── references/          # symbols, Karpathy norms, benchmarks, checkpoint notes
+├── templates/           # Gemini / Claude merge snippets
+├── scripts/             # benchmark.ps1, shrink.ps1, verify.ps1, sync-integration-packages.ps1
+├── gemini-signal/       # Gemini CLI extension (mirrored from skills/)
+├── claude-signal/       # Claude Code plugin (mirrored from skills/)
 ├── hooks/
-└── GEMINI.md
+└── GEMINI.md            # root context (synced from gemini-signal/)
 ```
 
 ---
@@ -270,6 +306,17 @@ signal/
 ## Star History
 
 [Star History Chart](https://www.star-history.com/?repos=mattbaconz%2Fsignal&type=date&legend=top-left)
+
+---
+
+## Maintainers
+
+**GitHub Release:** Publish a release from tag **`v0.3.1`** so the sidebar shows a current release (changelog text can match [CHANGELOG.md](CHANGELOG.md) § v0.3.1). With [GitHub CLI](https://cli.github.com/):  
+`gh release create v0.3.1 --title "SIGNAL v0.3.1" --notes-file CHANGELOG.md`  
+(edit notes or paste the v0.3.1 section only if you prefer).
+
+**GitHub Topics:** Repo → **Settings → General → Topics**. Suggested tags:  
+`agent-skills`, `token-compression`, `cursor`, `llm`, `developer-tools`, `gemini-cli`, `claude-code`, `opensource`, `ai-agents`, `prompt-engineering`.
 
 ---
 
