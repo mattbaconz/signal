@@ -3,50 +3,39 @@
   <img src="assets/signal-logo.png" alt="SIGNAL logo" width="130" />
 </p>
 
-<h1 align="center">🌐 SIGNAL · v0.3.1</h1>
+<h1 align="center">SIGNAL · v0.3.1</h1>
 
-<p align="center"><strong>Why burn the whole window when a tight spec fits?</strong></p>
-
-<p align="center">Fewer tokens on instructions. More room for code. Agent skills + symbol grammar + checkpoints.</p>
+<p align="center"><strong>Less prompt noise. More room for code.</strong><br />
+Agent skills that default to dense output: minified <code>.min.md</code> payloads, symbol shorthand, optional checkpoints.</p>
 
 <p align="center">
   <a href="https://github.com/mattbaconz/signal/stargazers"><img src="https://img.shields.io/github/stars/mattbaconz/signal?style=flat-square&logo=github&label=stars" alt="GitHub stars" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/mattbaconz/signal?style=flat-square" alt="License" /></a>
-  <a href="https://github.com/mattbaconz/signal/commits/main"><img src="https://img.shields.io/github/last-commit/mattbaconz/signal/main?style=flat-square&label=last%20commit" alt="Last commit" /></a>
   <a href="https://github.com/mattbaconz/signal/actions"><img src="https://img.shields.io/github/actions/workflow/status/mattbaconz/signal/verify.yml?branch=main&style=flat-square&label=CI" alt="CI" /></a>
   <img src="https://img.shields.io/badge/release-v0.3.1-5865F2?style=flat-square" alt="Version" />
 </p>
 
+### At a glance
+
+| Topic | Summary |
+| --- | --- |
+| **What you get** | Shorter **instructions + replies** in the agent; **checkpoints** (S3) instead of pasting full thread history when you want them. |
+| **What you run** | `npx skills add mattbaconz/signal` → **`/signal`** (light) · **`/signal2`** (default) · **`/signal3`** (auto-CKPT). |
+| **What this tree is** | **`skills/`** = source specs you edit. **`gemini-signal/`** · **`claude-signal/`** = mirrored host packages (don’t hand-edit; see [CONTRIBUTING](CONTRIBUTING.md)). |
+
+Protocol entrypoints: [`skills/signal.min.md`](skills/signal.min.md) · symbols [`skills/signal-core.min.md`](skills/signal-core.min.md) · repo [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · releases [CHANGELOG.md](CHANGELOG.md)
+
 <p align="center">
   <a href="#demo">Demo</a> ·
-  <a href="#before--after">Before / After</a> ·
   <a href="#install">Install</a> ·
   <a href="#commands">Commands</a> ·
-  <a href="#repo-map">Repo map</a> ·
-  <a href="#tiers">Tiers</a> ·
   <a href="#benchmark">Benchmark</a> ·
+  <a href="#repo-map">Repo map</a> ·
   <a href="#architecture">Architecture</a> ·
-  <a href="#coding-norms-karpathy-style">Karpathy norms</a> ·
-  <a href="#git-workflows--ci">Git &amp; CI</a> ·
-  <a href="#changelog">Changelog</a> ·
-  <a href="#star-history">Stars</a> ·
-  <a href="#maintainers">Maintainers</a>
+  <a href="#changelog">Changelog</a>
 </p>
 
-<p align="center">
-  <code>skills/</code> <em>(source)</em> ·
-  <code>gemini-signal/</code> ·
-  <code>claude-signal/</code> <em>(mirrored hosts)</em>
-  — <strong>you are here:</strong> clone root
-</p>
-
----
-
-**SIGNAL** is a **brutalist compression layer** for agentic workflows: minified `.min.md` skills, a small **symbol vocabulary** (`→` `∅` `Δ` `!` `[n]`), and **checkpoints** instead of pasting entire threads. *Dense beats polite when the meter is running.*
-
-Repo · [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · Protocol · [`skills/signal.min.md`](skills/signal.min.md) · Symbols · [`skills/signal-core.min.md`](skills/signal-core.min.md)
-
-**Latest changes:** [CHANGELOG.md](CHANGELOG.md) (v0.3.1 patch notes, v0.3.0 “Shrinking Session”, and earlier). **Contributing / min skills:** [CONTRIBUTING.md](CONTRIBUTING.md).
+<p align="center"><a href="#before--after">Before / after</a> · <a href="#tiers">Tiers</a> · <a href="#coding-norms-karpathy-style">Karpathy norms</a> · <a href="#git-workflows--ci">Git &amp; CI</a> · <a href="#star-history">Stars</a></p>
 
 ---
 
@@ -54,7 +43,7 @@ Repo · [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · 
 
 ![SIGNAL benchmark — scripted scenarios, skill shrink, and live Gemini snapshot](assets/signal-benchmark-results.png)
 
-**Figure:** scripted scenario savings (A–C), aggregate **`.md` → `.min.md`** skill payload shrink (~87% on seven pairs), and one **live Gemini CLI** row (single-turn `EqualContext` chess harness — `tokens.total` vs matched `prompt_tokens` vs reply length). Heuristic token estimates use **`ceil(characters / 4)`** for scenarios and skills; live row uses API-reported stats ([`docs/token-metrics.md`](docs/token-metrics.md)). Full tables: [Benchmark](#benchmark). Reproduce: [`scripts/benchmark.ps1`](scripts/benchmark.ps1); live: [`benchmark/README.md`](benchmark/README.md).
+**What you’re looking at:** three **scripted** savings shapes (A–C), **skill file** shrink (`.md` → `.min.md`), and one **live Gemini** snapshot (single-turn; prompt-heavy totals vs shorter replies — see [Benchmark](#benchmark)). Heuristic = `ceil(chars/4)`; API math = [`docs/token-metrics.md`](docs/token-metrics.md). Run: [`scripts/benchmark.ps1`](scripts/benchmark.ps1) · [`benchmark/README.md`](benchmark/README.md).
 
 ---
 
@@ -80,7 +69,7 @@ Global:
 npx skills add mattbaconz/signal -y -g
 ```
 
-**Quick start:** read [`skills/signal.min.md`](skills/signal.min.md) → pick a tier → pull in workflow skills (`signal-commit`, `signal-push`, …) only when needed.
+**After install:** open [`skills/signal.min.md`](skills/signal.min.md), pick **S1 / S2 / S3**, add workflow skills (`signal-commit`, …) only when you need them.
 
 ---
 
@@ -119,7 +108,7 @@ There is **no** legacy top-level `signal/` directory in this repo—ignore older
 
 ## Why SIGNAL
 
-Long prompts and hedging eat context. SIGNAL standardizes **how** you shrink: symbols instead of paragraphs, **`.signal_state.md`** for durable state, **signal-diff** / **signal-search** for summarized context instead of raw dumps.
+Same idea as [At a glance](#at-a-glance), with moving parts: **symbols** instead of paragraphs, **`.signal_state.md`** for durable state, **signal-diff** / **signal-search** instead of raw dumps — all optional tools you pull in when the session needs them.
 
 ```mermaid
 flowchart LR
@@ -321,7 +310,7 @@ All releases: [CHANGELOG.md](CHANGELOG.md).
 ```
 ./
 ├── skills/              # canonical *.md + *.min.md (edit here; see CONTRIBUTING.md)
-├── assets/              # logos, benchmark art, GIF instructions
+├── assets/              # logos, benchmark infographic
 ├── references/          # symbols, Karpathy norms, benchmarks, checkpoint notes
 ├── templates/           # Gemini / Claude merge snippets
 ├── scripts/             # benchmark.ps1, shrink.ps1, verify.ps1, sync-integration-packages.ps1
@@ -335,18 +324,13 @@ All releases: [CHANGELOG.md](CHANGELOG.md).
 
 ## Star History
 
-[Star History Chart](https://www.star-history.com/?repos=mattbaconz%2Fsignal&type=date&legend=top-left)
-
----
-
-## Maintainers
-
-**GitHub Release:** Publish a release from tag **`v0.3.1`** so the sidebar shows a current release (changelog text can match [CHANGELOG.md](CHANGELOG.md) § v0.3.1). With [GitHub CLI](https://cli.github.com/):  
-`gh release create v0.3.1 --title "SIGNAL v0.3.1" --notes-file CHANGELOG.md`  
-(edit notes or paste the v0.3.1 section only if you prefer).
-
-**GitHub Topics:** Repo → **Settings → General → Topics**. Suggested tags:  
-`agent-skills`, `token-compression`, `cursor`, `llm`, `developer-tools`, `gemini-cli`, `claude-code`, `opensource`, `ai-agents`, `prompt-engineering`.
+<a href="https://www.star-history.com/?repos=mattbaconz%2Fsignal&type=date&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&legend=top-left" />
+ </picture>
+</a>
 
 ---
 

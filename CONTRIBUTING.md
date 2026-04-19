@@ -51,7 +51,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
 
 - Bump **`signal_bundle_version`** in skill frontmatter when you cut a release (see [CHANGELOG.md](CHANGELOG.md)).
 - Align [`gemini-extension.json`](gemini-extension.json), [`gemini-signal/gemini-extension.json`](gemini-signal/gemini-extension.json), [`claude-signal/.claude-plugin/plugin.json`](claude-signal/.claude-plugin/plugin.json), and [`.claude-plugin/marketplace.json`](.claude-plugin/marketplace.json) with the same semver when maintainers ship a versioned release.
-- Tag releases as `v0.x.y` and optionally publish a **GitHub Release** (see [README.md § Maintainers](README.md#maintainers)).
+- Tag releases as `v0.x.y` and optionally publish a **GitHub Release** (see [Maintainer: GitHub topics and releases](#maintainer-github-topics-and-releases) below).
 
 ## Pull request checklist
 
@@ -63,4 +63,11 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
 
 ## Maintainer: GitHub topics and releases
 
-See [README.md — Maintainers](README.md#maintainers) for suggested **repository topics** and publishing a **GitHub Release** from tag `v0.3.1` (or the current tag).
+**GitHub Release:** Publish a release from tag **`v0.3.1`** (or the current `v0.x.y`) so the sidebar shows a current release; changelog text can match [CHANGELOG.md](CHANGELOG.md). With [GitHub CLI](https://cli.github.com/):
+
+`gh release create v0.3.1 --title "SIGNAL v0.3.1" --notes-file CHANGELOG.md`
+
+(edit the title or paste only the section for that version if you prefer).
+
+**GitHub Topics:** Repo → **Settings → General → Topics**. Suggested tags:  
+`agent-skills`, `token-compression`, `cursor`, `llm`, `developer-tools`, `gemini-cli`, `claude-code`, `opensource`, `ai-agents`, `prompt-engineering`.
