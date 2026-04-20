@@ -7,7 +7,7 @@ param(
 
 <#
 .SYNOPSIS
-  Verification harness for SIGNAL v0.3.1
+  Verification harness for SIGNAL v0.3.2
 
   Run from repo root:
     powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
@@ -61,7 +61,7 @@ $rootBin = Join-Path $RepoRoot 'bin\run-commit.ps1'
 foreach ($p in @($rootExt, $rootGem, $rootSkill, $rootMinSkill, $rootBin)) {
   if (-not (Test-Path -LiteralPath $p)) { Fail "repo-root incomplete: missing $p" }
 }
-if (-not $script:VerifyFailed) { Ok 'repo-root structure (v0.3.1)' }
+if (-not $script:VerifyFailed) { Ok 'repo-root structure (v0.3.2)' }
 
 # Extension mirroring structure
 $geminiSkill = Join-Path $RepoRoot 'gemini-signal\skills\signal\SKILL.md'
@@ -72,7 +72,17 @@ $claudeMinSkill = Join-Path $RepoRoot 'claude-signal\skills\signal\SKILL.min.md'
 foreach ($p in @($geminiSkill, $claudeSkill, $geminiMinSkill, $claudeMinSkill)) {
   if (-not (Test-Path -LiteralPath $p)) { Fail "host extension incomplete: missing $p" }
 }
-if (-not $script:VerifyFailed) { Ok 'host extensions structure (v0.3.1 mirrored)' }
+if (-not $script:VerifyFailed) { Ok 'host extensions structure (v0.3.2 mirrored)' }
+
+# Kiro mirror structure
+$kiroSkill    = Join-Path $RepoRoot 'kiro-signal\skills\signal\SKILL.md'
+$kiroMinSkill = Join-Path $RepoRoot 'kiro-signal\skills\signal\SKILL.min.md'
+$kiroRefs     = Join-Path $RepoRoot 'kiro-signal\references\symbols.md'
+
+foreach ($p in @($kiroSkill, $kiroMinSkill, $kiroRefs)) {
+  if (-not (Test-Path -LiteralPath $p)) { Fail "kiro extension incomplete: missing $p" }
+}
+if (-not $script:VerifyFailed) { Ok 'kiro-signal structure (v0.3.2 mirrored)' }
 
 # --- 0b) bin/run-commit.ps1 --dry ---
 $commitWrapper = Join-Path $RepoRoot 'bin\run-commit.ps1'
@@ -101,7 +111,8 @@ $mdFiles = Get-ChildItem -Path $RepoRoot -Recurse -Filter '*.md' -File -ErrorAct
     $_.FullName -notmatch '\\\.git\\' -and
     $_.FullName -notmatch '\\benchmark\\' -and
     $_.FullName -notmatch '\\gemini-signal\\skills\\' -and
-    $_.FullName -notmatch '\\claude-signal\\skills\\'
+    $_.FullName -notmatch '\\claude-signal\\skills\\' -and
+    $_.FullName -notmatch '\\kiro-signal\\skills\\'
   }
 
 $linkPattern = '\[[^\]]*\]\(([^)]+)\)'
@@ -148,5 +159,5 @@ if ($script:VerifyFailed) {
   Write-Host "`nx One or more checks failed." -ForegroundColor Red
   exit 1
 }
-Write-Host "`n+ All required checks passed (v0.3.1)." -ForegroundColor Green
+Write-Host "`n+ All required checks passed (v0.3.2)." -ForegroundColor Green
 exit 0

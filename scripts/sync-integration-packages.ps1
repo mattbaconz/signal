@@ -1,7 +1,7 @@
 #Requires -Version 5.1
-# SIGNAL v0.3.1 - sync-integration-packages.ps1
+# SIGNAL v0.3.2 - sync-integration-packages.ps1
 # Source of truth: root skills/ directory.
-# Mirrors canonical skills into gemini-signal/skills and claude-signal/skills.
+# Mirrors canonical skills into gemini-signal/skills, claude-signal/skills, and kiro-signal/skills.
 
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
@@ -20,7 +20,8 @@ if ($LASTEXITCODE -ne 0) { Write-Error "shrink.ps1 failed"; exit 1 }
 
 $targets = @(
     (Join-Path $RepoRoot 'gemini-signal\skills'),
-    (Join-Path $RepoRoot 'claude-signal\skills')
+    (Join-Path $RepoRoot 'claude-signal\skills'),
+    (Join-Path $RepoRoot 'kiro-signal\skills')
 )
 
 foreach ($destRoot in $targets) {
@@ -48,7 +49,32 @@ foreach ($destRoot in $targets) {
     }
 }
 
-# 2. Sync root manifests and binaries
+# 2. Kiro: bundle references/ alongside skills/ so imported skill folders resolve protocol links.
+# Kiro imports are GitHub subtree URLs (one skill folder at a time), but links in SKILL.md
+# point to ../../references/ which resolves to kiro-signal/references/ in context.
+$kiroSkillsDir = Join-Path $RepoRoot 'kiro-signal\skills'
+$kiroRefsDir   = Join-Path $RepoRoot 'kiro-signal\references'
+$rootRefsDir   = Join-Path $RepoRoot 'references'
+
+if (Test-Path $kiroRefsDir) { Remove-Item -LiteralPath $kiroRefsDir -Recurse -Force }
+New-Item -ItemType Directory -Path $kiroRefsDir -Force | Out-Null
+& robocopy.exe $rootRefsDir $kiroRefsDir /E /NFL /NDL /NJH /NJS
+if ($LASTEXITCODE -ge 8) { Write-Error "robocopy references to kiro-signal failed: $LASTEXITCODE"; exit 1 }
+Write-Host "  synced references/ -> kiro-signal/references/"
+
+# Rewrite ../references/ links in kiro-signal skill files to ../../references/
+# (skill lives at kiro-signal/skills/<name>/SKILL.md, references at kiro-signal/references/)
+$utf8 = [System.Text.Encoding]::UTF8
+Get-ChildItem -Path $kiroSkillsDir -Recurse -Filter "*.md" | ForEach-Object {
+    $content = [System.IO.File]::ReadAllText($_.FullName, $utf8)
+    $rewritten = $content.Replace('(../references/', '(../../references/')
+    if ($rewritten -ne $content) {
+        [System.IO.File]::WriteAllText($_.FullName, $rewritten, $utf8)
+        Write-Host "  rewrote references links: $($_.FullName)"
+    }
+}
+
+# 3. Sync root manifests and binaries (Gemini-specific)
 $geminiPack = Join-Path $RepoRoot 'gemini-signal'
 
 # Root Gemini extension (gallery + gemini extensions install <github-url>)
@@ -57,8 +83,6 @@ Copy-Item -LiteralPath (Join-Path $geminiPack 'gemini-extension.json') -Destinat
 # Root GEMINI.md: same content as gemini-signal/GEMINI.md but paths are repo-root-relative (no ../).
 $geminiSrc = Join-Path $geminiPack 'GEMINI.md'
 $geminiDst = Join-Path $RepoRoot 'GEMINI.md'
-# UTF-8 throughout (source files are UTF-8; default ReadAllText can mis-detect on Windows without BOM).
-$utf8 = [System.Text.Encoding]::UTF8
 $geminiBody = [System.IO.File]::ReadAllText($geminiSrc, $utf8)
 $geminiBody = $geminiBody.Replace('../skills/', 'skills/').Replace('../references/', 'references/')
 [System.IO.File]::WriteAllText($geminiDst, $geminiBody, $utf8)
@@ -75,5 +99,5 @@ foreach ($dir in $syncDirs) {
     }
 }
 
-Write-Host "sync-integration-packages: OK (v0.3.1 logic)" -ForegroundColor Green
+Write-Host "sync-integration-packages: OK (v0.3.2 logic)" -ForegroundColor Green
 exit 0

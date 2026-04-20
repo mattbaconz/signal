@@ -151,7 +151,7 @@ The summary line covers all files combined.
 
 ## BOOT Integration
 
-If `BOOT:review` is active (see [`references/boot-presets.md`](../references/boot-presets.md)):
+If `BOOT:review` is active (see [`references/boot-presets.md`](../../references/boot-presets.md)):
 - Output format is already set to `TMPL:rev`
 - Severity is already required by `severity_required`
 - No preamble, no summary prose — just the lines and the `∑` line

@@ -1,48 +1,35 @@
-<p align="center">
-  <img src="assets/signal-logo.png" alt="SIGNAL logo" width="130" />
-</p>
+﻿
 
-<h1 align="center">SIGNAL · v0.3.1</h1>
+# SIGNAL · v0.3.2
 
-<p align="center"><strong>Less prompt noise. More room for code.</strong><br />
-Agent skills that default to dense output: minified <code>.min.md</code> payloads, symbol shorthand, optional checkpoints.</p>
+**Less prompt noise. More room for code.**  
+Agent skills that default to dense output: minified `.min.md` payloads, symbol shorthand, optional checkpoints.
 
-<p align="center">
-  <a href="https://github.com/mattbaconz/signal/stargazers"><img src="https://img.shields.io/github/stars/mattbaconz/signal?style=flat-square&logo=github&label=stars" alt="GitHub stars" /></a>
-  <a href="LICENSE"><img src="https://img.shields.io/github/license/mattbaconz/signal?style=flat-square" alt="License" /></a>
-  <a href="https://github.com/mattbaconz/signal/actions"><img src="https://img.shields.io/github/actions/workflow/status/mattbaconz/signal/verify.yml?branch=main&style=flat-square&label=CI" alt="CI" /></a>
-  <img src="https://img.shields.io/badge/release-v0.3.1-5865F2?style=flat-square" alt="Version" />
-</p>
+
 
 ### At a glance
 
-| Topic | Summary |
-| --- | --- |
-| **What you get** | Shorter **instructions + replies** in the agent; **checkpoints** (S3) instead of pasting full thread history when you want them. |
-| **What you run** | `npx skills add mattbaconz/signal` → **`/signal`** (light) · **`/signal2`** (default) · **`/signal3`** (auto-CKPT). |
-| **What this tree is** | **`skills/`** = source specs you edit. **`gemini-signal/`** · **`claude-signal/`** = mirrored host packages (don’t hand-edit; see [CONTRIBUTING](CONTRIBUTING.md)). |
 
-Protocol entrypoints: [`skills/signal.min.md`](skills/signal.min.md) · symbols [`skills/signal-core.min.md`](skills/signal-core.min.md) · repo [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · releases [CHANGELOG.md](CHANGELOG.md)
+| Topic                 | Summary                                                                                                                                                             |
+| --------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **What you get**      | Shorter **instructions + replies** in the agent; **checkpoints** (S3) instead of pasting full thread history when you want them.                                    |
+| **What you run**      | `npx skills add mattbaconz/signal` → `**/signal`** (light) · `**/signal2**` (default) · `**/signal3**` (auto-CKPT).                                                 |
+| **What this tree is** | `**skills/`** = source specs you edit. `**gemini-signal/**` · `**claude-signal/**` = mirrored host packages (don’t hand-edit; see [CONTRIBUTING](CONTRIBUTING.md)). |
 
-<p align="center">
-  <a href="#demo">Demo</a> ·
-  <a href="#install">Install</a> ·
-  <a href="#commands">Commands</a> ·
-  <a href="#benchmark">Benchmark</a> ·
-  <a href="#repo-map">Repo map</a> ·
-  <a href="#architecture">Architecture</a> ·
-  <a href="#changelog">Changelog</a>
-</p>
 
-<p align="center"><a href="#before--after">Before / after</a> · <a href="#tiers">Tiers</a> · <a href="#coding-norms-karpathy-style">Karpathy norms</a> · <a href="#git-workflows--ci">Git &amp; CI</a> · <a href="#star-history">Stars</a></p>
+Protocol entrypoints: `[skills/signal.min.md](skills/signal.min.md)` · symbols `[skills/signal-core.min.md](skills/signal-core.min.md)` · repo [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · releases [CHANGELOG.md](CHANGELOG.md)
+
+[Demo](#demo) · [Install](#install) · [Commands](#commands) · [Benchmark](#benchmark) · [Repo map](#repo-map) · [Architecture](#architecture) · [Changelog](#changelog)
+
+[Before / after](#before--after) · [Tiers](#tiers) · [Karpathy norms](#coding-norms-karpathy-style) · [Git & CI](#git-workflows--ci) · [Stars](#star-history)
 
 ---
 
 ## Demo
 
-![SIGNAL benchmark — skill shrink, live reply savings, live Gemini snapshot](assets/signal-benchmark-results.png)
+SIGNAL benchmark — skill shrink, live reply savings, live Gemini snapshot
 
-**What to trust first:** **~87% smaller** skill payloads on disk (seven `.md` → `.min.md` pairs, reproducible) and **~67% fewer characters** in the **live** assistant reply (Gemini CLI JSON, EqualContext — matched `prompt_tokens`). **`tokens.total`** on that same single-turn run only moves **~8%** because **prompt tokens (~8k) dominate the sum** — that is expected, not a failed headline. Details: [Benchmark](#benchmark) · [docs/token-metrics.md](docs/token-metrics.md).
+**What to trust first:** **~87% smaller** skill payloads on disk (seven `.md` → `.min.md` pairs, reproducible) and **~67% fewer characters** in the **live** assistant reply (Gemini CLI JSON, EqualContext — matched `prompt_tokens`). `**tokens.total`** on that same single-turn run only moves **~8%** because **prompt tokens (~8k) dominate the sum** — that is expected, not a failed headline. Details: [Benchmark](#benchmark) · [docs/token-metrics.md](docs/token-metrics.md).
 
 **What’s illustration:** scenarios A–C use `ceil(characters / 4)` (not billed API tokens) — good for shape, not primary “proof” vs hosts that report real tokenizer counts.
 
@@ -57,7 +44,7 @@ Protocol entrypoints: [`skills/signal.min.md`](skills/signal.min.md) · symbols 
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | “I think the problem might be in `auth.js` around line 47…” | `auth.js:47` · null ref · guard — **~7× fewer tokens** in the scripted benchmark.                                                 |
 | Paste 10 turns of chat + tool noise into context.           | **CKPT atom**: stack, progress, next step — transcript stays out of the window.                                                   |
-| One giant `SKILL.md` tree + references forever.             | **Canonical `.md`** for humans, **`.min.md`** for the agent — **~87%** smaller on the seven main pairs ([Benchmark](#benchmark)). |
+| One giant `SKILL.md` tree + references forever.             | **Canonical `.md`** for humans, `**.min.md**` for the agent — **~87%** smaller on the seven main pairs ([Benchmark](#benchmark)). |
 
 
 ---
@@ -108,6 +95,7 @@ There is **no** legacy top-level `signal/` directory in this repo—ignore older
 | ---------------------------------------------------------------------- | ---------------------------------------------------------------------------- | --------------------------------------------------------------------- |
 | `[skills/](skills/)`                                                   | **Canonical** skill specs: `*.md` (readable) + `*.min.md` (dense)            | You install via `npx skills add` or copy skills into an agent         |
 | `[gemini-signal/](gemini-signal/)`, `[claude-signal/](claude-signal/)` | **Mirrored** host extension layouts (`SKILL.md` per tool)                    | You ship the Gemini CLI or Claude Code plugin from this tree          |
+| `[kiro-signal/](kiro-signal/)`                                         | **Kiro** mirror: `skills/` + bundled `references/` with rewritten paths      | You import into Kiro IDE — see [docs/kiro.md](docs/kiro.md)           |
 | `[references/](references/)`                                           | Shared refs (symbols, Karpathy norms, benchmarks, checkpoint notes)          | You cite norms or symbols                                             |
 | `[templates/](templates/)`                                             | Snippets to merge into a **project’s** GEMINI / CLAUDE files                 | You integrate SIGNAL into an app repo                                 |
 | `[scripts/](scripts/)`                                                 | `shrink.ps1`, `sync-integration-packages.ps1`, `verify.ps1`, `benchmark.ps1` | You contribute or verify locally ([CONTRIBUTING.md](CONTRIBUTING.md)) |
@@ -143,8 +131,6 @@ flowchart LR
   C --> D2
   M --> D3
 ```
-
-
 
 **Cumulative** transcript savings (baseline vs checkpoint-style history) are covered in [benchmark/README.md](benchmark/README.md) (`benchmark/long-session/` after a full clone). **Prompt vs output vs `tokens.total`** — hosts report different scopes; see [docs/token-metrics.md](docs/token-metrics.md).
 
@@ -285,8 +271,6 @@ flowchart TB
   ST --> STATE
 ```
 
-
-
 **Tier ladder:**
 
 ```mermaid
@@ -297,8 +281,6 @@ flowchart LR
   S2 -.- D2["BOOT · aliases · Δ"]
   S3 -.- D3["Auto-CKPT every 5 turns"]
 ```
-
-
 
 ---
 
@@ -363,14 +345,8 @@ All releases: [CHANGELOG.md](CHANGELOG.md).
 
 ## Star History
 
-<a href="https://www.star-history.com/?repos=mattbaconz%2Fsignal&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=mattbaconz/signal&type=date&legend=top-left" />
- </picture>
-</a>
+
 
 ---
 
-*v0.3.1 — Shrinking Session. Brutalist token compression.*
+*v0.3.2 — Shrinking Session. Brutalist token compression.*

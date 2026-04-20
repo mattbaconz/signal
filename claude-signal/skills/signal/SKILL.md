@@ -1,4 +1,4 @@
----
+﻿---
 name: signal
 description: >
   Brutalist token compression protocol. Activates a full compression suite
@@ -6,7 +6,7 @@ description: >
   turns, alias system, and checkpoint compression. Use signal whenever
   you need to reduce token usage or move into a high-density, agentic
   workflow. Supports three intensity tiers: /signal, /signal2, /signal3.
-signal_bundle_version: "0.3.1"
+signal_bundle_version: "0.3.2"
 ---
 
 # ⚡ SIGNAL — Core Compression Skill

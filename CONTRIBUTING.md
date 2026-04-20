@@ -11,7 +11,7 @@ Thanks for helping improve the skill bundle. This repo is **documentation-heavy*
 | [`references/`](references/) | Shared references (symbols, Karpathy norms, benchmarks, checkpoint notes). |
 | [`templates/`](templates/) | Snippets users merge into project `GEMINI.md` / `CLAUDE.md`. |
 
-**Do not** edit mirrored copies under [`gemini-signal/skills/`](gemini-signal/skills/) or [`claude-signal/skills/`](claude-signal/skills/) by hand. Those trees are **generated** from `skills/` by [`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1).
+**Do not** edit mirrored copies under [`gemini-signal/skills/`](gemini-signal/skills/), [`claude-signal/skills/`](claude-signal/skills/), or [`kiro-signal/skills/`](kiro-signal/skills/) by hand. Those trees are **generated** from `skills/` by [`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1). The `kiro-signal/` tree also gets a bundled copy of [`references/`](references/) with rewritten paths — also generated, not hand-edited.
 
 ## Minified skills (`.min.md`) — important
 

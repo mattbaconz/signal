@@ -6,6 +6,22 @@ All notable changes to this project are documented here. The format is informal;
 
 **Versioning:** For each release, align `**signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see [CONTRIBUTING.md — Maintainer: GitHub topics and releases](CONTRIBUTING.md#maintainer-github-topics-and-releases)).
 
+## v0.3.2 — 2026-04-19
+
+Kiro IDE support: third mirrored host package, bundled references, path rewrites.
+
+### Added
+
+- **`kiro-signal/`** — generated mirror of all skills for [Kiro IDE](https://kiro.dev) "Import a skill" (GitHub subtree URL import). Layout: `kiro-signal/skills/<name>/SKILL.md` + `SKILL.min.md`, plus `kiro-signal/references/` bundled alongside so protocol links in `SKILL.md` resolve after single-skill import.
+- **[`docs/kiro.md`](docs/kiro.md)** — Kiro-specific install guide: import flow, workspace vs global scope, per-skill GitHub URLs, `kiro-signal/` rationale, slash commands, frontmatter note.
+
+### Changed
+
+- **[`scripts/sync-integration-packages.ps1`](scripts/sync-integration-packages.ps1):** adds `kiro-signal/skills` to the mirror loop; copies `references/` to `kiro-signal/references/`; post-processes Kiro skill files to rewrite `(../references/` → `(../../references/`; version comment → v0.3.2.
+- **[`scripts/verify.ps1`](scripts/verify.ps1):** asserts `kiro-signal/skills/signal/SKILL.md`, `SKILL.min.md`, and `kiro-signal/references/symbols.md` exist; excludes `kiro-signal/skills/` from markdown link scan (generated mirror); version strings → v0.3.2.
+- **[`README.md`](README.md)** repo map: `kiro-signal/` row added, links to `docs/kiro.md`.
+- **[`CONTRIBUTING.md`](CONTRIBUTING.md):** notes `kiro-signal/` is generated; do not hand-edit.
+
 ## v0.3.1 — 2026-04-18
 
 Patch release: version + path consistency across the bundle and host packages.

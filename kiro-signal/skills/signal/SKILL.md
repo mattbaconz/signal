@@ -40,7 +40,7 @@ Brutalist token compression protocol. Every tool. ~85% fewer tokens.
 
 ## Protocol Reference
 
-- **Templates:** See [`../references/layers.md`](../references/layers.md) for `TMPL:bug`, `TMPL:rev`, etc.
+- **Templates:** See [`../references/layers.md`](../../references/layers.md) for `TMPL:bug`, `TMPL:rev`, etc.
 - **TMPL:auto Selection:**
   - bug report/error → `TMPL:bug`
   - code review/feedback → `TMPL:rev`
@@ -48,10 +48,10 @@ Brutalist token compression protocol. Every tool. ~85% fewer tokens.
   - architecture/design → `TMPL:arch`
   - comparison/scoring → `TMPL:score`
   - none fits → `SIGNAL_DRIFT: no matching template`
-- **Symbols:** Full list in [`references/symbols.md`](../references/symbols.md).
-- **BOOT Presets:** Full list in [`../references/boot-presets.md`](../references/boot-presets.md).
-- **Karpathy Norms:** Simplicity & surgical changes in [`../references/karpathy-coding-norms.md`](../references/karpathy-coding-norms.md).
-- **Benchmarks:** Projected savings in [`../references/benchmarks.md`](../references/benchmarks.md).
+- **Symbols:** Full list in [`references/symbols.md`](../../references/symbols.md).
+- **BOOT Presets:** Full list in [`../references/boot-presets.md`](../../references/boot-presets.md).
+- **Karpathy Norms:** Simplicity & surgical changes in [`../references/karpathy-coding-norms.md`](../../references/karpathy-coding-norms.md).
+- **Benchmarks:** Projected savings in [`../references/benchmarks.md`](../../references/benchmarks.md).
 
 ## Install
 
