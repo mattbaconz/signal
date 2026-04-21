@@ -74,7 +74,34 @@ Global:
 npx skills add mattbaconz/signal -y -g
 ```
 
-**After install:** open `[skills/signal.min.md](skills/signal.min.md)`, pick **S1 / S2 / S3**, add workflow skills (`signal-commit`, …) only when you need them.
+**After install:** open [`skills/signal.min.md`](skills/signal.min.md), pick **S1 / S2 / S3**, add workflow skills (`signal-commit`, …) only when you need them.
+
+### Claude Code (app + CLI)
+
+**Plugins only exist in [Claude Code](https://code.claude.com/docs/en/overview)** (the coding agent). The consumer **claude.ai** desktop chat does **not** expose **`/plugin`** — if slash commands like **`/plugin`** are ignored or “unknown,” you’re either in the wrong app or on an old Claude Code build. [Update Claude Code](https://code.claude.com/docs/en/setup) and restart; official troubleshooting: [Discover plugins — “/plugin command not recognized”](https://code.claude.com/docs/en/discover-plugins).
+
+**A) Plugin marketplace (when `/plugin` works)** — in the **Claude Code** session, same input as other slash commands:
+
+```text
+/plugin marketplace add mattbaconz/signal
+/plugin install signal@signal-suite
+```
+
+(`owner/repo` works for GitHub; you can use a full Git URL instead.) Then run **`/reload-plugins`**. Marketplace id is **`signal-suite`** — confirm with **`/plugin marketplace list`**. Details: [`claude-signal/README.md`](claude-signal/README.md).
+
+With the plugin, skills are namespaced: **`/signal:signal`**, **`/signal:signal-commit`**, **`/signal:signal-push`**, … (plugin name **`signal`**, then **`:`**, then folder name under [`claude-signal/skills/`](claude-signal/skills/)).
+
+**B) No `/plugin` — standalone skills (works everywhere Claude loads `~/.claude/skills/`):** clone this repo, run **`scripts/sync-integration-packages.ps1`** once if needed, then:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1
+```
+
+That copies [`claude-signal/skills/`](claude-signal/skills/) into **`%USERPROFILE%\.claude\skills\`**. Then use short commands like **`/signal`**, **`/signal-commit`** (see [Commands](#commands)). **Do not** also install the plugin for the same skills.
+
+**C) One-off:** run Claude Code from a terminal with the plugin dir — [`claude-signal/README.md`](claude-signal/README.md) (`claude --plugin-dir ./claude-signal` from the repo).
+
+**Optional:** merge [`templates/claude-CLAUDE.min.md`](templates/claude-CLAUDE.min.md) into your project **`CLAUDE.md`** for thin always-on defaults.
 
 ---
 

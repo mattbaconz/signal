@@ -25,13 +25,20 @@ To keep short commands like `/signal-commit` without the prefix, install skills 
 
 ## Marketplace (team install)
 
-From the repository root, this repo includes [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json). Users can add the marketplace and install the plugin:
+From the repository root, this repo includes [`.claude-plugin/marketplace.json`](../.claude-plugin/marketplace.json). In **Claude Code** (not the generic claude.ai chat app), add the marketplace and install:
 
 ```text
-/plugin marketplace add <git-url-or-path-to-this-repo>
+/plugin marketplace add mattbaconz/signal
 /plugin install signal@signal-suite
+/reload-plugins
 ```
 
 Use the marketplace **`name`** field (`signal-suite`) as shown by `/plugin marketplace list` after adding.
 
-See the main [README.md](../README.md) for SIGNAL behavior and tiers.
+### If `/plugin` is not recognized
+
+That usually means you are **not in Claude Code**, or Claude Code is **out of date**. See [Discover plugins — troubleshooting](https://code.claude.com/docs/en/discover-plugins#plugin-command-not-recognized). [Update](https://code.claude.com/docs/en/setup), restart, and try again.
+
+**Fallback (no plugin):** copy skills into `~/.claude/skills/` from [`claude-signal/skills/`](../claude-signal/skills/) or run [`scripts/install-signal-all.ps1`](../scripts/install-signal-all.ps1) from the repo root. Then use short slash commands (`/signal`, `/signal-commit`, …) without the `signal:` prefix — **do not** also enable the plugin (duplicate skills).
+
+See the main [README.md](../README.md#install) for SIGNAL behavior, tiers, and Claude Code install paths.
