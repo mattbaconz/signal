@@ -2,8 +2,9 @@
 
 - **signal-logo.png** — README hero.
 - **signal-benchmark-results.png** — benchmark infographic. Copy should track [README Benchmark](../README.md#benchmark) (order of evidence and caveats).
-- **claude-skill-signal-minimal.zip** — `signal/` folder with `SKILL.md` + `SKILL.min.md` for **Claude (app/web) “Upload skill”** (see [docs/claude-skills-install.md](../docs/claude-skills-install.md)).
-- **claude-skill-signal-with-references.zip** — `kiro-signal/` slice so `../../references` links in `SKILL.md` resolve.
+- **claude-skill-signal-flat.zip** — `SKILL.md` + `SKILL.min.md` at zip **root** (for picky uploaders).
+- **claude-skill-signal-minimal.zip** — `signal/` folder (forward-slash paths, not `Compress-Archive`).
+- **claude-skill-signal-with-references.zip** — `kiro-signal/skills/signal` + `references/`.
 
 Regenerate the ZIPs after skill changes: `.\scripts\sync-integration-packages.ps1` then `.\scripts\pack-skill-zips-for-upload.ps1`.
 
