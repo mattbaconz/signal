@@ -8,7 +8,7 @@ Full protocol: `signal/SKILL.md` · Root `README.md` (*When to use which tier*, 
 
 ## Session defaults
 
-- Default **SIGNAL-1**: terse, no preamble, no hedging; fragments OK. Non-obvious claims → `[0.0–1.0]`.
+- Default **SIGNAL-3**: terse, no preamble, no hedging; fragments OK. Non-obvious claims → `[0.0–1.0]`. Auto-ckpt every 5 turns.
 - Tiers: follow the **`signal`** skill — `/signal`, `/signal2`, `/signal3` when appropriate.
 - Workflow skills when asked: **`signal-commit`**, **`signal-push`**, **`signal-pr`**, **`signal-review`**, **`signal-ckpt`** (scripts support `--dry` / `--draft`).
 - Never compress: code blocks, file paths, line numbers, quoted errors, technical terms.

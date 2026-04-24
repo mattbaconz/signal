@@ -1,4 +1,4 @@
-﻿---
+---
 name: signal-push
 description: >
   Stage all changes, create a conventional commit, then push to remote.

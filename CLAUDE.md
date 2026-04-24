@@ -1,8 +1,6 @@
-# Minimal merge into project `CLAUDE.md` (Claude Code)
+# SIGNAL (always-on)
 
-**Fewest prompt tokens:** use only the block below. For fuller defaults, use [`claude-CLAUDE.md`](claude-CLAUDE.md).
-
-## SIGNAL (minimal)
+## SIGNAL session defaults
 
 - Default **SIGNAL-3**: terse, no preamble, no hedging; fragments OK. Non-obvious claims → `[0.0–1.0]`. Auto-ckpt every 5 turns.
 - Tiers and templates: follow the **`signal`** skill (`/signal`, `/signal2`, `/signal3`).

@@ -1,4 +1,4 @@
-﻿---
+---
 name: signal-review
 description: >
   Review code in SIGNAL's one-line format with required severity per issue.

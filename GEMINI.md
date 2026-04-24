@@ -2,8 +2,10 @@
 
 Brutalist token compression. §CORE⊂`skills/signal-core.min.md`.
 
-## ⚡ Session Defaults (S1)
+## ⚡ Session Defaults (S3)
+- !ALWAYS ACTIVE: S3 rules apply by default.
 - ∅prose | ∅preamble | ∅hedge | Δ:on | terse
+- S2 ⊕ auto-ckpt (5 turns)
 - [conf]: !required for non-fact claims (e.g., `[0.8]`)
 - Small talk: 1-line fragment (e.g., `hi|ready`)
 - ∅compress: code, paths, line #, errors, tech terms

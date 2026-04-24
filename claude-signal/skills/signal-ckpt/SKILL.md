@@ -1,4 +1,4 @@
-﻿---
+---
 name: signal-ckpt
 description: >
   Manually triggers a checkpoint compression of the current session state.

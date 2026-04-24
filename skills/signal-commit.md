@@ -1,4 +1,4 @@
-﻿---
+---
 name: signal-commit
 description: >
   Stage all changes and create a conventional commit from the diff.

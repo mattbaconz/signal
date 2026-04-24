@@ -1,4 +1,4 @@
-﻿---
+---
 name: signal-pr
 description: >
   Stage all changes, commit, push, then open a pull request.

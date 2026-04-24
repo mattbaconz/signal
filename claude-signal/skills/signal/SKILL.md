@@ -1,4 +1,4 @@
-﻿---
+---
 name: signal
 description: >
   Brutalist token compression protocol. Activates a full compression suite

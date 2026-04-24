@@ -8,8 +8,8 @@ When SIGNAL is installed as a skill, keep **this block short** so every session 
 
 ## SIGNAL session defaults
 
-- When the user asks for terse or low-token output, follow the **`signal`** skill and choose the tier based on session shape: prefer `/signal` or `/signal2` for normal work, and use `/signal3` only when checkpoint behavior is worth it on this host. See the bundle **`README.md`** (section **When to use which tier (canonical)**).
-- Default style: terse, no preamble, no hedging sentences — use `[0.0–1.0]` confidence where a claim is non-obvious.
+- Default style: SIGNAL-3 (terse, no preamble, no hedging, conf [0.0-1.0], auto-ckpt).
+- When the user asks for terse or low-token output, follow the **`signal`** skill and choose the tier based on session shape: prefer `/signal3` as the standard. See the bundle **`README.md`** (section **When to use which tier (canonical)**).
 - Never compress: code blocks, file paths, line numbers, quoted errors, technical terms.
 
 ## Coding tasks (Karpathy-inspired norms)
