@@ -4,8 +4,8 @@
 
 <h1 align="center">SIGNAL · v0.4.0</h1>
 
-<p align="center"><strong>Less prompt noise. More room for code.</strong><br />
-Professional dense mode for agents: minified skill payloads, structured terse replies, input compression, and checkpointed long sessions.</p>
+<p align="center"><strong>Compression you can prove. Dense mode agents can live in.</strong><br />
+Professional token compression for agents: always-on SIGNAL-3, input compression, minified skill payloads, structured terse replies, and checkpointed long sessions.</p>
 
 <p align="center">
   <a href="https://github.com/mattbaconz/signal/stargazers"><img src="https://img.shields.io/github/stars/mattbaconz/signal?style=flat-square&logo=github&label=stars" alt="GitHub stars" /></a>
@@ -49,12 +49,19 @@ Use `/signal-compress` when your loaded memory/rules/docs are getting too large.
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
 ```
 
-**Expected proof-first numbers:** static v0.4 fixtures show **11/11 fidelity-pass rows** and **~73% median estimated savings** across input-compression and skill-overhead checks. Live output claims are reported separately and must pass fidelity gates before they count.
+**Expected proof-first numbers:** static v0.4 fixtures show **11/11 fidelity-pass rows**, **73.5% median estimated savings**, and **39.8%–89.9% p10–p90 savings** across input-compression and skill-overhead checks. Live output claims are reported separately and must pass fidelity gates before they count.
+
+![SIGNAL v0.4.0 benchmark method](assets/signal-v04-benchmark-method.png)
+
+### Who it is for
+
+Use Signal when you run long coding-agent sessions, keep large `AGENTS.md` / `CLAUDE.md` / `GEMINI.md` files, or need terse replies without turning the assistant into a joke persona. The practical promise is simple: **less repeated context, fewer filler tokens, same protected technical details.**
 
 <p align="center">
   <a href="#demo">Demo</a> ·
   <a href="#install">Install</a> ·
   <a href="#commands">Commands</a> ·
+  <a href="#signal-vs-caveman-style">Signal vs Caveman-style</a> ·
   <a href="#benchmark">Benchmark</a> ·
   <a href="#repo-map">Repo map</a> ·
   <a href="#architecture">Architecture</a> ·
@@ -67,9 +74,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
 
 ## Demo
 
-![SIGNAL benchmark — skill shrink, live reply savings, live Gemini snapshot](assets/signal-benchmark-results.png)
+![SIGNAL v0.4.0 benchmark method](assets/signal-v04-benchmark-method.png)
 
-**What to trust first:** the v0.4 proof suite separates static input/skill shrinkage from live output-token claims. Static proof currently has **11/11 fidelity-pass rows** and **~73% median estimated savings** across input-compression and skill-overhead fixtures. Older live Gemini snapshots remain useful context, but live wins are counted only when the fidelity gate passes. Details: [Benchmark](#benchmark) · [docs/benchmark-methodology.md](docs/benchmark-methodology.md) · [docs/token-metrics.md](docs/token-metrics.md).
+**What to trust first:** the v0.4 proof suite separates static input/skill shrinkage from live output-token claims. Static proof currently has **11/11 fidelity-pass rows**, **73.5% median estimated savings**, and **39.8%–89.9% p10–p90 savings** across input-compression and skill-overhead fixtures. Live wins count only when the fidelity gate passes. Details: [Benchmark](#benchmark) · [docs/benchmark-methodology.md](docs/benchmark-methodology.md) · [docs/token-metrics.md](docs/token-metrics.md).
 
 **What’s illustration:** scenarios A–C use `ceil(characters / 4)` (not billed API tokens) — good for shape, not primary “proof” vs hosts that report real tokenizer counts.
 
@@ -84,7 +91,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
 | ----------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
 | “I think the problem might be in `auth.js` around line 47…” | `auth.js:47` · null ref · guard — **~7× fewer tokens** in the scripted benchmark.                                                 |
 | Paste 10 turns of chat + tool noise into context.           | **CKPT atom**: stack, progress, next step — transcript stays out of the window.                                                   |
-| One giant `SKILL.md` tree + references forever.             | **Canonical `.md`** for humans, **`.min.md`** for the agent — **~87%** smaller on the seven main pairs ([Benchmark](#benchmark)). |
+| One giant `SKILL.md` tree + references forever.             | **Canonical `.md`** for humans, **`.min.md`** for the agent — **~85%** smaller across the eight main skill pairs ([Benchmark](#benchmark)). |
 
 
 ---
@@ -197,7 +204,7 @@ There is **no** legacy top-level `signal/` directory in this repo—ignore older
 
 ## Why SIGNAL
 
-Same idea as [At a glance](#at-a-glance), with moving parts: **symbols** instead of paragraphs, **`.signal_state.md`** for durable state, **signal-diff** / **signal-search** instead of raw dumps — all optional tools you pull in when the session needs them.
+SIGNAL is not just “be brief.” It is a protocol surface for agents that need dense output, compressed input, durable state, and reproducible evidence. The core bet is that professional compression needs gates and artifacts, not only a terse personality.
 
 ```mermaid
 flowchart LR
@@ -210,11 +217,13 @@ flowchart LR
     S[Symbol grammar]
     C[CKPT summaries]
     M[Minified skills]
+    I[Input compression]
   end
   subgraph outputs [Dense]
     D1[Terse pointers]
     D2[Checkpoint atom]
-    D3[~87% smaller payloads]
+    D3[~85% smaller payloads]
+    D4[Reproducible JSON]
   end
   V1 --> S
   V2 --> C
@@ -222,9 +231,29 @@ flowchart LR
   S --> D1
   C --> D2
   M --> D3
+  I --> D4
 ```
 
 **Cumulative** transcript savings (baseline vs checkpoint-style history) are covered in [benchmark/README.md](benchmark/README.md) (`benchmark/long-session/` after a full clone). **Prompt vs output vs `tokens.total`** — hosts report different scopes; see [docs/token-metrics.md](docs/token-metrics.md).
+
+---
+
+## Signal vs Caveman-style
+
+[Caveman](https://github.com/JuliusBrussee/caveman) is the right comparison point because it made terse agent output easy to install and popular. Its public README currently reports a one-line `npx skills add JuliusBrussee/caveman` install, average output savings around **65%** across Claude API benchmark prompts, and `caveman-compress` input savings around **46%** on memory files. The [Caveman release notes](https://github.com/JuliusBrussee/caveman/releases) also emphasize a reproducible benchmark system and one-command install.
+
+SIGNAL v0.4.0 competes on a different axis: professional dense mode with proof gates.
+
+| Capability | Caveman-style baseline | SIGNAL v0.4.0 |
+| --- | --- | --- |
+| Output style | Persona/telegraphic compression | Professional dense protocol: terse, no preamble, confidence tokens, templates |
+| Input compression | Memory-file compression | `signal-compress` for memory, prompts, rules, and docs with protected-token checks |
+| Benchmark controls | Strong terse-control idea | Four arms: `baseline`, `terse-control`, `caveman-style`, `signal` |
+| What counts as a win | Reported savings plus validation | No win unless fidelity passes: code, paths, line numbers, errors, versions, and terms preserved |
+| Long sessions | Output/input savings | Checkpoint-oriented methodology for cumulative context growth |
+| Install posture | One-command install | One-command install plus always-on SIGNAL-3 host rules |
+
+The fair claim is not “SIGNAL always emits fewer output tokens than Caveman.” Caveman is very strong at raw output compression. The stronger SIGNAL claim is: **Signal is easier to trust in professional agent workflows because every benchmark claim must pass a fidelity gate and map back to reproducible JSON.**
 
 ---
 
@@ -260,7 +289,7 @@ Full reference: `[skills/signal-core.min.md](skills/signal-core.min.md)`.
 
 ## Benchmark
 
-v0.4.0 uses a proof-first benchmark methodology. A compression win counts only when fidelity passes: protected code, paths, line numbers, versions, quoted errors, identifiers, and technical terms must remain intact.
+v0.4.0 uses a proof-first benchmark methodology. A compression win counts only when fidelity passes: protected code, paths, line numbers, versions, quoted errors, identifiers, and technical terms must remain intact. The generated diagram above is a visual summary; the source of truth is the checked-in JSON and runner.
 
 Benchmark arms:
 
@@ -271,23 +300,40 @@ Benchmark arms:
 | `caveman-style` | Telegraphic/persona-style compression control |
 | `signal` | Actual SIGNAL skill/defaults |
 
-**Current static snapshot:** [`benchmark/results/v0.4-static.json`](benchmark/results/v0.4-static.json) reports **11/11 fidelity-pass rows** and **~73% median estimated savings** across input-compression fixtures and skill-overhead checks. Live output and long-session results are reported separately because provider token accounting varies by host.
+**Current static snapshot:** [`benchmark/results/v0.4-static.json`](benchmark/results/v0.4-static.json) reports **11/11 fidelity-pass rows**, **73.5% median estimated savings**, and **39.8%–89.9% p10–p90 savings** across input-compression fixtures and skill-overhead checks. Live output and long-session results are reported separately because provider token accounting varies by host.
 
 Methodology: [`docs/benchmark-methodology.md`](docs/benchmark-methodology.md). Runner: [`benchmark/proof-suite.ps1`](benchmark/proof-suite.ps1).
 
-The older chart below remains useful context, but v0.4.0 claims should be regenerated from the proof suite.
+### What the static proof covers
 
-### Heuristic scenarios (illustration only)
+| Category | Rows | Current result | Source |
+| --- | ---: | --- | --- |
+| Input compression | 3 | `3/3` fidelity pass; median savings `39.8%` | [`benchmark/fixtures/input-compress.json`](benchmark/fixtures/input-compress.json) |
+| Skill overhead | 8 | `8/8` fidelity pass; minified surfaces shrink the loaded skill payload | [`skills/`](skills/) |
+| Combined static snapshot | 11 | `11/11` fidelity pass; median savings `73.5%`; p10–p90 `39.8%–89.9%` | [`benchmark/results/v0.4-static.json`](benchmark/results/v0.4-static.json) |
 
-Uses `ceil(characters / 4)` — not billed API tokens; useful for **shape**, not a substitute for tokenizer-accurate counts on every host.
+### Output compression
 
+Output benchmarks are intentionally harder than the old “verbose vs terse” demo. They compare four arms:
 
-| Scenario                     | Verbose | SIGNAL | Saved        |
-| ---------------------------- | ------- | ------ | ------------ |
-| A: 10-turn history vs CKPT   | ~167    | ~45    | ~73% · ~3.7× |
-| B: Bug paragraph vs one line | ~51     | ~7     | ~86% · ~7.3× |
-| C: Hedging vs `[conf]`       | ~8      | ~2     | ~75% · ~4×   |
+- `baseline`
+- `terse-control`
+- `caveman-style`
+- `signal`
 
+The default live command runs a one-scenario smoke test and writes ignored local JSON under `benchmark/results/local/`. Full live output runs are opt-in because provider capacity, model version, and token accounting move over time.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1 -Live
+```
+
+Full live output run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1 -Live -MaxLiveScenarios 0
+```
+
+Do not promote a live output table into the README unless every claimed winning row has `success=true` and a fidelity score.
 
 ### Skill pairs (canonical `.md` → `.min.md`) — primary on-disk proof
 
@@ -307,22 +353,6 @@ Uses `ceil(characters / 4)` — not billed API tokens; useful for **shape**, not
 
 Min-only helpers (`signal-core`, `signal-diff`, `signal-search`) ≈ **1.6K** bytes (~**389** est. tokens).
 
-### Live Gemini (single-turn chess harness)
-
-**Caveat:** one turn per arm, **EqualContext** (matched project `GEMINI.md`). **No checkpoints**, no `/signal3` auto-CKPT, no multi-turn BOOT/delta — this stresses **output style** on one task type, not long-session history collapse.
-
-Source: [benchmark/benchmark chess/run_chess_compare.ps1](benchmark/benchmark%20chess/run_chess_compare.ps1) with `-Pair EqualContext`. Model `gemini-3.1-pro-preview`.
-
-**Why `tokens.total` is not the hero row:** both sides load **~8k prompt tokens**. `tokens.total` ≈ prompt + generation, so a big reply cut still yields only a **~8%** drop in `tokens.total` — while **reply characters** fall **~67%** (that is the visible win on this run).
-
-
-| Metric               | Baseline | SIGNAL-style | Notes                                          |
-| -------------------- | -------- | ------------ | ---------------------------------------------- |
-| **Reply (chars)**    | ~1,823   | ~604         | **~67% fewer** — primary live win on this run  |
-| `prompt_tokens`      | ~8,060   | ~8,061       | **Matched** — methodology check (EqualContext) |
-| `tokens.total` (max) | ~9,039   | ~8,333       | ~**8%** lower — dominated by prompt; see above |
-
-
 ### Reading the numbers & multi-turn proof
 
 `[docs/token-metrics.md](docs/token-metrics.md)` — prompt vs output vs `tokens.total`. **Multi-turn / cumulative** protocol benchmark: `[benchmark/long-session/](benchmark/long-session/)` (see `[benchmark/README.md](benchmark/README.md)`) — that is where checkpoint-style savings **compound** vs a growing baseline transcript.
@@ -333,24 +363,6 @@ Source: [benchmark/benchmark chess/run_chess_compare.ps1](benchmark/benchmark%20
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
-```
-
-**Automatic live output smoke** (Gemini CLI auth required; writes ignored local JSON under `benchmark/results/local/`; defaults to one scenario):
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1 -Live
-```
-
-Full live output run:
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1 -Live -MaxLiveScenarios 0
-```
-
-**Live chess** (refreshes JSON under `benchmark/benchmark chess/`):
-
-```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\benchmark\run.ps1 -Mode Chess -Pair EqualContext
 ```
 
 **Long-session** (multi-turn; many API calls):
