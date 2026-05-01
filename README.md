@@ -19,37 +19,68 @@ Professional token compression for agents: always-on SIGNAL-3, input compression
 | Topic | Summary |
 | --- | --- |
 | **What you get** | Shorter **instructions + replies** in the agent; **checkpoints** (S3) instead of pasting full thread history when you want them. |
-| **What you run** | `npx skills add mattbaconz/signal` → **`/signal3`** (recommended) · **`/signal2`** (strong) · **`/signal`** (light). |
+| **What you run** | `npx skills add mattbaconz/signal` → **`signal3`** or **`/signal3`**. No clone required for normal install. |
 | **What this tree is** | **`skills/`** = source specs you edit. **`gemini-signal/`** · **`claude-signal/`** · **`kiro-signal/`** = mirrored host packages (don’t hand-edit; see [CONTRIBUTING](CONTRIBUTING.md)). |
 
 Protocol entrypoints: [`skills/signal.min.md`](skills/signal.min.md) · symbols [`skills/signal-core.min.md`](skills/signal-core.min.md) · repo [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · releases [CHANGELOG.md](CHANGELOG.md)
 
-## 60-second start
+## 10-second install
 
 ```bash
 npx skills add mattbaconz/signal
 ```
 
-Then activate the default dense workflow:
+Then use Signal in any prompt:
+
+```text
+signal3
+```
+
+Slash commands are also supported when your host exposes them:
 
 ```text
 /signal3
 ```
 
-To make that default automatic for every prompt, install the always-on host rules:
+That is the normal path. **No clone required.**
+
+```mermaid
+flowchart TD
+  A["Want Signal?"] --> B["Fast install: no clone"]
+  B --> C["npx skills add mattbaconz/signal"]
+  C --> D["Use signal3 or /signal3 in chat"]
+  D --> E["Dense replies and protected technical details"]
+  A --> F["Always-on default"]
+  F --> G["Clone github.com/mattbaconz/signal"]
+  G --> H["Run scripts/install-signal-all.ps1 -AlwaysOn"]
+  H --> I["Normal prompts default to SIGNAL-3"]
+  A --> J["Proof check"]
+  J --> K["Run scripts/auto-benchmark.ps1"]
+  K --> L["Claims come from checked-in JSON"]
+```
+
+### Optional always-on setup
+
+Clone only if you want Signal to become a default host rule so users can stop typing `signal3` entirely:
+
+```bash
+git clone https://github.com/mattbaconz/signal
+cd signal
+```
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn -DryRun
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn
 ```
 
-Use `/signal-compress` when your loaded memory/rules/docs are getting too large. Verify the proof suite locally:
+### Proof in one command
+
+From a clone:
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
 ```
 
-**Expected proof-first numbers:** static v0.4 fixtures show **11/11 fidelity-pass rows**, **73.5% median estimated savings**, and **39.8%–89.9% p10–p90 savings** across input-compression and skill-overhead checks. Live output claims are reported separately and must pass fidelity gates before they count.
+Static v0.4 fixtures show **11/11 fidelity-pass rows**, **73.5% median estimated savings**, and **39.8%–89.9% p10–p90 savings** across input-compression and skill-overhead checks. Live output claims are reported separately and must pass fidelity gates before they count.
 
 ### Who it is for
 
@@ -96,17 +127,35 @@ Use Signal when you run long coding-agent sessions, keep large `AGENTS.md` / `CL
 
 ## Install
 
+### Fast install
+
 ```bash
 npx skills add mattbaconz/signal
 ```
 
-Global:
+Use `signal3` or `/signal3` in your agent chat to activate the recommended dense mode for long agentic work. Use `/signal` for the smallest activation surface and `/signal2` for a middle tier.
+
+Global install:
 
 ```bash
 npx skills add mattbaconz/signal -y -g
 ```
 
-**After install:** open [`skills/signal.min.md`](skills/signal.min.md), pick **S1 / S2 / S3**, add workflow skills (`signal-commit`, …) only when you need them.
+### Always-on setup
+
+The fast install gives you the skill without cloning. Clone the repo only when you want the helper scripts that write host memory files so normal prompts default to SIGNAL-3.
+
+```bash
+git clone https://github.com/mattbaconz/signal
+cd signal
+```
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn -DryRun
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn
+```
+
+The dry run prints every file that would change. The real run updates supported host instruction files such as `AGENTS.md`, `CLAUDE.md`, and `GEMINI.md`. Manual templates are documented in [docs/always-on.md](docs/always-on.md).
 
 ### Compatibility matrix
 
@@ -297,6 +346,17 @@ Benchmark arms:
 | `terse-control` | Explicit "answer concisely" control |
 | `caveman-style` | Telegraphic/persona-style compression control |
 | `signal` | Actual SIGNAL skill/defaults |
+
+```mermaid
+flowchart LR
+  P["Scenario fixtures"] --> A["4 arms: baseline, terse-control, caveman-style, signal"]
+  A --> M["Measure input tokens, output tokens, total tokens, chars"]
+  M --> F["Fidelity gate"]
+  F -->|Pass| J["Stable JSON row"]
+  F -->|Fail| X["No benchmark win counted"]
+  J --> R["README claim: median plus p10/p90 ranges"]
+  J --> D["Docs: methodology, metrics, release notes"]
+```
 
 **Current static snapshot:** [`benchmark/results/v0.4-static.json`](benchmark/results/v0.4-static.json) reports **11/11 fidelity-pass rows**, **73.5% median estimated savings**, and **39.8%–89.9% p10–p90 savings** across input-compression fixtures and skill-overhead checks. Live output and long-session results are reported separately because provider token accounting varies by host.
 
