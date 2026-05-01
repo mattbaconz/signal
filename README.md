@@ -51,8 +51,6 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
 
 **Expected proof-first numbers:** static v0.4 fixtures show **11/11 fidelity-pass rows**, **73.5% median estimated savings**, and **39.8%–89.9% p10–p90 savings** across input-compression and skill-overhead checks. Live output claims are reported separately and must pass fidelity gates before they count.
 
-![SIGNAL v0.4.0 benchmark method](assets/signal-v04-benchmark-method.png)
-
 ### Who it is for
 
 Use Signal when you run long coding-agent sessions, keep large `AGENTS.md` / `CLAUDE.md` / `GEMINI.md` files, or need terse replies without turning the assistant into a joke persona. The practical promise is simple: **less repeated context, fewer filler tokens, same protected technical details.**
