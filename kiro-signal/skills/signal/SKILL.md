@@ -1,17 +1,17 @@
-﻿---
+---
 name: signal
 description: >
   Brutalist token compression protocol. Activates a full compression suite
   including symbol grammar, output templates, BOOT declarations, delta-only
-  turns, alias system, and checkpoint compression. Use signal whenever
+  turns, alias system, input compression, and checkpoint compression. Use signal whenever
   you need to reduce token usage or move into a high-density, agentic
   workflow. Supports three intensity tiers: /signal, /signal2, /signal3.
-signal_bundle_version: "0.3.2"
+signal_bundle_version: "0.4.0"
 ---
 
 # ⚡ SIGNAL — Core Compression Skill
 
-Brutalist token compression protocol. Every tool. ~85% fewer tokens.
+Professional dense-mode token compression protocol. Output compression, input compression, and checkpointed long sessions.
 
 ## Activation
 
@@ -19,7 +19,10 @@ Brutalist token compression protocol. Every tool. ~85% fewer tokens.
 |---------|------|-------------|
 | `/signal` | SIGNAL-1 | Symbol grammar + filler drop + no preamble |
 | `/signal2` | SIGNAL-2 | + BOOT + aliases + delta turns |
-| `/signal3` | SIGNAL-3 | Full protocol: all 6 layers + auto-checkpoint |
+| `/signal3` or `signal3` | SIGNAL-3 | Full protocol: all 6 layers + auto-checkpoint |
+| `/signal-compress` | Input | Compress memory/rules/docs with fidelity gates |
+
+`signal`, `signal2`, and `signal3` without a slash are valid aliases when a host cannot expose slash commands.
 
 **Activation response must be the exact line for the chosen tier — no more:**
 ```text
@@ -51,7 +54,8 @@ Brutalist token compression protocol. Every tool. ~85% fewer tokens.
 - **Symbols:** Full list in [`references/symbols.md`](../../references/symbols.md).
 - **BOOT Presets:** Full list in [`../references/boot-presets.md`](../../references/boot-presets.md).
 - **Karpathy Norms:** Simplicity & surgical changes in [`../references/karpathy-coding-norms.md`](../../references/karpathy-coding-norms.md).
-- **Benchmarks:** Projected savings in [`../references/benchmarks.md`](../../references/benchmarks.md).
+- **Input Compression:** See [`signal-compress.md`](signal-compress.md) and [`../docs/signal-compress.md`](../docs/signal-compress.md).
+- **Benchmarks:** Proof-first methodology in [`../docs/benchmark-methodology.md`](../docs/benchmark-methodology.md).
 
 ## Install
 

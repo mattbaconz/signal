@@ -1,8 +1,8 @@
 ---
 name: signal-ckpt
-description: Compress session to ≤50 token atom (v0.3.1).
+description: Compress session to ≤50 token atom (v0.4.0).
 ---
-# ⚡ signal-ckpt (v0.3.1)
+# ⚡ signal-ckpt (v0.4.0)
 
 §TRIG: /signal-ckpt | "checkpoint" | "save state" | Auto:SIGNAL-3 (every 5 turns)
 §ACT: ∅prose | ∅history (after ckpt) | atom:!≤50t

@@ -1,0 +1,26 @@
+[
+  {
+    "scenario_id": "debug-react-rerender",
+    "kind": "debug",
+    "prompt": "Explain why a React component re-renders when a parent state changes, and give the shortest safe fix.",
+    "required_terms": ["React", "state", "memo", "props"]
+  },
+  {
+    "scenario_id": "fix-auth-expiry",
+    "kind": "fix",
+    "prompt": "Diagnose an auth middleware bug where expired JWTs sometimes pass validation. Include root cause and fix.",
+    "required_terms": ["JWT", "expiry", "middleware", "validation"]
+  },
+  {
+    "scenario_id": "review-sql-injection",
+    "kind": "review",
+    "prompt": "Review an API handler that interpolates req.query.id into a SQL string. Return severity and fix.",
+    "required_terms": ["SQL", "req.query.id", "severity", "parameterized"]
+  },
+  {
+    "scenario_id": "arch-cache-strategy",
+    "kind": "architecture",
+    "prompt": "Compare in-memory cache, Redis, and database-only reads for a small SaaS dashboard.",
+    "required_terms": ["cache", "Redis", "database", "tradeoff"]
+  }
+]

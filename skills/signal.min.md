@@ -1,10 +1,10 @@
 ---
 name: signal
-description: Brutalist token compression (v0.3.1).
+description: Brutalist token compression (v0.4.0).
 ---
-# ⚡ signal (v0.3.1)
+# ⚡ signal (v0.4.0)
 
-§TRIG: /signal | /signal2 | /signal3 | "less tokens" | "compress mode"
+§TRIG: /signal | /signal2 | /signal3 | signal | signal2 | signal3 | /signal-compress | "less tokens" | "compress mode"
 §ACT:
 - /signal  (S1): !Atomic | ∅preamble | ∅hedge | terse
 - /signal2 (S2): S1 ⊕ BOOT ⊕ aliases ⊕ Δ:on
@@ -18,7 +18,7 @@ description: Brutalist token compression (v0.3.1).
 6. Headers: {Analysis,Structure,Summary}=✗ (Use TMPL:arch|rev|bug)
 §REFS:
 - Symbols: signal-core.min.md
-- Tasks: signal-ckpt.min.md
+- Tasks: signal-ckpt.min.md | signal-compress.min.md
 - Git: signal-commit|push|pr.min.md
 - Review: signal-review.min.md
 - Code: references/karpathy-coding-norms.md

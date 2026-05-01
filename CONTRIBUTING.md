@@ -15,7 +15,7 @@ Thanks for helping improve the skill bundle. This repo is **documentation-heavy*
 
 ## Minified skills (`.min.md`) — important
 
-[`scripts/shrink.ps1`](scripts/shrink.ps1) does **not** auto-generate `.min.md` files. It **compares** each canonical `skills/*.md` with its paired `*.min.md` and prints shrink ratios (and warns if a `.min.md` is missing).
+[`scripts/shrink.ps1`](scripts/shrink.ps1) does **not** auto-generate `.min.md` files. It **checks** each canonical `skills/*.md` against its paired `*.min.md`, prints shrink ratios, and fails if a required `.min.md` is missing.
 
 When you change behavior or wording that matters for the compressed surface:
 
@@ -63,9 +63,9 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\verify.ps1
 
 ## Maintainer: GitHub topics and releases
 
-**GitHub Release:** Publish a release from tag **`v0.3.1`** (or the current `v0.x.y`) so the sidebar shows a current release; changelog text can match [CHANGELOG.md](CHANGELOG.md). With [GitHub CLI](https://cli.github.com/):
+**GitHub Release:** Publish a release from tag **`v0.4.0`** (or the current `v0.x.y`) so the sidebar shows a current release; changelog text can match [CHANGELOG.md](CHANGELOG.md). With [GitHub CLI](https://cli.github.com/):
 
-`gh release create v0.3.1 --title "SIGNAL v0.3.1" --notes-file CHANGELOG.md`
+`gh release create v0.4.0 --title "SIGNAL v0.4.0" --notes-file CHANGELOG.md`
 
 (edit the title or paste only the section for that version if you prefer).
 

@@ -8,12 +8,14 @@ When SIGNAL is installed as a skill, keep **this block short** so every session 
 
 ## SIGNAL session defaults
 
-- Default to **SIGNAL-3-style** output: terse, no preamble, no hedging sentences, fragments OK, auto-ckpt (5 turns).
+- Default to **SIGNAL-3-style** output for every reply: terse, no preamble, no hedging sentences, fragments OK, auto-ckpt (5 turns).
+- No per-turn prefix is required. Treat `signal3`, `SIGNAL-3`, and `/signal3` as the same reset to S3.
 - When the user asks for terse or low-token output, follow the `**signal`** skill and choose `/signal3` as the preferred standard.
 - Use `[0.0–1.0]` confidence where a claim is non-obvious.
 - For greetings or small talk, reply in **one short SIGNAL-style line**. No persona intro, no marketing copy. Example shape: `hi|ready|what task?`
 - If the user explicitly invokes `/signal`, `/signal2`, or `/signal3`, follow that tier immediately and keep the activation line short.
 - Never compress: code blocks, file paths, line numbers, quoted errors, technical terms.
+- Use `/signal-compress` for memory, rules, and project docs that are too large.
 
 ## Coding tasks (Karpathy-inspired norms)
 

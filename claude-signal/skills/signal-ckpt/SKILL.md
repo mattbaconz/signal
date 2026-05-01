@@ -6,7 +6,7 @@ description: >
   user types /signal-ckpt, "checkpoint", "compress context", "summarize session",
   "save state", or when the context window is getting large. In SIGNAL-3 mode
   this fires automatically every 5 turns.
-signal_bundle_version: "0.3.2"
+signal_bundle_version: "0.4.0"
 ---
 
 # ⚡ signal-ckpt — Manual Checkpoint

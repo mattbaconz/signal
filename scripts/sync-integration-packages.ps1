@@ -1,5 +1,5 @@
 #Requires -Version 5.1
-# SIGNAL v0.3.2 - sync-integration-packages.ps1
+# SIGNAL v0.4.0 - sync-integration-packages.ps1
 # Source of truth: root skills/ directory.
 # Mirrors canonical skills into gemini-signal/skills, claude-signal/skills, and kiro-signal/skills.
 
@@ -8,6 +8,7 @@ $ErrorActionPreference = 'Stop'
 
 $RepoRoot = Split-Path $PSScriptRoot -Parent
 $rootSkillsDir = Join-Path $RepoRoot 'skills'
+$Utf8NoBom = New-Object System.Text.UTF8Encoding($false)
 
 if (-not (Test-Path $rootSkillsDir)) {
     Write-Error "Run from SIGNAL repo root (skills\ directory not found)."
@@ -30,8 +31,8 @@ foreach ($destRoot in $targets) {
     }
     New-Item -ItemType Directory -Path $destRoot -Force | Out-Null
     
-    # Mirror individual files from skills/ into their own folders in the extensions
-    # This maintains the /signal-commit/SKILL.md structure for host compatibility
+    # Mirror individual files from skills/ into their own folders in the extensions.
+    # This maintains the /signal-commit/SKILL.md structure for host compatibility.
     Get-ChildItem -Path $rootSkillsDir -Filter "*.md" | ForEach-Object {
         $baseName = $_.BaseName.Replace(".min", "")
         $targetDir = Join-Path $destRoot $baseName
@@ -46,6 +47,17 @@ foreach ($destRoot in $targets) {
         
         Copy-Item -LiteralPath $_.FullName -Destination (Join-Path $targetDir $destName) -Force
         Write-Host "  synced $($_.Name) -> $targetDir\$destName"
+    }
+
+    # Mirror per-skill helper scripts. The skill specs and bin wrappers reference
+    # these paths directly, so packaged host trees must include them.
+    Get-ChildItem -Path $rootSkillsDir -Directory | ForEach-Object {
+        $scriptSrc = Join-Path $_.FullName 'scripts'
+        if (-not (Test-Path -LiteralPath $scriptSrc)) { return }
+        $scriptDst = Join-Path (Join-Path $destRoot $_.Name) 'scripts'
+        New-Item -ItemType Directory -Path $scriptDst -Force | Out-Null
+        Copy-Item -Path (Join-Path $scriptSrc '*') -Destination $scriptDst -Recurse -Force
+        Write-Host "  synced $($_.Name)\scripts -> $scriptDst"
     }
 }
 
@@ -64,12 +76,11 @@ Write-Host "  synced references/ -> kiro-signal/references/"
 
 # Rewrite ../references/ links in kiro-signal skill files to ../../references/
 # (skill lives at kiro-signal/skills/<name>/SKILL.md, references at kiro-signal/references/)
-$utf8 = [System.Text.Encoding]::UTF8
 Get-ChildItem -Path $kiroSkillsDir -Recurse -Filter "*.md" | ForEach-Object {
-    $content = [System.IO.File]::ReadAllText($_.FullName, $utf8)
+    $content = [System.IO.File]::ReadAllText($_.FullName, [System.Text.Encoding]::UTF8)
     $rewritten = $content.Replace('(../references/', '(../../references/')
     if ($rewritten -ne $content) {
-        [System.IO.File]::WriteAllText($_.FullName, $rewritten, $utf8)
+        [System.IO.File]::WriteAllText($_.FullName, $rewritten, $Utf8NoBom)
         Write-Host "  rewrote references links: $($_.FullName)"
     }
 }
@@ -83,9 +94,9 @@ Copy-Item -LiteralPath (Join-Path $geminiPack 'gemini-extension.json') -Destinat
 # Root GEMINI.md: same content as gemini-signal/GEMINI.md but paths are repo-root-relative (no ../).
 $geminiSrc = Join-Path $geminiPack 'GEMINI.md'
 $geminiDst = Join-Path $RepoRoot 'GEMINI.md'
-$geminiBody = [System.IO.File]::ReadAllText($geminiSrc, $utf8)
+$geminiBody = [System.IO.File]::ReadAllText($geminiSrc, [System.Text.Encoding]::UTF8)
 $geminiBody = $geminiBody.Replace('../skills/', 'skills/').Replace('../references/', 'references/')
-[System.IO.File]::WriteAllText($geminiDst, $geminiBody, $utf8)
+[System.IO.File]::WriteAllText($geminiDst, $geminiBody, $Utf8NoBom)
 
 # Robocopy for directories
 $syncDirs = @('commands', 'bin')
@@ -99,5 +110,5 @@ foreach ($dir in $syncDirs) {
     }
 }
 
-Write-Host "sync-integration-packages: OK (v0.3.2 logic)" -ForegroundColor Green
+Write-Host "sync-integration-packages: OK (v0.4.0 logic)" -ForegroundColor Green
 exit 0

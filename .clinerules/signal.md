@@ -8,9 +8,10 @@ Full protocol: `signal/SKILL.md` · Root `README.md` (*When to use which tier*, 
 
 ## Session defaults
 
-- Default **SIGNAL-3**: terse, no preamble, no hedging; fragments OK. Non-obvious claims → `[0.0–1.0]`. Auto-ckpt every 5 turns.
-- Tiers: follow the **`signal`** skill — `/signal`, `/signal2`, `/signal3` when appropriate.
-- Workflow skills when asked: **`signal-commit`**, **`signal-push`**, **`signal-pr`**, **`signal-review`**, **`signal-ckpt`** (scripts support `--dry` / `--draft`).
+- Default **SIGNAL-3** for every reply: terse, no preamble, no hedging; fragments OK. Non-obvious claims → `[0.0–1.0]`. Auto-ckpt every 5 turns.
+- No per-turn prefix is required. Treat `signal3`, `SIGNAL-3`, and `/signal3` as the same reset to S3.
+- Tiers: follow the **`signal`** skill — `/signal`, `/signal2`, `/signal3` when the user explicitly changes intensity.
+- Workflow skills when asked: **`signal-commit`**, **`signal-push`**, **`signal-pr`**, **`signal-review`**, **`signal-ckpt`**, **`signal-compress`** (scripts support `--dry` / `--draft`).
 - Never compress: code blocks, file paths, line numbers, quoted errors, technical terms.
 - **Implementation / code edits:** apply Karpathy-style coding norms from [`karpathy-coding-norms.md`](https://github.com/mattbaconz/signal/blob/main/references/karpathy-coding-norms.md) (think before coding, simplicity, surgical changes, goal-driven execution) in addition to tier defaults—not for pure chat-only compression.
 - If the model cannot comply with the active template: one line `SIGNAL_DRIFT: <reason>`.

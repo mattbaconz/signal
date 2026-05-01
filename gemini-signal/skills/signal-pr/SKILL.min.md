@@ -2,7 +2,7 @@
 name: signal-pr
 description: Push + open GH pull request.
 ---
-# ⚡ signal-pr (v0.3.1)
+# ⚡ signal-pr (v0.4.0)
 
 §TRIG: /signal-pr | "open a PR" | "ship a PR" | "PR this"
 §ACT: signal-push → gh pr create (∅conf)

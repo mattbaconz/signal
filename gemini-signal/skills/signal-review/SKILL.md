@@ -1,4 +1,4 @@
-﻿---
+---
 name: signal-review
 description: >
   Review code in SIGNAL's one-line format with required severity per issue.
@@ -6,7 +6,7 @@ description: >
   user types /signal-review, "review this", "review my code", "check this PR",
   "review this file", or asks for a code review on any file, diff, or PR.
   Works standalone or as part of a SIGNAL session.
-signal_bundle_version: "0.3.2"
+signal_bundle_version: "0.4.0"
 ---
 
 # ⚡ signal-review — Templated Code Review
@@ -79,7 +79,7 @@ If zero issues: output only `∑ 0 issues ✓`. No explanation, no praise.
 
 ## Severity Scale
 
-Full definitions in `references/severity.md`. Quick reference:
+Full definitions in [`references/severity.md`](../references/severity.md). Quick reference:
 
 | Level | Meaning |
 |---|---|

@@ -6,6 +6,28 @@ All notable changes to this project are documented here. The format is informal;
 
 **Versioning:** For each release, align `**signal_bundle_version`** in core `SKILL.md` frontmatter, a new section below, and an annotated git tag (`v0.x.y`). Optional: GitHub Release from that tag (see [CONTRIBUTING.md — Maintainer: GitHub topics and releases](CONTRIBUTING.md#maintainer-github-topics-and-releases)).
 
+## v0.4.0 — 2026-05-01
+
+Proof-first compression release: professional dense positioning, input compression as a first-class skill, and a benchmark methodology that compares SIGNAL against terse and caveman-style controls.
+
+### Added
+
+- **`signal-compress` skill** — compresses memory files, prompts, project rules, and docs while preserving protected technical tokens.
+- **[`docs/benchmark-methodology.md`](docs/benchmark-methodology.md)** — defines benchmark arms, row schema, fidelity gates, and reporting rules.
+- **[`benchmark/proof-suite.ps1`](benchmark/proof-suite.ps1)** — unified no-network proof runner for static, input-compression, skill-overhead, output dry-run, and Caveman comparison dry-run modes.
+- **Benchmark fixtures/results** under `benchmark/fixtures/` and `benchmark/results/v0.4-static.json`.
+- **[`scripts/auto-benchmark.ps1`](scripts/auto-benchmark.ps1)** — one command for static proof, dry-run plans, optional Gemini live output, and optional long-session quick runs.
+- **[`docs/always-on.md`](docs/always-on.md)** — host map and setup guidance for making SIGNAL-3 the default without per-prompt `/signal3`.
+
+### Changed
+
+- **README:** adds 60-second start, compatibility matrix, v0.4.0 proof-first benchmark framing, and `/signal3` as the recommended default for long agentic work.
+- **Benchmark dispatcher:** `benchmark/run.ps1` now supports `Static`, `Output`, `InputCompress`, `SkillOverhead`, `CompareCaveman`, `Chess`, and `LongSession`.
+- **Verification:** `scripts/verify.ps1` now smoke-tests the v0.4.0 proof benchmark modes.
+- **Installer:** `scripts/install-signal-all.ps1` now supports `-AlwaysOn`, `-DryRun`, and host selection.
+- **Always-on defaults:** `signal3`, `SIGNAL-3`, and `/signal3` are documented as equivalent S3 reset commands.
+- **Version:** bundle metadata and install surfaces move to `0.4.0`.
+
 ## v0.3.2 — 2026-04-19
 
 Kiro IDE support: third mirrored host package, bundled references, path rewrites.

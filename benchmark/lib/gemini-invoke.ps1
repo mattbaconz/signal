@@ -103,7 +103,20 @@ function Get-PromptTokens {
 
 function Parse-GeminiJson {
   param([string]$JsonText)
-  $obj = $JsonText | ConvertFrom-Json
+  $trimmed = $JsonText.Trim()
+  $sessionMarker = $trimmed.LastIndexOf('"session_id"')
+  if ($sessionMarker -ge 0) {
+    $sessionStart = $trimmed.LastIndexOf('{', $sessionMarker)
+    if ($sessionStart -ge 0) {
+      $trimmed = $trimmed.Substring($sessionStart)
+    }
+  }
+  $firstBrace = $trimmed.IndexOf('{')
+  $lastBrace = $trimmed.LastIndexOf('}')
+  if ($firstBrace -gt 0 -and $lastBrace -gt $firstBrace) {
+    $trimmed = $trimmed.Substring($firstBrace, $lastBrace - $firstBrace + 1)
+  }
+  $obj = $trimmed | ConvertFrom-Json
   # Strict mode: do not touch $obj.error unless the property exists
   $errProp = $obj.PSObject.Properties['error']
   if ($null -ne $errProp -and $null -ne $errProp.Value) {
@@ -119,6 +132,21 @@ function Test-RetryableGeminiFailure {
   $m = if ($Message) { $Message.ToLowerInvariant() } else { "" }
   if ($m -match '429|resource exhausted|rate|quota|timeout|temporar') { return $true }
   return $false
+}
+
+function Join-ProcessArguments {
+  param([string[]]$Args)
+  $quoted = @()
+  foreach ($a in $Args) {
+    if ($null -eq $a) { $a = '' }
+    if ($a -notmatch '[\s"]') {
+      $quoted += $a
+      continue
+    }
+    $escaped = $a.Replace('\', '\\').Replace('"', '\"')
+    $quoted += '"' + $escaped + '"'
+  }
+  return ($quoted -join ' ')
 }
 
 function Invoke-GeminiStdinJson {
@@ -184,25 +212,53 @@ function Invoke-GeminiNodePromptJson {
     [string]$GeminiJs,
     [string]$NodeExe,
     [int]$MaxRetries = 4,
-    [int]$InitialBackoffMs = 1500
+    [int]$InitialBackoffMs = 1500,
+    [int]$PerCallTimeoutMs = 120000
   )
   $attempt = 0
   $backoff = $InitialBackoffMs
+  $oldTerm = $env:TERM
+  $oldColorTerm = $env:COLORTERM
+  $oldNoColor = $env:NO_COLOR
+  $env:TERM = 'xterm-truecolor'
+  $env:COLORTERM = 'truecolor'
+  Remove-Item Env:\NO_COLOR -ErrorAction SilentlyContinue
   Push-Location -LiteralPath $WorkingDir
   try {
     while ($true) {
       $attempt++
       $errFile = [System.IO.Path]::GetTempFileName()
       try {
-        if ($Model) {
-          $raw = & $NodeExe $GeminiJs -m $Model -p $PromptText -o json --approval-mode plan 2>$errFile
-        } else {
-          $raw = & $NodeExe $GeminiJs -p $PromptText -o json --approval-mode plan 2>$errFile
+        $timeoutSeconds = [math]::Ceiling($PerCallTimeoutMs / 1000.0)
+        $job = Start-Job -ScriptBlock {
+          param($NodeExeArg, $GeminiJsArg, $PromptArg, $ModelArg, $WorkingDirArg)
+          $env:TERM = 'xterm-truecolor'
+          $env:COLORTERM = 'truecolor'
+          Remove-Item Env:\NO_COLOR -ErrorAction SilentlyContinue
+          Push-Location -LiteralPath $WorkingDirArg
+          try {
+            if ($ModelArg) {
+              & $NodeExeArg $GeminiJsArg -m $ModelArg -p $PromptArg -o json --skip-trust --approval-mode plan 2>&1
+            } else {
+              & $NodeExeArg $GeminiJsArg -p $PromptArg -o json --skip-trust --approval-mode plan 2>&1
+            }
+          } finally {
+            Pop-Location
+          }
+        } -ArgumentList $NodeExe, $GeminiJs, $PromptText, $Model, $WorkingDir
+        $done = Wait-Job -Job $job -Timeout $timeoutSeconds
+        if (-not $done) {
+          Stop-Job -Job $job -ErrorAction SilentlyContinue
+          Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+          throw "gemini timed out after $PerCallTimeoutMs ms"
         }
-        $stdout = if ($raw -is [array]) { [string]::Join("`n", $raw) } else { [string]$raw }
+        $jobOutput = Receive-Job -Job $job
+        Remove-Job -Job $job -Force -ErrorAction SilentlyContinue
+        $stdout = if ($jobOutput -is [array]) { [string]::Join("`n", $jobOutput) } else { [string]$jobOutput }
         $errText = if (Test-Path $errFile) { Get-Content -LiteralPath $errFile -Raw } else { "" }
+        $errString = if ($null -eq $errText) { "" } else { [string]$errText }
         if ([string]::IsNullOrWhiteSpace($stdout)) {
-          $msg = "empty stdout from gemini.js; stderr: $($errText.Substring(0, [Math]::Min(800, [Math]::Max($errText.Length, 1))))"
+          $msg = "empty stdout from gemini.js; stderr: $($errString.Substring(0, [Math]::Min(800, $errString.Length)))"
           if ($attempt -lt $MaxRetries -and (Test-RetryableGeminiFailure -Message "$msg $errText" -ExitCode 1)) {
             Start-Sleep -Milliseconds $backoff
             $backoff = [math]::Min($backoff * 2, 60000)
@@ -217,6 +273,9 @@ function Invoke-GeminiNodePromptJson {
     }
   } finally {
     Pop-Location
+    if ($null -eq $oldTerm) { Remove-Item Env:\TERM -ErrorAction SilentlyContinue } else { $env:TERM = $oldTerm }
+    if ($null -eq $oldColorTerm) { Remove-Item Env:\COLORTERM -ErrorAction SilentlyContinue } else { $env:COLORTERM = $oldColorTerm }
+    if ($null -eq $oldNoColor) { Remove-Item Env:\NO_COLOR -ErrorAction SilentlyContinue } else { $env:NO_COLOR = $oldNoColor }
   }
 }
 

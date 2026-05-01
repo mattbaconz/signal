@@ -1,0 +1,23 @@
+[
+  {
+    "scenario_id": "memory-gemini",
+    "source": "GEMINI.md style project memory",
+    "original": "# Project Defaults\n\nPlease always remember that this repository uses Next.js, PostgreSQL, and Redis. When making edits, you should first inspect the relevant files, then make the smallest possible change, and finally run the most relevant tests. Do not rewrite code blocks. Keep commands like `npm test` and file paths such as src/auth/session.ts unchanged.\n\nIf a bug involves AUTH_TOKEN_EXPIRED, preserve that exact error string in your response.",
+    "compressed": "# Project Defaults\n\nstack=Next.js+PostgreSQL+Redis. Before edits: inspect relevant files -> smallest change -> run relevant tests. Preserve code blocks, `npm test`, `src/auth/session.ts`, `AUTH_TOKEN_EXPIRED`.",
+    "required_terms": ["Next.js", "PostgreSQL", "Redis", "`npm test`", "src/auth/session.ts", "AUTH_TOKEN_EXPIRED"]
+  },
+  {
+    "scenario_id": "agents-rules",
+    "source": "AGENTS.md style rules",
+    "original": "# Agent Rules\n\nYou should avoid making broad refactors unless the user explicitly asks for them. When you are unsure about a fact, state a confidence value. Never compress file paths, line numbers, quoted errors, or technical terms. Keep examples like C:\\skills\\signal\\skills\\signal.md and line 47 exactly as written.",
+    "compressed": "# Agent Rules\n\nAvoid broad refactors unless explicit. Unsure fact -> confidence value. Never compress file paths, line numbers, quoted errors, technical terms. Preserve `C:\\skills\\signal\\skills\\signal.md` and line 47.",
+    "required_terms": ["C:\\skills\\signal\\skills\\signal.md", "line 47", "technical terms"]
+  },
+  {
+    "scenario_id": "project-rules",
+    "source": "long project rules",
+    "original": "# Project Rules\n\nThis project requires every database migration to include a rollback plan. Please make sure that migrations touching the users table mention users.email and users.created_at explicitly. Production deploys use `pnpm deploy --prod`. If the command fails with \"LOCK_TIMEOUT\", stop and report the failure without retrying automatically.",
+    "compressed": "# Project Rules\n\nDB migrations require rollback plan. If touching users table, mention `users.email` + `users.created_at`. Prod deploy: `pnpm deploy --prod`. On \"LOCK_TIMEOUT\": stop; report; do not auto-retry.",
+    "required_terms": ["users.email", "users.created_at", "`pnpm deploy --prod`", "\"LOCK_TIMEOUT\""]
+  }
+]

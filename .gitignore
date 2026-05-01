@@ -58,6 +58,12 @@ venv/
 benchmark/*
 !benchmark/README.md
 !benchmark/run.ps1
+!benchmark/proof-suite.ps1
+!benchmark/fixtures/
+!benchmark/fixtures/**
+!benchmark/results/
+!benchmark/results/v0.4-static.json
+benchmark/results/local/
 !benchmark/lib/
 !benchmark/lib/**
 # Long-session runner + scenario (ignore generated JSON log and RESULTS append)

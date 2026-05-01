@@ -1,6 +1,6 @@
 #Requires -Version 5.1
-# SIGNAL v0.3.1 - shrink.ps1
-# Automates minification of SKILL.md into SKILL.min.md using Symbol Grammar.
+# SIGNAL v0.4.0 - shrink.ps1
+# Checks canonical SKILL.md / SKILL.min.md pairs and reports shrink ratios.
 
 [CmdletBinding()]
 param(
@@ -24,7 +24,8 @@ function Shrink-File([string]$target) {
     }
     
     if (-not (Test-Path -LiteralPath $minPath)) {
-        Write-Host "  ! Missing $minPath. Please create it using Symbol Grammar." -ForegroundColor Yellow
+        Write-Host "  x Missing $minPath. Please create it using Symbol Grammar." -ForegroundColor Red
+        $script:ShrinkFailed = $true
         return
     }
 
@@ -41,12 +42,17 @@ function Shrink-File([string]$target) {
 }
 
 if ($All) {
-    # Only check top-level skills directory and root for canonical v0.3.1 pairs
+    $script:ShrinkFailed = $false
+    # Only check top-level skills directory for canonical v0.4.0 pairs.
     Get-ChildItem -Path "$repoRoot\skills" -Filter "*.md" | Where-Object { $_.Name -notmatch "\.min\.md$" -and $_.Name -ne "signal-core.min.md" } | ForEach-Object {
         Shrink-File $_.FullName
     }
+    if ($script:ShrinkFailed) { exit 1 }
 } elseif ($Path) {
+    $script:ShrinkFailed = $false
     Shrink-File (Resolve-Path -LiteralPath $Path).Path
+    if ($script:ShrinkFailed) { exit 1 }
 } else {
     Write-Host "Please provide -Path or use -All" -ForegroundColor Red
+    exit 1
 }

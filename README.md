@@ -2,16 +2,16 @@
   <img src="assets/signal-logo.png" alt="SIGNAL logo" width="130" />
 </p>
 
-<h1 align="center">SIGNAL · v0.3.2</h1>
+<h1 align="center">SIGNAL · v0.4.0</h1>
 
 <p align="center"><strong>Less prompt noise. More room for code.</strong><br />
-Agent skills that default to dense output: minified <code>.min.md</code> payloads, symbol shorthand, optional checkpoints.</p>
+Professional dense mode for agents: minified skill payloads, structured terse replies, input compression, and checkpointed long sessions.</p>
 
 <p align="center">
   <a href="https://github.com/mattbaconz/signal/stargazers"><img src="https://img.shields.io/github/stars/mattbaconz/signal?style=flat-square&logo=github&label=stars" alt="GitHub stars" /></a>
   <a href="LICENSE"><img src="https://img.shields.io/github/license/mattbaconz/signal?style=flat-square" alt="License" /></a>
   <a href="https://github.com/mattbaconz/signal/actions"><img src="https://img.shields.io/github/actions/workflow/status/mattbaconz/signal/verify.yml?branch=main&style=flat-square&label=CI" alt="CI" /></a>
-  <img src="https://img.shields.io/badge/release-v0.3.2-5865F2?style=flat-square" alt="Version" />
+  <img src="https://img.shields.io/badge/release-v0.4.0-5865F2?style=flat-square" alt="Version" />
 </p>
 
 ### At a glance
@@ -19,10 +19,37 @@ Agent skills that default to dense output: minified <code>.min.md</code> payload
 | Topic | Summary |
 | --- | --- |
 | **What you get** | Shorter **instructions + replies** in the agent; **checkpoints** (S3) instead of pasting full thread history when you want them. |
-| **What you run** | `npx skills add mattbaconz/signal` → **`/signal`** (light) · **`/signal2`** (default) · **`/signal3`** (auto-CKPT). |
+| **What you run** | `npx skills add mattbaconz/signal` → **`/signal3`** (recommended) · **`/signal2`** (strong) · **`/signal`** (light). |
 | **What this tree is** | **`skills/`** = source specs you edit. **`gemini-signal/`** · **`claude-signal/`** · **`kiro-signal/`** = mirrored host packages (don’t hand-edit; see [CONTRIBUTING](CONTRIBUTING.md)). |
 
 Protocol entrypoints: [`skills/signal.min.md`](skills/signal.min.md) · symbols [`skills/signal-core.min.md`](skills/signal-core.min.md) · repo [github.com/mattbaconz/signal](https://github.com/mattbaconz/signal) · releases [CHANGELOG.md](CHANGELOG.md)
+
+## 60-second start
+
+```bash
+npx skills add mattbaconz/signal
+```
+
+Then activate the default dense workflow:
+
+```text
+/signal3
+```
+
+To make that default automatic for every prompt, install the always-on host rules:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn -DryRun
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn
+```
+
+Use `/signal-compress` when your loaded memory/rules/docs are getting too large. Verify the proof suite locally:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
+```
+
+**Expected proof-first numbers:** static v0.4 fixtures show **11/11 fidelity-pass rows** and **~73% median estimated savings** across input-compression and skill-overhead checks. Live output claims are reported separately and must pass fidelity gates before they count.
 
 <p align="center">
   <a href="#demo">Demo</a> ·
@@ -42,11 +69,11 @@ Protocol entrypoints: [`skills/signal.min.md`](skills/signal.min.md) · symbols 
 
 ![SIGNAL benchmark — skill shrink, live reply savings, live Gemini snapshot](assets/signal-benchmark-results.png)
 
-**What to trust first:** **~87% smaller** skill payloads on disk (seven `.md` → `.min.md` pairs, reproducible) and **~67% fewer characters** in the **live** assistant reply (Gemini CLI JSON, EqualContext — matched `prompt_tokens`). **`tokens.total`** on that same single-turn run only moves **~8%** because **prompt tokens (~8k) dominate the sum** — that is expected, not a failed headline. Details: [Benchmark](#benchmark) · [docs/token-metrics.md](docs/token-metrics.md).
+**What to trust first:** the v0.4 proof suite separates static input/skill shrinkage from live output-token claims. Static proof currently has **11/11 fidelity-pass rows** and **~73% median estimated savings** across input-compression and skill-overhead fixtures. Older live Gemini snapshots remain useful context, but live wins are counted only when the fidelity gate passes. Details: [Benchmark](#benchmark) · [docs/benchmark-methodology.md](docs/benchmark-methodology.md) · [docs/token-metrics.md](docs/token-metrics.md).
 
 **What’s illustration:** scenarios A–C use `ceil(characters / 4)` (not billed API tokens) — good for shape, not primary “proof” vs hosts that report real tokenizer counts.
 
-**Reproduce:** [scripts/benchmark.ps1](scripts/benchmark.ps1) (static) · [benchmark/run.ps1](benchmark/run.ps1) / [benchmark/README.md](benchmark/README.md) (live + long-session).
+**Reproduce:** [benchmark/run.ps1](benchmark/run.ps1) (proof suite, live dry-runs, and long-session runners) · methodology [docs/benchmark-methodology.md](docs/benchmark-methodology.md).
 
 ---
 
@@ -76,6 +103,19 @@ npx skills add mattbaconz/signal -y -g
 
 **After install:** open [`skills/signal.min.md`](skills/signal.min.md), pick **S1 / S2 / S3**, add workflow skills (`signal-commit`, …) only when you need them.
 
+### Compatibility matrix
+
+| Host | Best path | Auto-activation |
+| --- | --- | --- |
+| Claude Code | Plugin marketplace or standalone `~/.claude/skills/` copy | Plugin/hooks can remind; slash command still explicit |
+| OpenAI Codex | `npx skills add mattbaconz/signal` or copy into `.codex/skills` | `AGENTS.md` can make S3 always-on |
+| Gemini CLI | Gemini extension package or repo-root `GEMINI.md` | `GEMINI.md` can make S3 always-on |
+| Cursor | Copy skills/rules into Cursor skill/rule paths | `.cursor/rules/signal.mdc` can make S3 always-on |
+| Windsurf | Generated `.windsurf/rules/signal.md` | Rules can apply automatically |
+| Cline | Generated `.clinerules/signal.md` | Rules can apply automatically |
+| GitHub Copilot | Generated `.github/copilot-instructions.md` | Instruction file applies in repo context |
+| Kiro | Import from `kiro-signal/skills/<name>` subtree | Per-skill import; activation depends on Kiro workspace |
+
 ### Claude Code (app + CLI)
 
 **Plugins only exist in [Claude Code](https://code.claude.com/docs/en/overview)** (the coding agent). The consumer **claude.ai** desktop chat does **not** expose **`/plugin`** — if slash commands like **`/plugin`** are ignored or “unknown,” you’re either in the wrong app or on an old Claude Code build. [Update Claude Code](https://code.claude.com/docs/en/setup) and restart; official troubleshooting: [Discover plugins — “/plugin command not recognized”](https://code.claude.com/docs/en/discover-plugins).
@@ -103,6 +143,17 @@ That copies [`claude-signal/skills/`](claude-signal/skills/) into **`%USERPROFIL
 
 **Optional:** merge [`templates/claude-CLAUDE.min.md`](templates/claude-CLAUDE.min.md) into your project **`CLAUDE.md`** for thin always-on defaults.
 
+### Always-on SIGNAL-3
+
+Users should not need to type `/signal3` on every prompt. Add the host instruction file once, then prompt normally. The agent treats `signal3`, `SIGNAL-3`, and `/signal3` as the same reset command.
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn -DryRun
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\install-signal-all.ps1 -AlwaysOn
+```
+
+Details and host file map: [`docs/always-on.md`](docs/always-on.md).
+
 ---
 
 ## Commands
@@ -118,6 +169,7 @@ That copies [`claude-signal/skills/`](claude-signal/skills/) into **`%USERPROFIL
 | `/signal-pr`     | Push + PR (`gh`)                   |
 | `/signal-review` | One-line review, severity required |
 | `/signal-state`  | `.signal_state.md`                 |
+| `/signal-compress` | Compress memory/rules/docs with fidelity gates |
 | `/signal-diff`   | Summarized changes                 |
 | `/signal-search` | Summarized search                  |
 
@@ -138,7 +190,7 @@ There is **no** legacy top-level `signal/` directory in this repo—ignore older
 | `[kiro-signal/](kiro-signal/)`                                         | **Kiro** mirror: `skills/` + bundled `references/` with rewritten paths      | You import into Kiro IDE — see [docs/kiro.md](docs/kiro.md)           |
 | `[references/](references/)`                                           | Shared refs (symbols, Karpathy norms, benchmarks, checkpoint notes)          | You cite norms or symbols                                             |
 | `[templates/](templates/)`                                             | Snippets to merge into a **project’s** GEMINI / CLAUDE files                 | You integrate SIGNAL into an app repo                                 |
-| `[scripts/](scripts/)`                                                 | `shrink.ps1`, `sync-integration-packages.ps1`, `verify.ps1`, `benchmark.ps1` | You contribute or verify locally ([CONTRIBUTING.md](CONTRIBUTING.md)) |
+| `[scripts/](scripts/)`, `[benchmark/](benchmark/)`                     | `shrink.ps1`, `sync-integration-packages.ps1`, `verify.ps1`, proof benchmark runners | You contribute or verify locally ([CONTRIBUTING.md](CONTRIBUTING.md)) |
 
 
 ---
@@ -208,7 +260,22 @@ Full reference: `[skills/signal-core.min.md](skills/signal-core.min.md)`.
 
 ## Benchmark
 
-The chart matches [Demo](#demo). **Honest order of strength:** (1) **skill file shrink on disk** — verifiable byte counts; (2) **live reply length** — real JSON from one Gemini run; (3) **single-turn `tokens.total`** — moves slowly when **prompt** is huge; (4) **scripted A–C** — `ceil(chars/4)` illustrations, not API tokenizer truth.
+v0.4.0 uses a proof-first benchmark methodology. A compression win counts only when fidelity passes: protected code, paths, line numbers, versions, quoted errors, identifiers, and technical terms must remain intact.
+
+Benchmark arms:
+
+| Arm | Purpose |
+| --- | --- |
+| `baseline` | Normal agent/system prompt |
+| `terse-control` | Explicit "answer concisely" control |
+| `caveman-style` | Telegraphic/persona-style compression control |
+| `signal` | Actual SIGNAL skill/defaults |
+
+**Current static snapshot:** [`benchmark/results/v0.4-static.json`](benchmark/results/v0.4-static.json) reports **11/11 fidelity-pass rows** and **~73% median estimated savings** across input-compression fixtures and skill-overhead checks. Live output and long-session results are reported separately because provider token accounting varies by host.
+
+Methodology: [`docs/benchmark-methodology.md`](docs/benchmark-methodology.md). Runner: [`benchmark/proof-suite.ps1`](benchmark/proof-suite.ps1).
+
+The older chart below remains useful context, but v0.4.0 claims should be regenerated from the proof suite.
 
 ### Heuristic scenarios (illustration only)
 
@@ -227,14 +294,15 @@ Uses `ceil(characters / 4)` — not billed API tokens; useful for **shape**, not
 
 | Pair              | Bytes (≈)          | Est. tok (≈)      | Shrink   |
 | ----------------- | ------------------ | ----------------- | -------- |
-| signal            | 2.8K → 0.7K        | ~712 → ~182       | ~75%     |
+| signal            | 3.3K → 0.9K        | ~819 → ~217       | ~74%     |
 | signal-ckpt       | 5.6K → 0.7K        | ~1389 → ~163      | ~88%     |
 | signal-commit     | 8.3K → 0.7K        | ~2071 → ~178      | ~91%     |
+| signal-compress   | 2.9K → 0.9K        | ~717 → ~221       | ~69%     |
 | signal-pr         | 4.7K → 0.5K        | ~1177 → ~130      | ~89%     |
 | signal-push       | 3.7K → 0.5K        | ~936 → ~131       | ~86%     |
 | signal-review     | 5.5K → 0.6K        | ~1378 → ~145      | ~90%     |
 | signal-state      | 2.0K → 0.7K        | ~511 → ~163       | ~68%     |
-| **7 pairs total** | **~32.7K → ~4.4K** | **~8173 → ~1090** | **~87%** |
+| **8 pairs total** | **~36.0K → ~5.3K** | **~8996 → ~1329** | **~85%** |
 
 
 Min-only helpers (`signal-core`, `signal-diff`, `signal-search`) ≈ **1.6K** bytes (~**389** est. tokens).
@@ -264,7 +332,19 @@ Source: [benchmark/benchmark chess/run_chess_compare.ps1](benchmark/benchmark%20
 **Static** (heuristic + skill table printout; no API):
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\benchmark.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1
+```
+
+**Automatic live output smoke** (Gemini CLI auth required; writes ignored local JSON under `benchmark/results/local/`; defaults to one scenario):
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1 -Live
+```
+
+Full live output run:
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\auto-benchmark.ps1 -Live -MaxLiveScenarios 0
 ```
 
 **Live chess** (refreshes JSON under `benchmark/benchmark chess/`):
@@ -297,6 +377,7 @@ flowchart TB
   subgraph context [Context tools]
     DIFF["signal-diff"]
     SRCH["signal-search"]
+    CMP["signal-compress"]
     ST["signal-state"]
   end
   subgraph persist [Persistence]
@@ -308,6 +389,7 @@ flowchart TB
   P --> REV
   P --> DIFF
   P --> SRCH
+  P --> CMP
   ST --> STATE
 ```
 
@@ -374,7 +456,8 @@ All releases: [CHANGELOG.md](CHANGELOG.md).
 ├── assets/              # logos, benchmark infographic
 ├── references/          # symbols, Karpathy norms, benchmarks, checkpoint notes
 ├── templates/           # Gemini / Claude merge snippets
-├── scripts/             # benchmark.ps1, shrink.ps1, verify.ps1, sync-integration-packages.ps1
+├── scripts/             # shrink.ps1, verify.ps1, sync-integration-packages.ps1
+├── benchmark/           # proof-suite.ps1, fixtures, live benchmark runners
 ├── gemini-signal/       # Gemini CLI extension (mirrored from skills/)
 ├── claude-signal/       # Claude Code plugin (mirrored from skills/)
 ├── kiro-signal/         # Kiro IDE import (mirrored + bundled references/)
@@ -396,4 +479,4 @@ All releases: [CHANGELOG.md](CHANGELOG.md).
 
 ---
 
-*v0.3.2 — Shrinking Session. Brutalist token compression.*
+*v0.4.0 — Proof-first compression. Professional dense mode.*

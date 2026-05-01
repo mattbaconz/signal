@@ -2,7 +2,7 @@
 name: signal-review
 description: 1-line code review + severity.
 ---
-# ⚡ signal-review (v0.3.1)
+# ⚡ signal-review (v0.4.0)
 
 §TRIG: /signal-review | "review [this|my code|file|PR]"
 §ACT: ∅prose | TMPL:rev | severity:!1-5
